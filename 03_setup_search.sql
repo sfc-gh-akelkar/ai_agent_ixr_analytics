@@ -41,46 +41,93 @@ CALL SYSTEM$WAIT(5);
 -- Test Query 1: Search for vaccination content
 SELECT 
     'Vaccination Search Test' AS TEST_NAME,
-    *
-FROM TABLE(
-    CONTENT_SEARCH_SVC!SEARCH(
-        QUERY => 'flu vaccine importance for seniors',
-        NUM_RESULTS => 5
-    )
-);
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "flu vaccine importance for seniors",
+            "columns": ["CONTENT_ID", "TITLE", "CONTENT_TYPE", "TRANSCRIPT_TEXT"],
+            "limit": 5
+        }'
+    ) AS SEARCH_RESULTS;
 
 -- Test Query 2: Search for cancer screening content  
 SELECT 
     'Cancer Screening Test' AS TEST_NAME,
-    *
-FROM TABLE(
-    CONTENT_SEARCH_SVC!SEARCH(
-        QUERY => 'cancer screening guidelines and recommendations',
-        NUM_RESULTS => 5
-    )
-);
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "cancer screening guidelines and recommendations",
+            "columns": ["CONTENT_ID", "TITLE", "CONTENT_TYPE", "TRANSCRIPT_TEXT"],
+            "limit": 5
+        }'
+    ) AS SEARCH_RESULTS;
 
 -- Test Query 3: Search for diabetes management
 SELECT 
     'Diabetes Management Test' AS TEST_NAME,
-    *
-FROM TABLE(
-    CONTENT_SEARCH_SVC!SEARCH(
-        QUERY => 'how to manage type 2 diabetes effectively',
-        NUM_RESULTS => 5
-    )
-);
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "how to manage type 2 diabetes effectively",
+            "columns": ["CONTENT_ID", "TITLE", "CONTENT_TYPE", "TRANSCRIPT_TEXT"],
+            "limit": 5
+        }'
+    ) AS SEARCH_RESULTS;
 
 -- Test Query 4: Search for preventative care
 SELECT 
     'Preventative Care Test' AS TEST_NAME,
-    *
-FROM TABLE(
-    CONTENT_SEARCH_SVC!SEARCH(
-        QUERY => 'preventative health screenings and checkups',
-        NUM_RESULTS => 5
-    )
-);
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "preventative health screenings and checkups",
+            "columns": ["CONTENT_ID", "TITLE", "CONTENT_TYPE", "TRANSCRIPT_TEXT"],
+            "limit": 5
+        }'
+    ) AS SEARCH_RESULTS;
+
+-- ============================================================================
+-- Advanced Filter Examples
+-- ============================================================================
+
+-- Test Query 5: Filter by content type (Video only)
+SELECT 
+    'Video Content Filter Test' AS TEST_NAME,
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "health screening prevention",
+            "columns": ["CONTENT_ID", "TITLE", "CONTENT_TYPE"],
+            "filter": {"@eq": {"CONTENT_TYPE": "Video"}},
+            "limit": 3
+        }'
+    ) AS SEARCH_RESULTS;
+
+-- Test Query 6: Filter by content type (Article only)
+SELECT 
+    'Article Content Filter Test' AS TEST_NAME,
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "patient care medical advice",
+            "columns": ["CONTENT_ID", "TITLE", "CONTENT_TYPE"],
+            "filter": {"@eq": {"CONTENT_TYPE": "Article"}},
+            "limit": 3
+        }'
+    ) AS SEARCH_RESULTS;
+
+-- Test Query 7: Filter by recent publish date
+SELECT 
+    'Recent Content Filter Test' AS TEST_NAME,
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "healthcare wellness",
+            "columns": ["CONTENT_ID", "TITLE", "PUBLISH_DATE"],
+            "filter": {"@gte": {"PUBLISH_DATE": "2024-09-01"}},
+            "limit": 5
+        }'
+    ) AS SEARCH_RESULTS;
 
 -- ============================================================================
 -- Service Status and Metadata
@@ -99,32 +146,60 @@ DESC CORTEX SEARCH SERVICE CONTENT_SEARCH_SVC;
 -- Example 1: Find content related to appointment adherence
 -- The agent will use this pattern to retrieve contextual content
 /*
-SELECT * FROM TABLE(
-    CONTENT_SEARCH_SVC!SEARCH(
-        QUERY => 'appointment reminders and show rates',
-        NUM_RESULTS => 3
-    )
-);
+SELECT 
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "appointment reminders and show rates",
+            "columns": ["CONTENT_ID", "TITLE", "TRANSCRIPT_TEXT"],
+            "limit": 3
+        }'
+    );
 */
 
 -- Example 2: Find content that might influence screening rates
 /*
-SELECT * FROM TABLE(
-    CONTENT_SEARCH_SVC!SEARCH(
-        QUERY => 'preventative screening benefits early detection',
-        NUM_RESULTS => 5
-    )
-);
+SELECT 
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "preventative screening benefits early detection",
+            "columns": ["CONTENT_ID", "TITLE", "TRANSCRIPT_TEXT"],
+            "limit": 5
+        }'
+    );
 */
 
 -- Example 3: Find content about patient engagement
 /*
-SELECT * FROM TABLE(
-    CONTENT_SEARCH_SVC!SEARCH(
-        QUERY => 'patient education digital health content',
-        NUM_RESULTS => 5
-    )
-);
+SELECT 
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "patient education digital health content",
+            "columns": ["CONTENT_ID", "TITLE", "TRANSCRIPT_TEXT"],
+            "limit": 5
+        }'
+    );
+*/
+
+-- Example 4: Combined filters - Recent video content only
+/*
+SELECT 
+    SNOWFLAKE.CORTEX.SEARCH_PREVIEW(
+        'PATIENTPOINT_DB.IXR_ANALYTICS.CONTENT_SEARCH_SVC',
+        '{
+            "query": "vaccination immunization shots",
+            "columns": ["CONTENT_ID", "TITLE", "CONTENT_TYPE", "PUBLISH_DATE"],
+            "filter": {
+                "@and": [
+                    {"@eq": {"CONTENT_TYPE": "Video"}},
+                    {"@gte": {"PUBLISH_DATE": "2024-06-01"}}
+                ]
+            },
+            "limit": 5
+        }'
+    );
 */
 
 -- ============================================================================
