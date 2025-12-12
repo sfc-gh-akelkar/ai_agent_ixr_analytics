@@ -545,6 +545,7 @@ EVENTS AS (
             WHEN 8 THEN 'High internal temperature, fan noise, thermal shutdowns'
             ELSE 'General hardware malfunction'
         END AS FAILURE_SYMPTOMS
+    FROM BASE b
 )
 SELECT
     UUID_STRING() AS MAINTENANCE_ID,
