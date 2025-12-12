@@ -28,6 +28,13 @@ TRUNCATE TABLE IF EXISTS RAW_DATA.MAINTENANCE_HISTORY;
 TRUNCATE TABLE IF EXISTS RAW_DATA.DEVICE_INVENTORY;
 
 /*----------------------------------------------------------------------------
+  Demo clock (do not rely on wall-clock time)
+----------------------------------------------------------------------------*/
+
+SET DEMO_AS_OF_TS = (SELECT DEMO_AS_OF_TS FROM OPERATIONS.V_DEMO_TIME);
+SET DEMO_AS_OF_DATE = (SELECT DEMO_AS_OF_DATE FROM OPERATIONS.V_DEMO_TIME);
+
+/*----------------------------------------------------------------------------
   STEP 1: Generate Device Inventory (100 devices)
 ----------------------------------------------------------------------------*/
 
@@ -72,9 +79,9 @@ SELECT
     
     -- Installation dates (1-4 years ago, older devices more likely to fail)
     CASE 
-        WHEN SEQ = 32 THEN DATEADD('day', -1065, CURRENT_DATE())  -- 4532: ~2.9 years old
-        WHEN SEQ = 66 THEN DATEADD('day', -950, CURRENT_DATE())   -- 7821: ~2.6 years old
-        ELSE DATEADD('day', -(UNIFORM(365, 1460, RANDOM())), CURRENT_DATE())
+        WHEN SEQ = 32 THEN DATEADD('day', -1065, $DEMO_AS_OF_DATE)  -- 4532: ~2.9 years old
+        WHEN SEQ = 66 THEN DATEADD('day', -950, $DEMO_AS_OF_DATE)   -- 7821: ~2.6 years old
+        ELSE DATEADD('day', -(UNIFORM(365, 1460, RANDOM())), $DEMO_AS_OF_DATE)
     END AS INSTALLATION_DATE,
     
     'LOC-' || LPAD(SEQ, 4, '0') AS LOCATION_ID,
@@ -167,15 +174,15 @@ SELECT
     CASE 
         WHEN SEQ = 32 THEN 'Expired'  -- 4532: Out of warranty
         WHEN SEQ = 66 THEN 'Expired'
-        WHEN DATEDIFF('day', DATEADD('day', -(UNIFORM(365, 1460, RANDOM())), CURRENT_DATE()), CURRENT_DATE()) > 1095 
+        WHEN DATEDIFF('day', DATEADD('day', -(UNIFORM(365, 1460, RANDOM())), $DEMO_AS_OF_DATE), $DEMO_AS_OF_DATE) > 1095 
             THEN 'Expired'
         ELSE 'Active'
     END AS WARRANTY_STATUS,
     
     -- Last maintenance (60-180 days ago)
     CASE
-        WHEN SEQ = 32 THEN DATEADD('day', -118, CURRENT_DATE())  -- 4532: Recent maintenance but still degrading
-        ELSE DATEADD('day', -(UNIFORM(60, 180, RANDOM())), CURRENT_DATE())
+        WHEN SEQ = 32 THEN DATEADD('day', -118, $DEMO_AS_OF_DATE)  -- 4532: Recent maintenance but still degrading
+        ELSE DATEADD('day', -(UNIFORM(60, 180, RANDOM())), $DEMO_AS_OF_DATE)
     END AS LAST_MAINTENANCE_DATE,
     
     'Active' AS OPERATIONAL_STATUS
@@ -197,7 +204,10 @@ DECLARE
     days_of_history INT DEFAULT 30;
     interval_minutes INT DEFAULT 5;
     total_intervals INT;
+    demo_as_of_ts TIMESTAMP_NTZ;
 BEGIN
+    demo_as_of_ts := (SELECT DEMO_AS_OF_TS FROM OPERATIONS.V_DEMO_TIME);
+
     -- Calculate total intervals
     total_intervals := (days_of_history * 24 * 60) / interval_minutes;
     
@@ -211,7 +221,7 @@ BEGIN
         d.DEVICE_ID,
         
         -- Timestamp (every 5 minutes for 30 days)
-        DATEADD('minute', -(SEQ * :interval_minutes), CURRENT_TIMESTAMP()) AS TIMESTAMP,
+        DATEADD('minute', -(SEQ * :interval_minutes), :demo_as_of_ts) AS TIMESTAMP,
         
         -- Temperature: Varies by device health status
         CASE 
@@ -359,14 +369,14 @@ BEGIN
             WHEN d.DEVICE_ID = '7821' THEN
                 -- Display panel degradation: brightness drops over last 14 days (worse during business hours)
                 CASE
-                    WHEN HOUR(DATEADD('minute', -(SEQ * :interval_minutes), CURRENT_TIMESTAMP())) BETWEEN 7 AND 19 THEN
+                    WHEN HOUR(DATEADD('minute', -(SEQ * :interval_minutes), :demo_as_of_ts)) BETWEEN 7 AND 19 THEN
                         GREATEST(20, LEAST(90, 85 - (CASE WHEN SEQ < (14 * 24 * 12) THEN ((14 * 24 * 12) - SEQ) * 0.020 ELSE 0 END)))
                     ELSE
                         GREATEST(10, LEAST(40, 30 - (CASE WHEN SEQ < (14 * 24 * 12) THEN ((14 * 24 * 12) - SEQ) * 0.008 ELSE 0 END)))
                 END
             ELSE
                 CASE 
-                    WHEN HOUR(DATEADD('minute', -(SEQ * :interval_minutes), CURRENT_TIMESTAMP())) BETWEEN 7 AND 19 
+                    WHEN HOUR(DATEADD('minute', -(SEQ * :interval_minutes), :demo_as_of_ts)) BETWEEN 7 AND 19 
                         THEN 85 
                     ELSE 30  -- Dimmed at night
                 END
@@ -521,8 +531,8 @@ BASE AS (
 EVENTS AS (
     SELECT
         b.*,
-        -- Incident dates over past 18 months
-        DATEADD('day', -(UNIFORM(1, 540, RANDOM())), CURRENT_DATE()) AS INCIDENT_DATE,
+        -- Incident dates over past 18 months (anchored to demo clock)
+        DATEADD('day', -(UNIFORM(1, 540, RANDOM())), $DEMO_AS_OF_DATE) AS INCIDENT_DATE,
         -- Incident types
         CASE (b.SEQ % 3)
             WHEN 0 THEN 'Preventive'
@@ -733,12 +743,12 @@ FROM EVENTS;
 MERGE INTO MAINTENANCE_HISTORY t
 USING (
     SELECT * FROM VALUES
-      ('DEMO-4532-PSU', '4532', DATEADD('hour', -18, CURRENT_TIMESTAMP()), 'Corrective', 'Power Supply', 'Rising power draw and temperature; intermittent reboots', 'Part Replacement', DATEADD('hour', -2, CURRENT_TIMESTAMP()), 16.0, TRUE, FALSE, 'PSU Module', 350.0, 220.0, 85.0, 655.0, 10.5, 1200.0, TRUE, 'Power supply degradation', TRUE, 'CLIMBING', 'CLIMBING', 'STABLE', 7, 'v2.3.8', 'Lobby', 'Samsung DM55E', 1065, 'Device showed 7 days of warning signs; would benefit from earlier proactive replacement.', 3),
-      ('DEMO-4512-NET', '4512', DATEADD('hour', -30, CURRENT_TIMESTAMP()), 'Corrective', 'Network Connectivity', 'High latency, packet loss, frequent disconnects', 'Remote Fix', DATEADD('hour', -29, CURRENT_TIMESTAMP()), 0.5, TRUE, TRUE, NULL, 40.0, 0.0, 0.0, 40.0, 0.8, 220.0, FALSE, 'Upstream ISP / router misconfiguration', TRUE, 'STABLE', 'STABLE', 'CLIMBING', 5, 'v2.4.0', 'Waiting Room', 'LG 55XS4F', 900, 'Remote fix applied: network interface reset + config refresh.', 2),
-      ('DEMO-4523-MEM', '4523', DATEADD('hour', -22, CURRENT_TIMESTAMP()), 'Corrective', 'Software Crash', 'Memory leak; high CPU/memory; thermal warnings', 'Remote Fix', DATEADD('hour', -21, CURRENT_TIMESTAMP()), 0.8, TRUE, TRUE, NULL, 55.0, 0.0, 0.0, 55.0, 1.2, 310.0, FALSE, 'Application memory leak', TRUE, 'CLIMBING', 'CLIMBING', 'STABLE', 10, 'v2.3.8', 'Exam Room', 'NEC P554', 980, 'Remote fix applied: restart services + patch rollout scheduled.', 4),
-      ('DEMO-7821-DISP', '7821', DATEADD('hour', -40, CURRENT_TIMESTAMP()), 'Corrective', 'Display Panel', 'Flickering/artifacts; brightness drop observed', 'Part Replacement', DATEADD('hour', -10, CURRENT_TIMESTAMP()), 22.0, TRUE, FALSE, 'Display Panel', 420.0, 600.0, 110.0, 1130.0, 14.0, 1500.0, TRUE, 'Panel degradation', FALSE, 'STABLE', 'STABLE', 'STABLE', 3, 'v2.4.1', 'Hallway', 'Philips 55BDL4050D', 950, 'Hardware-only fix; remote attempts ineffective.', 1),
-      ('DEMO-4545-THERM', '4545', DATEADD('hour', -26, CURRENT_TIMESTAMP()), 'Corrective', 'Overheating', 'Thermal warnings; ambient temperature elevated', 'Field Service', DATEADD('hour', -6, CURRENT_TIMESTAMP()), 8.0, TRUE, FALSE, NULL, 280.0, 40.0, 160.0, 480.0, 6.5, 780.0, TRUE, 'Ventilation obstruction / placement', TRUE, 'CLIMBING', 'STABLE', 'STABLE', 6, 'v2.4.0', 'Lobby', 'Samsung DM55E', 820, 'Field visit required to improve airflow and relocate device.', 2),
-      ('DEMO-4556-EARLY', '4556', DATEADD('hour', -12, CURRENT_TIMESTAMP()), 'Preventive', 'Firmware Bug', 'Early drift in power/temp; minor stability issues', 'Remote Fix', DATEADD('hour', -11, CURRENT_TIMESTAMP()), 0.3, TRUE, TRUE, NULL, 35.0, 0.0, 0.0, 35.0, 0.4, 95.0, FALSE, 'Known firmware issue', TRUE, 'CLIMBING', 'CLIMBING', 'STABLE', 3, 'v2.3.8', 'Waiting Room', 'LG 55XS4F', 600, 'Preventive remote patch applied based on early-warning signals.', 0)
+      ('DEMO-4532-PSU', '4532', DATEADD('hour', -18, $DEMO_AS_OF_TS), 'Corrective', 'Power Supply', 'Rising power draw and temperature; intermittent reboots', 'Part Replacement', DATEADD('hour', -2, $DEMO_AS_OF_TS), 16.0, TRUE, FALSE, 'PSU Module', 350.0, 220.0, 85.0, 655.0, 10.5, 1200.0, TRUE, 'Power supply degradation', TRUE, 'CLIMBING', 'CLIMBING', 'STABLE', 7, 'v2.3.8', 'Lobby', 'Samsung DM55E', 1065, 'Device showed 7 days of warning signs; would benefit from earlier proactive replacement.', 3),
+      ('DEMO-4512-NET', '4512', DATEADD('hour', -30, $DEMO_AS_OF_TS), 'Corrective', 'Network Connectivity', 'High latency, packet loss, frequent disconnects', 'Remote Fix', DATEADD('hour', -29, $DEMO_AS_OF_TS), 0.5, TRUE, TRUE, NULL, 40.0, 0.0, 0.0, 40.0, 0.8, 220.0, FALSE, 'Upstream ISP / router misconfiguration', TRUE, 'STABLE', 'STABLE', 'CLIMBING', 5, 'v2.4.0', 'Waiting Room', 'LG 55XS4F', 900, 'Remote fix applied: network interface reset + config refresh.', 2),
+      ('DEMO-4523-MEM', '4523', DATEADD('hour', -22, $DEMO_AS_OF_TS), 'Corrective', 'Software Crash', 'Memory leak; high CPU/memory; thermal warnings', 'Remote Fix', DATEADD('hour', -21, $DEMO_AS_OF_TS), 0.8, TRUE, TRUE, NULL, 55.0, 0.0, 0.0, 55.0, 1.2, 310.0, FALSE, 'Application memory leak', TRUE, 'CLIMBING', 'CLIMBING', 'STABLE', 10, 'v2.3.8', 'Exam Room', 'NEC P554', 980, 'Remote fix applied: restart services + patch rollout scheduled.', 4),
+      ('DEMO-7821-DISP', '7821', DATEADD('hour', -40, $DEMO_AS_OF_TS), 'Corrective', 'Display Panel', 'Flickering/artifacts; brightness drop observed', 'Part Replacement', DATEADD('hour', -10, $DEMO_AS_OF_TS), 22.0, TRUE, FALSE, 'Display Panel', 420.0, 600.0, 110.0, 1130.0, 14.0, 1500.0, TRUE, 'Panel degradation', FALSE, 'STABLE', 'STABLE', 'STABLE', 3, 'v2.4.1', 'Hallway', 'Philips 55BDL4050D', 950, 'Hardware-only fix; remote attempts ineffective.', 1),
+      ('DEMO-4545-THERM', '4545', DATEADD('hour', -26, $DEMO_AS_OF_TS), 'Corrective', 'Overheating', 'Thermal warnings; ambient temperature elevated', 'Field Service', DATEADD('hour', -6, $DEMO_AS_OF_TS), 8.0, TRUE, FALSE, NULL, 280.0, 40.0, 160.0, 480.0, 6.5, 780.0, TRUE, 'Ventilation obstruction / placement', TRUE, 'CLIMBING', 'STABLE', 'STABLE', 6, 'v2.4.0', 'Lobby', 'Samsung DM55E', 820, 'Field visit required to improve airflow and relocate device.', 2),
+      ('DEMO-4556-EARLY', '4556', DATEADD('hour', -12, $DEMO_AS_OF_TS), 'Preventive', 'Firmware Bug', 'Early drift in power/temp; minor stability issues', 'Remote Fix', DATEADD('hour', -11, $DEMO_AS_OF_TS), 0.3, TRUE, TRUE, NULL, 35.0, 0.0, 0.0, 35.0, 0.4, 95.0, FALSE, 'Known firmware issue', TRUE, 'CLIMBING', 'CLIMBING', 'STABLE', 3, 'v2.3.8', 'Waiting Room', 'LG 55XS4F', 600, 'Preventive remote patch applied based on early-warning signals.', 0)
     AS s(
       MAINTENANCE_ID, DEVICE_ID, INCIDENT_DATE, INCIDENT_TYPE, FAILURE_TYPE, FAILURE_SYMPTOMS,
       RESOLUTION_TYPE, RESOLUTION_DATE, RESOLUTION_TIME_HOURS, REMOTE_FIX_ATTEMPTED, REMOTE_FIX_SUCCESSFUL,
