@@ -200,7 +200,7 @@ BEGIN
         d.DEVICE_ID,
         
         -- Timestamp (every 5 minutes for 30 days)
-        DATEADD('minute', -(SEQ * interval_minutes), CURRENT_TIMESTAMP()) AS TIMESTAMP,
+        DATEADD('minute', -(SEQ * :interval_minutes), CURRENT_TIMESTAMP()) AS TIMESTAMP,
         
         -- Temperature: Varies by device health status
         CASE 
@@ -268,13 +268,13 @@ BEGIN
         
         -- Brightness (business hours vs. night)
         CASE 
-            WHEN HOUR(DATEADD('minute', -(SEQ * interval_minutes), CURRENT_TIMESTAMP())) BETWEEN 7 AND 19 
+            WHEN HOUR(DATEADD('minute', -(SEQ * :interval_minutes), CURRENT_TIMESTAMP())) BETWEEN 7 AND 19 
                 THEN 85 
             ELSE 30  -- Dimmed at night
         END AS BRIGHTNESS_LEVEL,
         
         -- Screen on hours (cumulative)
-        (total_intervals - SEQ) * (interval_minutes / 60.0) AS SCREEN_ON_HOURS,
+        (total_intervals - SEQ) * (:interval_minutes / 60.0) AS SCREEN_ON_HOURS,
         
         -- Network latency
         15 + UNIFORM(-5, 15, RANDOM()) + 
@@ -307,7 +307,7 @@ BEGIN
         END AS WARNING_COUNT,
         
         -- Uptime hours (resets occasionally)
-        (SEQ * interval_minutes / 60.0) % 720 AS UPTIME_HOURS,  -- Resets every 30 days
+        (SEQ * :interval_minutes / 60.0) % 720 AS UPTIME_HOURS,  -- Resets every 30 days
         
         -- Data quality (normally high)
         0.95 + UNIFORM(0, 0.05, RANDOM()) AS DATA_QUALITY_SCORE
