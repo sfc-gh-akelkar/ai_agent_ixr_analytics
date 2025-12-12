@@ -90,6 +90,18 @@ CREATE WAREHOUSE COMPUTE_WH WITH WAREHOUSE_SIZE = 'X-SMALL';
 - ✅ Instead use: `SELECT SNOWFLAKE.CORTEX.COMPLETE('model', 'prompt')`  
 - This is now properly implemented in dashboard_app.py
 
+### Error: "KeyError: 'avg_failure_probability'" (or similar column name errors)
+**Status**: ✅ **FIXED** (v1.0.5)  
+**Solution**: Snowflake returns column names in UPPERCASE by default.
+
+**Technical Details**:
+- View defines: `avg_failure_probability`
+- Snowflake returns: `AVG_FAILURE_PROBABILITY`
+- ❌ Wrong: `metrics['avg_failure_probability']`
+- ✅ Correct: `metrics['AVG_FAILURE_PROBABILITY']`
+
+This has been fixed in dashboard_app.py for all metric column references.
+
 ### Error: "String is too long and would be truncated"
 **Status**: ✅ **FIXED** (v1.0.2)  
 **Solution**: Column sizes increased. Re-run the latest version of `setup_backend.sql` from GitHub.
@@ -228,6 +240,6 @@ Once verification passes, proceed to:
 ---
 
 **Last Updated**: December 12, 2025  
-**Status**: All errors fixed (5 issues resolved)  
-**Version**: 1.0.4
+**Status**: All errors fixed (6 issues resolved)  
+**Version**: 1.0.5
 
