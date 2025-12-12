@@ -206,7 +206,7 @@ BEGIN
         -- Temperature: Varies by device health status
         CASE 
             -- Device 4532: Power supply degradation (temperature climbing over last 7 days)
-            WHEN d.DEVICE_ID = '4532' THEN
+            WHEN d.DEVICE_ID = 4532 THEN
                 CASE 
                     WHEN SEQ < (7 * 24 * 12) THEN  -- Last 7 days
                         m.TYPICAL_TEMP_F + 
@@ -217,11 +217,11 @@ BEGIN
                 END
             
             -- Device 7821: Display panel issue (temperature normal, other symptoms)
-            WHEN d.DEVICE_ID = '7821' THEN
+            WHEN d.DEVICE_ID = 7821 THEN
                 m.TYPICAL_TEMP_F + UNIFORM(-2, 2, RANDOM())
             
             -- Minor anomaly devices (slightly elevated but not critical)
-            WHEN d.DEVICE_ID IN ('4505', '4512', '4523', '4534', '4545', '4556', '4567', '4578') THEN
+            WHEN d.DEVICE_ID IN (4505, 4512, 4523, 4534, 4545, 4556, 4567, 4578) THEN
                 m.TYPICAL_TEMP_F + UNIFORM(-2, 5, RANDOM())  -- Occasionally warmer
                 
             -- Normal devices
@@ -236,7 +236,7 @@ BEGIN
         -- Power consumption: Correlates with temperature for power supply issues
         CASE 
             -- Device 4532: Power spikes correlating with temperature
-            WHEN d.DEVICE_ID = '4532' THEN
+            WHEN d.DEVICE_ID = 4532 THEN
                 CASE 
                     WHEN SEQ < (7 * 24 * 12) THEN
                         m.TYPICAL_POWER_W + 
@@ -256,7 +256,7 @@ BEGIN
         
         -- CPU usage (normal variation)
         CASE 
-            WHEN d.DEVICE_ID = '4532' AND SEQ < (7 * 24 * 12) THEN
+            WHEN d.DEVICE_ID = 4532 AND SEQ < (7 * 24 * 12) THEN
                 UNIFORM(30, 70, RANDOM())  -- Higher CPU due to system stress
             ELSE UNIFORM(15, 45, RANDOM())
         END AS CPU_USAGE_PCT,
@@ -292,9 +292,9 @@ BEGIN
         
         -- Error count: Increases with device stress
         CASE 
-            WHEN d.DEVICE_ID = '4532' AND SEQ < (7 * 24 * 12) THEN
+            WHEN d.DEVICE_ID = 4532 AND SEQ < (7 * 24 * 12) THEN
                 FLOOR(UNIFORM(5, 15, RANDOM()) + ((7 * 24 * 12) - SEQ) * 0.001)
-            WHEN d.DEVICE_ID IN ('4505', '4512', '4523') THEN
+            WHEN d.DEVICE_ID IN (4505, 4512, 4523) THEN
                 FLOOR(UNIFORM(1, 4, RANDOM()))
             ELSE 
                 FLOOR(UNIFORM(0, 2, RANDOM()))
@@ -302,7 +302,7 @@ BEGIN
         
         -- Warning count
         CASE 
-            WHEN d.DEVICE_ID = '4532' AND SEQ < (7 * 24 * 12) THEN
+            WHEN d.DEVICE_ID = 4532 AND SEQ < (7 * 24 * 12) THEN
                 FLOOR(UNIFORM(2, 8, RANDOM()))
             ELSE FLOOR(UNIFORM(0, 3, RANDOM()))
         END AS WARNING_COUNT,
