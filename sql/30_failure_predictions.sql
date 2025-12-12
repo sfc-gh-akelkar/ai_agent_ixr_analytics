@@ -1,16 +1,15 @@
 /*============================================================================
-  Act 3 (Simulated ML): 24–48h Failure Prediction + Accuracy Tracking
+  24–48h failure prediction + evaluation (simulated)
 
   Goal:
   - Provide a credible demo of "predictive failure modeling" without training
-    an ML model, by using explainable heuristics from telemetry + Act 2 scores.
+    an ML model, by using explainable heuristics from telemetry + watchlist scores.
   - Track prediction quality against "ground truth" incidents (scenario rows)
-    inserted by sql/02_generate_sample_data.sql (DEMO-* incidents).
+    inserted by sql/01_generate_sample_data.sql (DEMO-* incidents).
 
   IMPORTANT (credibility):
-  - Accuracy metrics here are "demo accuracy" against a small, deterministic
-    scenario set. Do not present as production accuracy unless evaluated on
-    real labeled data.
+  - Metrics here are "demo evaluation" against a small, deterministic scenario
+    set. Do not present as production accuracy unless evaluated on real labels.
 ============================================================================*/
 
 USE ROLE SF_INTELLIGENCE_DEMO;
@@ -94,7 +93,7 @@ $$
 DECLARE
   run_id STRING DEFAULT UUID_STRING();
 BEGIN
-  -- Ensure Act 2 watchlist exists and is fresh enough for this AS_OF_TS in demo mode.
+  -- Ensure the anomaly watchlist exists and is fresh enough for this AS_OF_TS in demo mode.
   -- For simplicity, we compute predictions directly from the most recent watchlist snapshot.
 
   INSERT INTO OPERATIONS.FAILURE_PREDICTIONS (

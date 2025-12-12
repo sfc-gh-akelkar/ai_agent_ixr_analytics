@@ -1,5 +1,5 @@
 /*============================================================================
-  ACT 1: FOUNDATION - DATABASE SETUP
+  Database setup
   
   Purpose: Create the foundational database schema for predictive maintenance
   
@@ -136,7 +136,7 @@ CREATE OR REPLACE TABLE MAINTENANCE_HISTORY (
     ROOT_CAUSE TEXT,
     PREVENTABLE BOOLEAN,
 
-    -- Enrichment (Phase 1+): additional context to support later acts (search/training/analytics)
+    -- Enrichment: additional context to support downstream search/analytics
     PRE_FAILURE_TEMP_TREND VARCHAR(20),        -- 'STABLE', 'CLIMBING', 'ERRATIC'
     PRE_FAILURE_POWER_TREND VARCHAR(20),
     PRE_FAILURE_NETWORK_TREND VARCHAR(20),
@@ -240,7 +240,7 @@ LEFT JOIN DEVICE_MODELS_REFERENCE m ON d.DEVICE_MODEL = m.MODEL_NAME;
 /*----------------------------------------------------------------------------
   ANALYTICS: Baseline (Pre-ML) Metrics
 
-  These views establish the "before ML" baseline so later acts can show deltas
+  These views establish the "before ML" baseline so the demo can show deltas
   (more lead time, fewer manual checks, etc.) without inventing cost numbers.
 ----------------------------------------------------------------------------*/
 
@@ -292,7 +292,7 @@ FROM RAW_DATA.V_DEVICE_HEALTH_SUMMARY;
 /*----------------------------------------------------------------------------
   SUCCESS MESSAGE
 ----------------------------------------------------------------------------*/
-SELECT 'Act 1 Database Setup Complete! ✅' AS STATUS,
+SELECT 'Database setup complete ✅' AS STATUS,
        'Tables created: DEVICE_INVENTORY, SCREEN_TELEMETRY, MAINTENANCE_HISTORY' AS NEXT_STEP,
        'Run 02_generate_sample_data.sql next' AS ACTION;
 

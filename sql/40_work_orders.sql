@@ -2,7 +2,7 @@
   Ops Center: Work Orders + Scheduling (Simulation)
 
   Purpose:
-  - Turn Act 2 (watchlist) + Act 3 (predictions) into operational actions:
+  - Turn watchlist + predictions into operational actions:
     prioritized work orders with recommended next steps and dispatch guidance.
 ============================================================================*/
 

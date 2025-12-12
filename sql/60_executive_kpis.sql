@@ -1,5 +1,5 @@
 /*============================================================================
-  Act 6: Business Metrics (Executive-ready KPIs with explicit assumptions)
+  Business Metrics (Executive-ready KPIs with explicit assumptions)
 
   Principles:
   - Do NOT fabricate ROI. Use observed costs/downtime from MAINTENANCE_HISTORY.

@@ -1,5 +1,5 @@
 /*============================================================================
-  Snowflake Intelligence Enablement (Cortex Analyst)
+  Curated analytics views (Snowflake Intelligence / Cortex Analyst)
 
   Purpose:
   - Create curated, governed ANALYTICS views that are stable for natural language

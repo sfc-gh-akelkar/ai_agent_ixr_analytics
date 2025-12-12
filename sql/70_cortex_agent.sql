@@ -10,19 +10,21 @@
   - Agent SQL example: https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-agents-manage
 
   Prereqs (run first):
-  - sql/20_intelligence_semantic_layer.sql
-  - sql/22_create_semantic_views.sql
-  - sql/21_cortex_search_kb.sql
-  - sql/30_act2_watchlist.sql
-  - sql/31_act2_semantic_view_watchlist.sql
-  - sql/40_act3_failure_prediction.sql
-  - sql/41_act3_semantic_views_prediction.sql
-  - sql/45_ops_work_orders.sql
-  - sql/46_ops_semantic_view_work_orders.sql
-  - sql/50_act5_remote_remediation.sql
-  - sql/51_act5_semantic_view_remote_remediation.sql
-  - sql/60_act6_business_metrics.sql
-  - sql/61_act6_semantic_view_exec_kpis.sql
+  - sql/00_setup.sql
+  - sql/01_generate_sample_data.sql
+  - sql/10_curated_analytics_views.sql
+  - sql/12_cortex_search_kb.sql
+  - sql/11_semantic_views.sql
+  - sql/20_anomaly_watchlist.sql
+  - sql/21_semantic_view_anomaly_watchlist.sql
+  - sql/30_failure_predictions.sql
+  - sql/31_semantic_views_predictions.sql
+  - sql/40_work_orders.sql
+  - sql/41_semantic_view_work_orders.sql
+  - sql/50_remote_remediation.sql
+  - sql/51_semantic_view_remote_remediation.sql
+  - sql/60_executive_kpis.sql
+  - sql/61_semantic_view_executive_kpis.sql
 
   IMPORTANT:
   - This script uses warehouse APP_WH for Analyst execution.

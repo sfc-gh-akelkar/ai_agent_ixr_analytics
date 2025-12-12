@@ -1,5 +1,5 @@
 /*============================================================================
-  Act 5 (Snowflake Intelligence): Semantic View for Remote Remediation Executions
+  Semantic View for Remote Remediation Executions (Snowflake Intelligence)
 ============================================================================*/
 
 USE ROLE SF_INTELLIGENCE_DEMO;
@@ -27,7 +27,7 @@ CREATE OR REPLACE SEMANTIC VIEW SV_REMOTE_REMEDIATION
     execs.successes AS SUM(IFF(execs.STATUS = 'SUCCESS', 1, 0)),
     execs.escalations AS SUM(IFF(execs.STATUS = 'ESCALATED', 1, 0))
   )
-  COMMENT = 'Act 5 semantic view: remote remediation outcomes (simulated).'
+  COMMENT = 'Semantic view: remote remediation outcomes (simulated).'
   COPY GRANTS;
 
 

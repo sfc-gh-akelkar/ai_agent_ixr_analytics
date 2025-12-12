@@ -1,5 +1,5 @@
 /*============================================================================
-  Act 3 (Snowflake Intelligence): Semantic Views for Failure Predictions + Accuracy
+  Semantic Views for Failure Predictions + Evaluation (Snowflake Intelligence)
 ============================================================================*/
 
 USE ROLE SF_INTELLIGENCE_DEMO;
@@ -24,7 +24,7 @@ CREATE OR REPLACE SEMANTIC VIEW SV_FAILURE_PREDICTIONS
   METRICS (
     preds.prediction_probability AS MAX(preds.PREDICTION_PROBABILITY) COMMENT = 'Prediction probability (0–1).'
   )
-  COMMENT = 'Act 3 semantic view: simulated 24–48h failure predictions.'
+  COMMENT = 'Semantic view: simulated 24–48h failure predictions.'
   COPY GRANTS;
 
 CREATE OR REPLACE SEMANTIC VIEW SV_PREDICTION_ACCURACY
@@ -49,7 +49,7 @@ CREATE OR REPLACE SEMANTIC VIEW SV_PREDICTION_ACCURACY
     eval.false_positives AS MAX(eval.FALSE_POSITIVES),
     eval.false_negatives AS MAX(eval.FALSE_NEGATIVES)
   )
-  COMMENT = 'Act 3 semantic view: demo prediction accuracy metrics (not production accuracy).'
+  COMMENT = 'Semantic view: demo prediction evaluation metrics (not production accuracy).'
   COPY GRANTS;
 
 

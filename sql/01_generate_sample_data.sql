@@ -1,5 +1,5 @@
 /*============================================================================
-  ACT 1: SYNTHETIC DATA GENERATION
+  Synthetic data generation
   
   Purpose: Generate realistic device fleet data with telemetry patterns
   
@@ -668,7 +668,7 @@ SELECT
     -- Preventable
     CASE WHEN (SEQ % 10) IN (0, 6, 7, 8) THEN TRUE ELSE FALSE END AS PREVENTABLE,
 
-    -- Enriched context columns (used in later acts for search/training/analytics)
+    -- Enriched context columns (used downstream for search/analytics)
     CASE
         WHEN FAILURE_TYPE IN ('Overheating') THEN 'CLIMBING'
         WHEN FAILURE_TYPE IN ('Power Supply') THEN 'CLIMBING'
@@ -809,7 +809,7 @@ ORDER BY OVERALL_STATUS;
   SUCCESS MESSAGE
 ----------------------------------------------------------------------------*/
 SELECT 
-    '✅ Act 1 Data Generation Complete!' AS STATUS,
+    '✅ Data Generation Complete!' AS STATUS,
     'You now have 100 devices with 30 days of telemetry' AS SUMMARY,
     'Scenario devices: 4532 (power), 4512 (network), 4523 (memory leak), 4545 (intermittent), 4556 (subtle), 7821 (display)' AS KEY_FINDING,
     'Next: Build Streamlit monitoring dashboard' AS NEXT_STEP;

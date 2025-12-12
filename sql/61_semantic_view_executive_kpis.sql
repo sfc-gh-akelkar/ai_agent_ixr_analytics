@@ -1,5 +1,5 @@
 /*============================================================================
-  Act 6 (Snowflake Intelligence): Executive KPI Semantic View
+  Executive KPI Semantic View (Snowflake Intelligence)
 ============================================================================*/
 
 USE ROLE SF_INTELLIGENCE_DEMO;
@@ -35,7 +35,7 @@ CREATE OR REPLACE SEMANTIC VIEW SV_EXEC_KPIS
     kpi.est_revenue_protected_usd_30d AS MAX(kpi.EST_REVENUE_PROTECTED_USD_30D),
     kpi.est_field_cost_avoided_usd_30d AS MAX(kpi.EST_FIELD_COST_AVOIDED_USD_30D)
   )
-  COMMENT = 'Act 6 semantic view: executive KPIs. Estimates are explicitly assumption-driven.'
+  COMMENT = 'Semantic view: executive KPIs. Estimates are explicitly assumption-driven.'
   COPY GRANTS;
 
 

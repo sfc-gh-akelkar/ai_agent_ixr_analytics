@@ -13,10 +13,10 @@ Snowflake turns PatientPoint’s screen telemetry + maintenance history into **e
 - **Reduce risk (brand + SLA + compliance posture)**: Unpredictable outages create reputational risk with clinics and partners, plus operational risk from manual processes and inconsistent remediation.
 
 ### Action (WHAT the solution does)
-- **Act 2 – Early warning**: Anomaly watchlist (baseline 14d vs scoring 1d) flags devices drifting before they cross thresholds.
-- **Act 3 – 24–48h prediction**: Failure predictions + confidence + (demo) accuracy tracking vs deterministic scenario incidents.
+- **Early warning**: Anomaly watchlist (baseline 14d vs scoring 1d) flags devices drifting before they cross thresholds.
+- **24–48h prediction**: Failure predictions + confidence + demo evaluation metrics vs deterministic scenario incidents.
 - **Ops Center – Operationalization**: Auto-generated work orders with recommended channel (remote vs field), priority, and due-by.
-- **Act 5 – Automated remote resolution (simulated)**: Runbooks + executions + escalation when remote is unlikely to succeed.
+- **Automated remote resolution (simulated)**: Runbooks + executions + escalation when remote is unlikely to succeed.
 - **Snowflake Intelligence (Agent)**: One chat interface that uses **Cortex Analyst** (semantic views) + **Cortex Search** (KB) to answer exec + ops + technician questions.
 
 ### Result (WHAT outcomes you show, credibly)
@@ -38,7 +38,7 @@ Snowflake turns PatientPoint’s screen telemetry + maintenance history into **e
 ## Demo setup (1–2 minutes)
 
 ### Run order (already in repo)
-Use the ordered script list you already have (Act 1 → semantic layer → search → semantic views → watchlist → predictions → work orders → remediation → exec KPIs → agent).
+Use the ordered script list in `START_HERE.md` (setup → data → curated views → semantic views → search → watchlist → predictions → work orders → remediation → executive KPIs → agent).
 
 ### Demo posture (credibility statements)
 - “This is realistic synthetic telemetry + labeled scenario incidents for demo repeatability.”

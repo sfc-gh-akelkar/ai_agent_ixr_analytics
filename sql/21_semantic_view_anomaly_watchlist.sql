@@ -1,10 +1,10 @@
 /*============================================================================
-  Act 2 (Snowflake Intelligence): Semantic View for Anomaly Watchlist
+  Semantic View for Anomaly Watchlist
 
-  This exposes the Act 2 watchlist in business-friendly terms for Cortex Analyst.
+  This exposes the anomaly watchlist in business-friendly terms for Cortex Analyst.
 
   Depends on:
-  - sql/30_act2_watchlist.sql (creates OPERATIONS.WATCHLIST_CURRENT + procedure)
+  - sql/20_anomaly_watchlist.sql (creates OPERATIONS.WATCHLIST_CURRENT + procedure)
   - sql/20_intelligence_semantic_layer.sql (creates ANALYTICS.V_FLEET_DEVICE_STATUS)
 ============================================================================*/
 
@@ -74,7 +74,7 @@ CREATE OR REPLACE SEMANTIC VIEW SV_ANOMALY_WATCHLIST
     watchlist.anomaly_score_display AS MAX(watchlist.SCORE_DISPLAY) COMMENT = 'Display anomaly score (0–1).',
     watchlist.anomaly_score_stability AS MAX(watchlist.SCORE_STABILITY) COMMENT = 'Stability anomaly score (0–1).'
   )
-  COMMENT = 'Act 2 semantic view: anomaly watchlist for early warning (baseline 14d vs scoring 1d).'
+  COMMENT = 'Semantic view: anomaly watchlist for early warning (baseline 14d vs scoring 1d).'
   COPY GRANTS;
 
 

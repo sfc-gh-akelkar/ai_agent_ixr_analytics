@@ -1,5 +1,5 @@
 /*============================================================================
-  Act 5 (Simulation): Automated Remote Resolution Workflows + Escalation
+  Automated Remote Resolution Workflows + Escalation (Simulation)
 
   Purpose:
   - Demonstrate "automated remote fixes" without touching real devices.

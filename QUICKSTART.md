@@ -1,4 +1,4 @@
-# Act 1 Quick Start Guide
+# Quick Start Guide
 
 ## ⚡ 5-Minute Setup
 
@@ -12,23 +12,23 @@
 
 1. **Open Snowsight** → Go to **Worksheets**
 2. **Create new SQL worksheet**
-3. **Copy and paste** contents of `sql/01_setup_database.sql`
+3. **Copy and paste** contents of `sql/00_setup.sql`
 4. **Click "Run All"** (or select all and run)
 5. **Wait for completion** - should see success message
 
-**✅ Checkpoint:** You should see message: "Act 1 Database Setup Complete!"
+**✅ Checkpoint:** You should see a success message indicating setup completed.
 
 ---
 
 ## Step 2: Generate Data (1 minute)
 
 1. **In same or new worksheet**
-2. **Copy and paste** contents of `sql/02_generate_sample_data.sql`
+2. **Copy and paste** contents of `sql/01_generate_sample_data.sql`
 3. **Click "Run All"**
 4. **Wait 30-60 seconds** for data generation
 
-**✅ Checkpoint:** 
-- Success message: "Act 1 Data Generation Complete!"
+**✅ Checkpoint:**
+- Success message indicating data generation completed
 - Verification queries show:
   - 100 devices
   - ~864,000 telemetry records
@@ -36,7 +36,7 @@
 
 ---
 
-## Step 3: Launch Dashboard (2 minutes)
+## Step 3: (Optional) Launch Dashboard (2 minutes)
 
 1. **In Snowsight** → Go to **Projects** → **Streamlit**
 2. **Click "+ Streamlit App"**
@@ -45,7 +45,7 @@
    - Database: `PREDICTIVE_MAINTENANCE`
    - Warehouse: (select your warehouse)
 4. **Delete default code**
-5. **Copy and paste** all contents from `streamlit/01_Fleet_Monitoring.py`
+5. **Copy and paste** all contents from `streamlit/fleet_monitoring.py`
 6. **Click "Run"**
 
 **✅ Checkpoint:** Dashboard loads showing fleet overview
@@ -72,7 +72,7 @@
 1. Select **Device #4501** (or any other device)
 2. Should see stable, normal metrics with small variation
 
-**✅ All tests passed?** Act 1 is complete! 🎉
+**✅ All tests passed?** You’re ready to run the full Intelligence demo. 🎉
 
 ---
 
@@ -86,7 +86,7 @@
 >
 > This is a classic power supply degradation pattern. Without predictive maintenance, we'd only know about this when the device fails during business hours - that's lost revenue and an emergency $500 tech dispatch.
 >
-> Right now, an operator would need to manually check all 100 devices to spot this. In Act 2, we'll add machine learning to automatically detect these anomalies."
+> Right now, an operator would need to manually check all 100 devices to spot this. Next, we’ll use Snowflake Intelligence (Agent + semantic views + search) to automatically rank anomalies, predict failures, generate work orders, and simulate remote remediation."
 
 ---
 
@@ -119,7 +119,7 @@ LIMIT 10;
 
 ## ✅ Success Criteria
 
-You're ready for Act 2 when:
+You're ready to continue when:
 - ✅ Dashboard loads without errors
 - ✅ Fleet shows 100 devices
 - ✅ Device #4532 shows clear degradation in charts
@@ -128,12 +128,7 @@ You're ready for Act 2 when:
 
 ---
 
-## 🚀 Next: Act 2
+## 🚀 Next: Run the full Intelligence sequence
 
-When ready, request Act 2 files for:
-- Automatic anomaly detection using Cortex ML
-- Watch list for flagged devices  
-- Comparison of ML detection vs. manual thresholds
-
-**Estimated time for Act 2:** 2-3 hours
+Continue running the numbered SQL scripts from `START_HERE.md` (watchlist → predictions → work orders → remediation → executive KPIs → agent).
 

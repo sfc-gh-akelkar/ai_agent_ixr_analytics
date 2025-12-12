@@ -1,5 +1,5 @@
 """
-ACT 1: FLEET MONITORING DASHBOARD
+FLEET MONITORING DASHBOARD
 
 Purpose: Basic monitoring interface for PatientPoint device fleet
 Shows device health status and allows drilling into individual devices
@@ -9,7 +9,7 @@ Run this in Snowflake Streamlit:
 2. Paste this code
 3. Run the app
 
-This is Act 1 - just monitoring, no ML predictions yet
+This dashboard provides monitoring and drill-down views. Predictive analytics and workflow automation are delivered via Snowflake Intelligence (semantic views + agent).
 """
 
 import streamlit as st
@@ -36,7 +36,7 @@ session = get_active_session()
 #============================================================================
 
 st.title("📺 PatientPoint Fleet Monitoring")
-st.markdown("**Act 1:** Real-time monitoring of digital screen fleet")
+st.markdown("**Real-time monitoring:** digital screen fleet")
 
 #============================================================================
 # SIDEBAR - Filters
@@ -201,11 +201,11 @@ with st.expander("📊 Baseline (Pre-ML) Monitoring Metrics", expanded=False):
             st.metric("Critical devices", int(baseline["DEVICES_CRITICAL"]))
 
         st.caption(
-            "In Act 2, anomaly detection should increase lead time and reduce manual review by surfacing only unusual devices."
+            "Anomaly detection should increase lead time and reduce manual review by surfacing only unusual devices."
         )
     except Exception:
         st.warning(
-            "Baseline views not found. Re-run the latest `sql/01_setup_database.sql` to create "
+            "Baseline views not found. Re-run the latest `sql/00_setup.sql` to create "
             "`PREDICTIVE_MAINTENANCE.ANALYTICS.V_BASELINE_METRICS`."
         )
 
@@ -216,7 +216,7 @@ with st.expander("🧪 Demo Scenario Devices (for walkthroughs)", expanded=False
         "4512": "Network degradation (latency↑, packet loss↑)",
         "4523": "Software/memory leak (cpu↑, mem↑, temp↑)",
         "4545": "Intermittent issues (sporadic spikes)",
-        "4556": "Early-stage subtle drift (below thresholds, good for Act 2)",
+        "4556": "Early-stage subtle drift (below thresholds; good early-warning example)",
     }
     scenario_ids = "', '".join(scenarios.keys())
     scenario_df = session.sql(f"""
@@ -571,10 +571,10 @@ if selected_device_id:
 
 st.divider()
 st.markdown("""
-**Act 1 Status:** ✅ Basic monitoring operational  
-**Next Act:** Add anomaly detection to automatically flag devices with unusual patterns  
+**Status:** ✅ Basic monitoring operational  
+**Next:** Use the Agent + watchlist to automatically flag devices with unusual patterns  
 
-*This dashboard shows real-time device health. In Act 2, we'll add machine learning 
+*This dashboard shows real-time device health. Use the watchlist + predictions to prioritize devices before failure
 to automatically detect anomalies instead of relying on threshold rules.*
 """)
 

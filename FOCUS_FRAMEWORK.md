@@ -8,10 +8,10 @@ This repo is organized to support a **credible executive narrative** while still
 - **Unexpected downtime**: Break/fix operations cause unpredictable outages, SLA risk, and reputational impact.
 
 ### Actions (what we do in Snowflake)
-- **AI/ML predictive models (demo simulation)**
-  - **Act 2**: anomaly scoring + ranked watchlist (baseline 14d vs scoring 1d)
-  - **Act 3**: 24–48h failure predictions + demo accuracy tracking
-  - Note: Act 2/3 are **simulated (no training pipeline)** but are explainable and reproducible.
+- **Predictive analytics (demo simulation)**
+  - Anomaly scoring + ranked watchlist (baseline 14d vs scoring 1d)
+  - 24–48h failure predictions + demo evaluation metrics
+  - Note: These are **simulated (no training pipeline)** but are explainable and reproducible.
 - **AI Agent implementation (Snowflake Intelligence)**
   - **Cortex Analyst** over native **semantic views** for structured questions
   - **Cortex Search** over a maintenance KB for “similar incidents” retrieval
@@ -32,28 +32,28 @@ This repo is organized to support a **credible executive narrative** while still
 
 ## What’s implemented in the repo (inventory)
 
-### Data foundation (Act 1)
-- **Schemas/tables/views**: `sql/01_setup_database.sql`
-- **Synthetic data (telemetry + history)**: `sql/02_generate_sample_data.sql`
+### Data foundation
+- **Schemas/tables/views**: `sql/00_setup.sql`
+- **Synthetic data (telemetry + history)**: `sql/01_generate_sample_data.sql`
   - Includes deterministic `DEMO-*` incidents for scenario devices (supports eval + demo repeatability)
 
 ### Snowflake Intelligence enablement (Semantic layer + Search + Agent)
-- Curated analytics views: `sql/20_intelligence_semantic_layer.sql`
-- Cortex Search KB + service: `sql/21_cortex_search_kb.sql`
-- Split semantic views (fleet/telemetry/incidents/remote rates/baseline): `sql/22_create_semantic_views.sql`
-- Cortex Agent (orchestration=auto, APP_WH): `sql/23_create_cortex_agent.sql`
+- Curated analytics views: `sql/10_curated_analytics_views.sql`
+- Cortex Search KB + service: `sql/12_cortex_search_kb.sql`
+- Split semantic views (fleet/telemetry/incidents/remote rates/baseline): `sql/11_semantic_views.sql`
+- Cortex Agent (orchestration=auto, APP_WH): `sql/70_cortex_agent.sql`
 
-### Ops Center (Act 2–5)
-- Anomaly watchlist + scoring procedure: `sql/30_act2_watchlist.sql`
-- Watchlist semantic view: `sql/31_act2_semantic_view_watchlist.sql`
-- Failure predictions + demo accuracy tracking: `sql/40_act3_failure_prediction.sql`
-- Prediction semantic views: `sql/41_act3_semantic_views_prediction.sql`
-- Work orders + queue: `sql/45_ops_work_orders.sql` + `sql/46_ops_semantic_view_work_orders.sql`
-- Remote remediation runbooks/executions: `sql/50_act5_remote_remediation.sql` + `sql/51_act5_semantic_view_remote_remediation.sql`
+### Ops Center (watchlist → predictions → work orders → remediation)
+- Anomaly watchlist + scoring procedure: `sql/20_anomaly_watchlist.sql`
+- Watchlist semantic view: `sql/21_semantic_view_anomaly_watchlist.sql`
+- Failure predictions + demo evaluation: `sql/30_failure_predictions.sql`
+- Prediction semantic views: `sql/31_semantic_views_predictions.sql`
+- Work orders + queue: `sql/40_work_orders.sql` + `sql/41_semantic_view_work_orders.sql`
+- Remote remediation runbooks/executions: `sql/50_remote_remediation.sql` + `sql/51_semantic_view_remote_remediation.sql`
 
-### Executive dashboard KPIs (Act 6)
-- KPI view + assumptions: `sql/60_act6_business_metrics.sql`
-- Exec KPI semantic view: `sql/61_act6_semantic_view_exec_kpis.sql`
+### Executive dashboard KPIs
+- KPI view + assumptions: `sql/60_executive_kpis.sql`
+- Exec KPI semantic view: `sql/61_semantic_view_executive_kpis.sql`
 
 ---
 

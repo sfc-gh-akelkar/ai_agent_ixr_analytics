@@ -1,5 +1,5 @@
 /*============================================================================
-  Act 2 (Simulated ML): Anomaly Scoring + Ops Watchlist
+  Anomaly scoring + ops watchlist (simulated)
 
   Approach:
   - NO model training / ML pipeline.
