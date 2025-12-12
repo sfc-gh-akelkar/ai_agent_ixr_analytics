@@ -18,6 +18,14 @@
 - Increased `required_tools` from VARCHAR(500) to VARCHAR(1000)
 - All repair manual content now fits properly
 
+### Issue #4: Line 644 "invalid identifier FAILURE_PROBABILITY"
+**Status**: ✅ **FIXED** (v1.0.3)  
+**Error**: `error line 644 at position 9 invalid identifier 'FAILURE_PROBABILITY'`  
+**Solution**: 
+- Commented out problematic UNION ALL verification query
+- Query had mismatched columns between the two SELECT statements
+- Verification queries are now optional and can be run individually after setup
+
 ---
 
 ## 🚀 How to Use setup_backend.sql
@@ -211,6 +219,6 @@ Once verification passes, proceed to:
 ---
 
 **Last Updated**: December 12, 2025  
-**Status**: All SQL errors fixed (3 issues resolved)  
-**Version**: 1.0.2
+**Status**: All SQL errors fixed (4 issues resolved)  
+**Version**: 1.0.3
 
