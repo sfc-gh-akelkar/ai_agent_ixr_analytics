@@ -293,7 +293,7 @@ BEGIN
   SELECT *
   FROM _scored
   WHERE :MODE = 'SCENARIO_LOCK'
-    AND DEVICE_ID IN (SELECT VALUE::STRING FROM TABLE(FLATTEN(input => scenario_list)));
+    AND DEVICE_ID IN (SELECT VALUE::STRING FROM TABLE(FLATTEN(input => :scenario_list)));
 
   -- Insert into history table
   INSERT INTO OPERATIONS.ANOMALY_SCORES (
