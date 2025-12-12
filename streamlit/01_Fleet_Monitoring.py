@@ -373,7 +373,11 @@ if selected_device_id:
         
         # Add threshold lines
         model_info = session.sql(f"""
-            SELECT TEMP_WARNING_THRESHOLD_F, TEMP_CRITICAL_THRESHOLD_F
+            SELECT 
+                TEMP_WARNING_THRESHOLD_F, 
+                TEMP_CRITICAL_THRESHOLD_F,
+                POWER_WARNING_THRESHOLD_W,
+                POWER_CRITICAL_THRESHOLD_W
             FROM PREDICTIVE_MAINTENANCE.RAW_DATA.DEVICE_MODELS_REFERENCE
             WHERE MODEL_NAME = '{device_info['DEVICE_MODEL']}'
         """).to_pandas().iloc[0]
