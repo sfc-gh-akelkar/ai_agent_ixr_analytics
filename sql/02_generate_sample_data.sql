@@ -164,7 +164,7 @@ SELECT
     END AS LAST_MAINTENANCE_DATE,
     
     'Active' AS OPERATIONAL_STATUS
-FROM TABLE(GENERATOR(ROWCOUNT => 100));
+FROM TABLE(GENERATOR(ROWCOUNT => 100)) AS g;
 
 /*----------------------------------------------------------------------------
   STEP 2: Create stored procedure to generate telemetry data
@@ -196,17 +196,17 @@ BEGIN
         d.DEVICE_ID,
         
         -- Timestamp (every 5 minutes for 30 days)
-        DATEADD('minute', -(interval * interval_minutes), CURRENT_TIMESTAMP()) AS TIMESTAMP,
+        DATEADD('minute', -(g.SEQ * interval_minutes), CURRENT_TIMESTAMP()) AS TIMESTAMP,
         
         -- Temperature: Varies by device health status
         CASE 
             -- Device 4532: Power supply degradation (temperature climbing over last 7 days)
             WHEN d.DEVICE_ID = '4532' THEN
                 CASE 
-                    WHEN interval < (7 * 24 * 12) THEN  -- Last 7 days
+                    WHEN g.SEQ < (7 * 24 * 12) THEN  -- Last 7 days
                         m.TYPICAL_TEMP_F + 
                         UNIFORM(-3, 3, RANDOM()) +  -- Normal noise
-                        ((7 * 24 * 12) - interval) * 0.003  -- Linear climb (0.003°F per 5-min interval = ~25° over 7 days)
+                        ((7 * 24 * 12) - g.SEQ) * 0.003  -- Linear climb (0.003°F per 5-min interval = ~25° over 7 days)
                     ELSE  -- Before degradation started
                         m.TYPICAL_TEMP_F + UNIFORM(-3, 3, RANDOM())
                 END
@@ -225,7 +225,7 @@ BEGIN
         
         -- Ambient temperature (seasonal variation)
         70 + 
-        (SIN((interval / (total_intervals * 1.0)) * 2 * PI()) * 5) +  -- Seasonal wave
+        (SIN((g.SEQ / (total_intervals * 1.0)) * 2 * PI()) * 5) +  -- Seasonal wave
         UNIFORM(-2, 2, RANDOM()) AS AMBIENT_TEMP_F,
         
         -- Power consumption: Correlates with temperature for power supply issues
@@ -233,10 +233,10 @@ BEGIN
             -- Device 4532: Power spikes correlating with temperature
             WHEN d.DEVICE_ID = '4532' THEN
                 CASE 
-                    WHEN interval < (7 * 24 * 12) THEN
+                    WHEN g.SEQ < (7 * 24 * 12) THEN
                         m.TYPICAL_POWER_W + 
                         UNIFORM(-5, 10, RANDOM()) +
-                        ((7 * 24 * 12) - interval) * 0.014 +  -- Climbing power (120W increase over 7 days)
+                        ((7 * 24 * 12) - g.SEQ) * 0.014 +  -- Climbing power (120W increase over 7 days)
                         (CASE WHEN UNIFORM(0, 100, RANDOM()) < 20 THEN UNIFORM(20, 50, RANDOM()) ELSE 0 END)  -- Random spikes
                     ELSE
                         m.TYPICAL_POWER_W + UNIFORM(-5, 10, RANDOM())
@@ -251,7 +251,7 @@ BEGIN
         
         -- CPU usage (normal variation)
         CASE 
-            WHEN d.DEVICE_ID = '4532' AND interval < (7 * 24 * 12) THEN
+            WHEN d.DEVICE_ID = '4532' AND g.SEQ < (7 * 24 * 12) THEN
                 UNIFORM(30, 70, RANDOM())  -- Higher CPU due to system stress
             ELSE UNIFORM(15, 45, RANDOM())
         END AS CPU_USAGE_PCT,
@@ -260,17 +260,17 @@ BEGIN
         UNIFORM(40, 70, RANDOM()) AS MEMORY_USAGE_PCT,
         
         -- Disk usage (slowly growing)
-        50 + ((total_intervals - interval) / (total_intervals * 1.0)) * 15 AS DISK_USAGE_PCT,
+        50 + ((total_intervals - g.SEQ) / (total_intervals * 1.0)) * 15 AS DISK_USAGE_PCT,
         
         -- Brightness (business hours vs. night)
         CASE 
-            WHEN HOUR(DATEADD('minute', -(interval * interval_minutes), CURRENT_TIMESTAMP())) BETWEEN 7 AND 19 
+            WHEN HOUR(DATEADD('minute', -(g.SEQ * interval_minutes), CURRENT_TIMESTAMP())) BETWEEN 7 AND 19 
                 THEN 85 
             ELSE 30  -- Dimmed at night
         END AS BRIGHTNESS_LEVEL,
         
         -- Screen on hours (cumulative)
-        (total_intervals - interval) * (interval_minutes / 60.0) AS SCREEN_ON_HOURS,
+        (total_intervals - g.SEQ) * (interval_minutes / 60.0) AS SCREEN_ON_HOURS,
         
         -- Network latency
         15 + UNIFORM(-5, 15, RANDOM()) + 
@@ -287,8 +287,8 @@ BEGIN
         
         -- Error count: Increases with device stress
         CASE 
-            WHEN d.DEVICE_ID = '4532' AND interval < (7 * 24 * 12) THEN
-                FLOOR(UNIFORM(5, 15, RANDOM()) + ((7 * 24 * 12) - interval) * 0.001)
+            WHEN d.DEVICE_ID = '4532' AND g.SEQ < (7 * 24 * 12) THEN
+                FLOOR(UNIFORM(5, 15, RANDOM()) + ((7 * 24 * 12) - g.SEQ) * 0.001)
             WHEN d.DEVICE_ID IN ('4505', '4512', '4523') THEN
                 FLOOR(UNIFORM(1, 4, RANDOM()))
             ELSE 
@@ -297,19 +297,19 @@ BEGIN
         
         -- Warning count
         CASE 
-            WHEN d.DEVICE_ID = '4532' AND interval < (7 * 24 * 12) THEN
+            WHEN d.DEVICE_ID = '4532' AND g.SEQ < (7 * 24 * 12) THEN
                 FLOOR(UNIFORM(2, 8, RANDOM()))
             ELSE FLOOR(UNIFORM(0, 3, RANDOM()))
         END AS WARNING_COUNT,
         
         -- Uptime hours (resets occasionally)
-        (interval * interval_minutes / 60.0) % 720 AS UPTIME_HOURS,  -- Resets every 30 days
+        (g.SEQ * interval_minutes / 60.0) % 720 AS UPTIME_HOURS,  -- Resets every 30 days
         
         -- Data quality (normally high)
         0.95 + UNIFORM(0, 0.05, RANDOM()) AS DATA_QUALITY_SCORE
         
     FROM DEVICE_INVENTORY d
-    CROSS JOIN TABLE(GENERATOR(ROWCOUNT => :total_intervals)) t(interval)
+    CROSS JOIN TABLE(GENERATOR(ROWCOUNT => :total_intervals)) AS g
     LEFT JOIN DEVICE_MODELS_REFERENCE m ON d.DEVICE_MODEL = m.MODEL_NAME
     WHERE d.OPERATIONAL_STATUS = 'Active';
     
@@ -485,7 +485,7 @@ SELECT
     -- Preventable
     CASE WHEN (SEQ % 10) IN (0, 6, 7, 8) THEN TRUE ELSE FALSE END AS PREVENTABLE
     
-FROM TABLE(GENERATOR(ROWCOUNT => 150));
+FROM TABLE(GENERATOR(ROWCOUNT => 150)) AS g;
 
 /*----------------------------------------------------------------------------
   VERIFICATION QUERIES
