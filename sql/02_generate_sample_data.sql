@@ -712,6 +712,57 @@ SELECT
 FROM EVENTS;
 
 /*----------------------------------------------------------------------------
+  STEP 4B (DEMO): Deterministic "ground truth" incidents for scenario devices
+
+  Why:
+  - The bulk MAINTENANCE_HISTORY generator is random by design and is great for
+    analytics + KB search, but it isn't guaranteed to contain recent incidents
+    tied to our telemetry scenario devices.
+  - These 6 rows create a repeatable set of recent incidents that Acts 3–6 can
+    evaluate against (prediction accuracy, cost avoidance, remediation, etc.).
+----------------------------------------------------------------------------*/
+
+MERGE INTO MAINTENANCE_HISTORY t
+USING (
+    SELECT * FROM VALUES
+      ('DEMO-4532-PSU', '4532', DATEADD('hour', -18, CURRENT_TIMESTAMP()), 'Corrective', 'Power Supply', 'Rising power draw and temperature; intermittent reboots', 'Part Replacement', DATEADD('hour', -2, CURRENT_TIMESTAMP()), 16.0, TRUE, FALSE, 'PSU Module', 350.0, 220.0, 85.0, 655.0, 10.5, 1200.0, TRUE, 'Power supply degradation', TRUE, 'CLIMBING', 'CLIMBING', 'STABLE', 7, 'v2.3.8', 'Lobby', 'Samsung DM55E', 1065, 'Device showed 7 days of warning signs; would benefit from earlier proactive replacement.', 3),
+      ('DEMO-4512-NET', '4512', DATEADD('hour', -30, CURRENT_TIMESTAMP()), 'Corrective', 'Network Connectivity', 'High latency, packet loss, frequent disconnects', 'Remote Fix', DATEADD('hour', -29, CURRENT_TIMESTAMP()), 0.5, TRUE, TRUE, NULL, 40.0, 0.0, 0.0, 40.0, 0.8, 220.0, FALSE, 'Upstream ISP / router misconfiguration', TRUE, 'STABLE', 'STABLE', 'CLIMBING', 5, 'v2.4.0', 'Waiting Room', 'LG 55XS4F', 900, 'Remote fix applied: network interface reset + config refresh.', 2),
+      ('DEMO-4523-MEM', '4523', DATEADD('hour', -22, CURRENT_TIMESTAMP()), 'Corrective', 'Software Crash', 'Memory leak; high CPU/memory; thermal warnings', 'Remote Fix', DATEADD('hour', -21, CURRENT_TIMESTAMP()), 0.8, TRUE, TRUE, NULL, 55.0, 0.0, 0.0, 55.0, 1.2, 310.0, FALSE, 'Application memory leak', TRUE, 'CLIMBING', 'CLIMBING', 'STABLE', 10, 'v2.3.8', 'Exam Room', 'NEC P554', 980, 'Remote fix applied: restart services + patch rollout scheduled.', 4),
+      ('DEMO-7821-DISP', '7821', DATEADD('hour', -40, CURRENT_TIMESTAMP()), 'Corrective', 'Display Panel', 'Flickering/artifacts; brightness drop observed', 'Part Replacement', DATEADD('hour', -10, CURRENT_TIMESTAMP()), 22.0, TRUE, FALSE, 'Display Panel', 420.0, 600.0, 110.0, 1130.0, 14.0, 1500.0, TRUE, 'Panel degradation', FALSE, 'STABLE', 'STABLE', 'STABLE', 3, 'v2.4.1', 'Hallway', 'Philips 55BDL4050D', 950, 'Hardware-only fix; remote attempts ineffective.', 1),
+      ('DEMO-4545-THERM', '4545', DATEADD('hour', -26, CURRENT_TIMESTAMP()), 'Corrective', 'Overheating', 'Thermal warnings; ambient temperature elevated', 'Field Service', DATEADD('hour', -6, CURRENT_TIMESTAMP()), 8.0, TRUE, FALSE, NULL, 280.0, 40.0, 160.0, 480.0, 6.5, 780.0, TRUE, 'Ventilation obstruction / placement', TRUE, 'CLIMBING', 'STABLE', 'STABLE', 6, 'v2.4.0', 'Lobby', 'Samsung DM55E', 820, 'Field visit required to improve airflow and relocate device.', 2),
+      ('DEMO-4556-EARLY', '4556', DATEADD('hour', -12, CURRENT_TIMESTAMP()), 'Preventive', 'Firmware Bug', 'Early drift in power/temp; minor stability issues', 'Remote Fix', DATEADD('hour', -11, CURRENT_TIMESTAMP()), 0.3, TRUE, TRUE, NULL, 35.0, 0.0, 0.0, 35.0, 0.4, 95.0, FALSE, 'Known firmware issue', TRUE, 'CLIMBING', 'CLIMBING', 'STABLE', 3, 'v2.3.8', 'Waiting Room', 'LG 55XS4F', 600, 'Preventive remote patch applied based on early-warning signals.', 0)
+    AS s(
+      MAINTENANCE_ID, DEVICE_ID, INCIDENT_DATE, INCIDENT_TYPE, FAILURE_TYPE, FAILURE_SYMPTOMS,
+      RESOLUTION_TYPE, RESOLUTION_DATE, RESOLUTION_TIME_HOURS, REMOTE_FIX_ATTEMPTED, REMOTE_FIX_SUCCESSFUL,
+      PARTS_REPLACED, LABOR_COST_USD, PARTS_COST_USD, TRAVEL_COST_USD, TOTAL_COST_USD,
+      DOWNTIME_HOURS, REVENUE_IMPACT_USD, CUSTOMER_NOTIFIED, ROOT_CAUSE, PREVENTABLE,
+      PRE_FAILURE_TEMP_TREND, PRE_FAILURE_POWER_TREND, PRE_FAILURE_NETWORK_TREND,
+      DAYS_OF_WARNING_SIGNS, FIRMWARE_VERSION_AT_INCIDENT, ENVIRONMENT_TYPE_AT_INCIDENT,
+      DEVICE_MODEL_AT_INCIDENT, DEVICE_AGE_DAYS_AT_INCIDENT, OPERATOR_NOTES, SIMILAR_RECENT_FAILURES
+    )
+) s
+ON t.MAINTENANCE_ID = s.MAINTENANCE_ID
+WHEN NOT MATCHED THEN
+  INSERT (
+    MAINTENANCE_ID, DEVICE_ID, INCIDENT_DATE, INCIDENT_TYPE, FAILURE_TYPE, FAILURE_SYMPTOMS,
+    RESOLUTION_TYPE, RESOLUTION_DATE, RESOLUTION_TIME_HOURS, REMOTE_FIX_ATTEMPTED, REMOTE_FIX_SUCCESSFUL,
+    PARTS_REPLACED, LABOR_COST_USD, PARTS_COST_USD, TRAVEL_COST_USD, TOTAL_COST_USD,
+    DOWNTIME_HOURS, REVENUE_IMPACT_USD, CUSTOMER_NOTIFIED, ROOT_CAUSE, PREVENTABLE,
+    PRE_FAILURE_TEMP_TREND, PRE_FAILURE_POWER_TREND, PRE_FAILURE_NETWORK_TREND,
+    DAYS_OF_WARNING_SIGNS, FIRMWARE_VERSION_AT_INCIDENT, ENVIRONMENT_TYPE_AT_INCIDENT,
+    DEVICE_MODEL_AT_INCIDENT, DEVICE_AGE_DAYS_AT_INCIDENT, OPERATOR_NOTES, SIMILAR_RECENT_FAILURES
+  )
+  VALUES (
+    s.MAINTENANCE_ID, s.DEVICE_ID, s.INCIDENT_DATE, s.INCIDENT_TYPE, s.FAILURE_TYPE, s.FAILURE_SYMPTOMS,
+    s.RESOLUTION_TYPE, s.RESOLUTION_DATE, s.RESOLUTION_TIME_HOURS, s.REMOTE_FIX_ATTEMPTED, s.REMOTE_FIX_SUCCESSFUL,
+    s.PARTS_REPLACED, s.LABOR_COST_USD, s.PARTS_COST_USD, s.TRAVEL_COST_USD, s.TOTAL_COST_USD,
+    s.DOWNTIME_HOURS, s.REVENUE_IMPACT_USD, s.CUSTOMER_NOTIFIED, s.ROOT_CAUSE, s.PREVENTABLE,
+    s.PRE_FAILURE_TEMP_TREND, s.PRE_FAILURE_POWER_TREND, s.PRE_FAILURE_NETWORK_TREND,
+    s.DAYS_OF_WARNING_SIGNS, s.FIRMWARE_VERSION_AT_INCIDENT, s.ENVIRONMENT_TYPE_AT_INCIDENT,
+    s.DEVICE_MODEL_AT_INCIDENT, s.DEVICE_AGE_DAYS_AT_INCIDENT, s.OPERATOR_NOTES, s.SIMILAR_RECENT_FAILURES
+  );
+
+/*----------------------------------------------------------------------------
   VERIFICATION QUERIES
 ----------------------------------------------------------------------------*/
 
