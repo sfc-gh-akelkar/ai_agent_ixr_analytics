@@ -2,13 +2,21 @@
 
 ## ✅ SQL Syntax Errors - FIXED!
 
-### Issue: Line 509 "won't boot" error
-**Status**: ✅ **FIXED**  
+### Issue #1: Line 509 "won't boot" error
+**Status**: ✅ **FIXED** (v1.0.1)  
 **Solution**: Changed "won't" to "will not" to avoid apostrophe parsing issues
 
-### Issue: Line 340 JSON parsing in test query
-**Status**: ✅ **FIXED**  
+### Issue #2: Line 340 JSON parsing in test query
+**Status**: ✅ **FIXED** (v1.0.1)  
 **Solution**: Commented out optional test query. You can test Cortex Search after setup using the dashboard.
+
+### Issue #3: RUNBOOK_DOCS column truncation
+**Status**: ✅ **FIXED** (v1.0.2)  
+**Error**: `String '30 minutes - 2 hours (software), 4-6 hours (hardware)' is too long and would be truncated`  
+**Solution**: 
+- Increased `estimated_repair_time` from VARCHAR(50) to VARCHAR(100)
+- Increased `required_tools` from VARCHAR(500) to VARCHAR(1000)
+- All repair manual content now fits properly
 
 ---
 
@@ -65,8 +73,16 @@ CREATE WAREHOUSE COMPUTE_WH WITH WAREHOUSE_SIZE = 'X-SMALL';
 ### Error: "Cortex features not available"
 **Solution**: Contact Snowflake support to enable Cortex AI features in your account.
 
-### Error: "Too many rows generated"
-**Solution**: Normal - script generates 500 devices. Let it complete.
+### Error: "String is too long and would be truncated"
+**Status**: ✅ **FIXED** (v1.0.2)  
+**Solution**: Column sizes increased. Re-run the latest version of `setup_backend.sql` from GitHub.
+
+**If you already ran an older version**:
+```sql
+-- Drop and recreate with latest script
+DROP TABLE IF EXISTS PATIENTPOINT_OPS.DEVICE_ANALYTICS.RUNBOOK_DOCS;
+-- Then re-run the full setup_backend.sql
+```
 
 ---
 
@@ -195,6 +211,6 @@ Once verification passes, proceed to:
 ---
 
 **Last Updated**: December 12, 2025  
-**Status**: All SQL syntax errors fixed  
-**Version**: 1.0.1
+**Status**: All SQL errors fixed (3 issues resolved)  
+**Version**: 1.0.2
 
