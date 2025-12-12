@@ -28,9 +28,8 @@ st.set_page_config(
 # Get Snowflake session
 session = get_active_session()
 
-# Set context
-session.sql("USE DATABASE PREDICTIVE_MAINTENANCE").collect()
-session.sql("USE SCHEMA RAW_DATA").collect()
+# Note: Streamlit in Snowflake is already connected to the database
+# specified when creating the app. Use fully qualified table names.
 
 #============================================================================
 # HEADER
@@ -48,14 +47,14 @@ st.sidebar.header("🔍 Filters")
 # Get filter options
 states = session.sql("""
     SELECT DISTINCT FACILITY_STATE 
-    FROM DEVICE_INVENTORY 
+    FROM PREDICTIVE_MAINTENANCE.RAW_DATA.DEVICE_INVENTORY 
     WHERE OPERATIONAL_STATUS = 'Active'
     ORDER BY FACILITY_STATE
 """).to_pandas()
 
 device_models = session.sql("""
     SELECT DISTINCT DEVICE_MODEL 
-    FROM DEVICE_INVENTORY 
+    FROM PREDICTIVE_MAINTENANCE.RAW_DATA.DEVICE_INVENTORY 
     WHERE OPERATIONAL_STATUS = 'Active'
     ORDER BY DEVICE_MODEL
 """).to_pandas()
@@ -115,7 +114,7 @@ fleet_summary_query = f"""
         AVG(TEMPERATURE_F) AS AVG_TEMP,
         AVG(POWER_CONSUMPTION_W) AS AVG_POWER,
         SUM(ERROR_COUNT) AS TOTAL_ERRORS
-    FROM V_DEVICE_HEALTH_SUMMARY
+    FROM PREDICTIVE_MAINTENANCE.RAW_DATA.V_DEVICE_HEALTH_SUMMARY
     WHERE 1=1 {where_sql}
 """
 
@@ -205,7 +204,7 @@ device_list_query = f"""
         LAST_REPORT_TIME,
         DEVICE_AGE_DAYS,
         DAYS_SINCE_MAINTENANCE
-    FROM V_DEVICE_HEALTH_SUMMARY
+    FROM PREDICTIVE_MAINTENANCE.RAW_DATA.V_DEVICE_HEALTH_SUMMARY
     WHERE 1=1 {where_sql}
     ORDER BY 
         CASE 
@@ -286,7 +285,7 @@ if selected_device_id:
             s.ERROR_COUNT,
             s.DEVICE_AGE_DAYS,
             s.DAYS_SINCE_MAINTENANCE
-        FROM DEVICE_INVENTORY d
+        FROM PREDICTIVE_MAINTENANCE.RAW_DATA.DEVICE_INVENTORY d
         LEFT JOIN V_DEVICE_HEALTH_SUMMARY s ON d.DEVICE_ID = s.DEVICE_ID
         WHERE d.DEVICE_ID = '{selected_device_id}'
     """
@@ -336,7 +335,7 @@ if selected_device_id:
             ERROR_COUNT,
             CPU_USAGE_PCT,
             NETWORK_LATENCY_MS
-        FROM SCREEN_TELEMETRY
+        FROM PREDICTIVE_MAINTENANCE.RAW_DATA.SCREEN_TELEMETRY
         WHERE DEVICE_ID = '{selected_device_id}'
         ORDER BY TIMESTAMP DESC
         LIMIT 8640  -- Last 30 days at 5-min intervals
@@ -364,7 +363,7 @@ if selected_device_id:
         # Add threshold lines
         model_info = session.sql(f"""
             SELECT TEMP_WARNING_THRESHOLD_F, TEMP_CRITICAL_THRESHOLD_F
-            FROM DEVICE_MODELS_REFERENCE
+            FROM PREDICTIVE_MAINTENANCE.RAW_DATA.DEVICE_MODELS_REFERENCE
             WHERE MODEL_NAME = '{device_info['DEVICE_MODEL']}'
         """).to_pandas().iloc[0]
         
