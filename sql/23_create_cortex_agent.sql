@@ -13,6 +13,8 @@
   - sql/20_intelligence_semantic_layer.sql
   - sql/22_create_semantic_views.sql
   - sql/21_cortex_search_kb.sql
+  - sql/30_act2_watchlist.sql
+  - sql/31_act2_semantic_view_watchlist.sql
 
   IMPORTANT:
   - This script uses warehouse APP_WH for Analyst execution.
@@ -48,6 +50,7 @@ instructions:
 
   orchestration: |
     Tooling rules:
+    - Use Analyst_Watchlist to identify which devices are most abnormal right now (baseline 14d vs scoring 1d) and why.
     - Use Analyst_Fleet for fleet status, current critical/warning devices, and locations.
     - Use Analyst_Telemetry for 7–30 day trends (temperature/power/network/errors/brightness).
     - Use Analyst_Incidents for incident history, downtime, cost and revenue impact.
@@ -70,6 +73,8 @@ instructions:
     - Keep it concise and business-oriented.
 
   sample_questions:
+    - question: "What devices should the ops team look at first today, and why?"
+      answer: "I will use the anomaly watchlist semantic view to rank devices and summarize the top abnormal signals."
     - question: "How many devices are critical today, and where are they located?"
       answer: "I will use the fleet status semantic view to summarize critical devices by city/state."
     - question: "Why is device 4532 flagged? Show the last 7 days of key metrics."
@@ -80,6 +85,10 @@ instructions:
       answer: "I will use the baseline semantic view to report devices requiring review and charts-to-review proxy."
 
 tools:
+  - tool_spec:
+      type: "cortex_analyst_text_to_sql"
+      name: "Analyst_Watchlist"
+      description: "Ranked anomaly watchlist (baseline 14d vs scoring 1d) with explainable domain scores and why-flagged."
   - tool_spec:
       type: "cortex_analyst_text_to_sql"
       name: "Analyst_Fleet"
@@ -106,6 +115,10 @@ tools:
       description: "Searches the maintenance knowledge base for similar incidents and troubleshooting steps."
 
 tool_resources:
+  Analyst_Watchlist:
+    semantic_view: "PREDICTIVE_MAINTENANCE.ANALYTICS.SV_ANOMALY_WATCHLIST"
+    warehouse: "APP_WH"
+    timeout_seconds: 60
   Analyst_Fleet:
     semantic_view: "PREDICTIVE_MAINTENANCE.ANALYTICS.SV_FLEET_STATUS"
     warehouse: "APP_WH"
