@@ -211,7 +211,7 @@ BEGIN
                     WHEN SEQ < (7 * 24 * 12) THEN  -- Last 7 days
                         m.TYPICAL_TEMP_F + 
                         UNIFORM(-3, 3, RANDOM()) +  -- Normal noise
-                        ((7 * 24 * 12) - SEQ) * 0.003  -- Linear climb (0.003°F per 5-min interval = ~25° over 7 days)
+                        ((7 * 24 * 12) - SEQ) * 0.010  -- Linear climb (0.010°F per 5-min interval = ~20° over 7 days)
                     ELSE  -- Before degradation started
                         m.TYPICAL_TEMP_F + UNIFORM(-3, 3, RANDOM())
                 END
@@ -241,7 +241,7 @@ BEGIN
                     WHEN SEQ < (7 * 24 * 12) THEN
                         m.TYPICAL_POWER_W + 
                         UNIFORM(-5, 10, RANDOM()) +
-                        ((7 * 24 * 12) - SEQ) * 0.014 +  -- Climbing power (120W increase over 7 days)
+                        ((7 * 24 * 12) - SEQ) * 0.060 +  -- Climbing power (120W increase over 7 days)
                         (CASE WHEN UNIFORM(0, 100, RANDOM()) < 20 THEN UNIFORM(20, 50, RANDOM()) ELSE 0 END)  -- Random spikes
                     ELSE
                         m.TYPICAL_POWER_W + UNIFORM(-5, 10, RANDOM())
