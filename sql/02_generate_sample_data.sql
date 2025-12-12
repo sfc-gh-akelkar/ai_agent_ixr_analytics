@@ -21,8 +21,8 @@ USE SCHEMA RAW_DATA;
   STEP 1: Generate Device Inventory (100 devices)
 ----------------------------------------------------------------------------*/
 
--- Seed random for reproducibility
-SELECT SETSEED(0.42);
+-- Note: Snowflake's RANDOM() is pseudo-random and does not support seeding
+-- Each run will generate slightly different values, but patterns remain consistent
 
 -- Generate 100 devices across US locations
 INSERT INTO DEVICE_INVENTORY 
