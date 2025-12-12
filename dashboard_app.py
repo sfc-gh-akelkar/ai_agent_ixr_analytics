@@ -20,7 +20,6 @@ from datetime import datetime, timedelta
 import time
 import json
 from snowflake.snowpark import Session
-from snowflake.cortex import Complete
 import yaml
 
 # ============================================================================
@@ -192,8 +191,7 @@ def query_cortex_analyst(session, question, semantic_model_path="semantic_model.
         with open(semantic_model_path, 'r') as f:
             semantic_model = yaml.safe_load(f)
         
-        # Use Cortex Complete with semantic understanding
-        # In production, this would use the Cortex Analyst API
+        # Use Cortex Complete via SQL call (SiS compatible)
         prompt = f"""You are a SQL expert analyzing medical device fleet data.
         
 Semantic Model Context:
@@ -208,8 +206,20 @@ User Question: {question}
 Generate a SQL query to answer this question. Return ONLY the SQL query, no explanation.
 """
         
-        # Get SQL from LLM
-        sql_query = Complete("mistral-large2", prompt)
+        # Call Cortex Complete via SQL (works in Streamlit in Snowflake)
+        llm_query = f"""
+        SELECT SNOWFLAKE.CORTEX.COMPLETE(
+            'mistral-large2',
+            $${prompt}$$
+        ) AS generated_sql
+        """
+        
+        llm_result = session.sql(llm_query).collect()
+        sql_query = llm_result[0]['GENERATED_SQL'] if llm_result else None
+        
+        if not sql_query:
+            st.warning("Could not generate SQL query")
+            return None, None
         
         # Execute the generated SQL
         result = session.sql(sql_query).to_pandas()
