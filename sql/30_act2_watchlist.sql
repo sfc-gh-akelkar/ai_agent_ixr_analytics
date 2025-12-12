@@ -140,8 +140,19 @@ BEGIN
   CREATE OR REPLACE TEMP TABLE _scored AS
   WITH joined AS (
     SELECT
-      s.DEVICE_ID,
-      b.*,
+      s.DEVICE_ID AS DEVICE_ID,
+      b.BL_TEMP_MEAN,
+      b.BL_TEMP_STD,
+      b.BL_POWER_MEAN,
+      b.BL_POWER_STD,
+      b.BL_LAT_MEAN,
+      b.BL_LAT_STD,
+      b.BL_LOSS_MEAN,
+      b.BL_LOSS_STD,
+      b.BL_BRIGHT_MEAN,
+      b.BL_BRIGHT_STD,
+      b.BL_ERR_MEAN,
+      b.BL_ERR_STD,
       s.SC_TEMP,
       s.SC_TEMP_MAX,
       s.SC_POWER,
