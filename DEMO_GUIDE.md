@@ -47,6 +47,97 @@ Use the ordered script list in `START_HERE.md` (setup → data → curated views
 
 ---
 
+## Prescriptive 20‑minute demo script (verbatim, designed to WOW)
+
+### 0:00–1:00 — Opening (frame the business)
+Say:
+“PatientPoint’s screens are not just ‘IT devices’—they’re **revenue delivery endpoints**. When a screen is down, you lose impressions, partners notice, and clinic staff gets pulled into troubleshooting. Today I’m going to show how Snowflake helps you **make money, save money, and reduce risk** by moving from reactive break/fix to proactive operations.”
+
+Then say (Snowflake differentiator):
+“What’s special here is Snowflake isn’t just storing data—Snowflake is the **governed system of intelligence**: curated data + semantic layer + retrieval + orchestration—so answers are explainable and auditable.”
+
+### 1:00–3:30 — Challenge → Result preview (exec-friendly)
+Do (Snowsight worksheet OR Agent):
+- Show `ANALYTICS.V_EXEC_KPIS` OR ask the Agent:
+
+Copy/paste to Agent:
+- “Show executive KPIs: fleet size, critical/warning now, watchlist count, predicted failures in the next 48 hours, downtime hours and revenue impact in the last 30 days.”
+
+Say:
+“Two important credibility points:
+1) **Observed** downtime and revenue impact come from incident history.
+2) Any ‘avoided cost’ is **explicitly assumption-driven**—we can edit it live per PatientPoint.”
+
+Copy/paste to Agent:
+- “Which KPIs are observed vs estimated? Show the assumptions driving the estimates.”
+
+### 3:30–7:30 — Action #1: Early warning watchlist (baseline vs now)
+Say:
+“The hardest part operationally isn’t collecting telemetry—it’s deciding **what matters right now**. We compute a per-device baseline, then score what changed in the last day. The output is a ranked watchlist with ‘why flagged’ explanations.”
+
+Copy/paste to Agent:
+- “What devices should the ops team look at first today and why? Include the top abnormal signals.”
+
+If they ask “how is it explainable?” say:
+“It’s not a black box. Each device is scored across thermal, power, network, display, and stability—and we can see the underlying deltas.”
+
+Copy/paste to Agent:
+- “For device 4532, summarize the abnormal signals and the last 7–30 days of telemetry trends.”
+
+### 7:30–11:00 — Action #2: 24–48h predicted failures (and how to talk about accuracy)
+Say:
+“Early warning is great, but the real operational unlock is: **what’s likely to fail in the next 24–48 hours**, and what type of failure is it? That’s how you schedule work, parts, and staffing—before downtime hits.”
+
+Copy/paste to Agent:
+- “Which devices are likely to fail in the next 48 hours? Show probability, predicted failure type, and the reason.”
+
+If they ask “is the accuracy real?” say:
+“For the demo, we track **demo evaluation metrics** against a deterministic scenario set so the demo is repeatable. In production, accuracy comes from evaluation on your labeled incident outcomes.”
+
+Copy/paste to Agent:
+- “Show the latest prediction evaluation metrics and explain what they represent.”
+
+### 11:00–14:00 — Action #3: Turn insight into an ops queue (work orders)
+Say:
+“This is where value becomes real: insights become **work orders** with priority, due-by time, and recommended channel—remote vs field—based on predicted failure type and historical success rates.”
+
+Copy/paste to Agent:
+- “What work orders are open right now? Which are P1 and due in the next 24 hours?”
+- “Which work orders require field dispatch vs remote remediation? Summarize counts and top examples.”
+
+Tie to PatientPoint dollars:
+“Every avoided dispatch saves real money. Every hour of avoided downtime protects ad delivery. The key is prioritization and routing—not just alerts.”
+
+### 14:00–17:00 — Action #4: Automated remote remediation (simulated) + escalation
+Say:
+“Now the ‘wow’: remote remediation. In this demo we simulate executions, but the pattern is production-ready: runbooks, outcomes, and escalation when remote is unlikely.”
+
+Copy/paste to Agent:
+- “Pick the highest priority remote work order and provide step-by-step runbook instructions.”
+- “Show recent remote remediation outcomes: successes vs escalations.”
+
+Say:
+“Escalation is not failure—it’s risk management. If the data says display panel failures rarely resolve remotely, we don’t waste time; we dispatch with the right parts.”
+
+### 17:00–19:00 — Evidence grounding (KB + historical outcomes)
+Say:
+“The agent is only valuable if it’s grounded. We combine structured telemetry and outcomes with a searchable maintenance knowledge base of similar incidents.”
+
+Copy/paste to Agent:
+- “For ‘Network Connectivity’ failures, what fixes have worked historically and what is the remote success rate?”
+- “Find similar incidents to device 4512 and summarize the top troubleshooting steps.”
+
+### 19:00–20:00 — Close (value + next steps)
+Say:
+“For PatientPoint, the value is straightforward:
+- **Make money**: fewer missed impressions and stronger partner trust through higher uptime.
+- **Save money**: fewer unnecessary dispatches and lower time-to-diagnose/resolve.
+- **Reduce risk**: predictable operations, governed answers, and an auditable workflow from signal → action → result.
+
+Next step after the demo is simple: connect to your real telemetry stream and incident history, calibrate assumptions with your finance team, and then swap the simulated scoring for production models—without changing the data product or the agent interface.”
+
+---
+
 ## The live demo (10–15 minutes, structured to WOW)
 
 ### Segment 1 — Exec hook (2 minutes): “Stop revenue leakage”
