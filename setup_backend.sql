@@ -221,8 +221,8 @@ CREATE OR REPLACE TABLE RUNBOOK_DOCS (
     failure_category VARCHAR(100),
     content TEXT,
     severity VARCHAR(20),
-    estimated_repair_time VARCHAR(50),
-    required_tools VARCHAR(500),
+    estimated_repair_time VARCHAR(100),
+    required_tools VARCHAR(1000),
     safety_notes VARCHAR(1000),
     created_at TIMESTAMP_LTZ DEFAULT CURRENT_TIMESTAMP()
 );
