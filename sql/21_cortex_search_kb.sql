@@ -10,7 +10,7 @@
   - sql/02_generate_sample_data.sql
 
   Notes:
-  - Choose an existing warehouse for WAREHOUSE= (e.g., COMPUTE_WH).
+  - Choose an existing warehouse for WAREHOUSE= (this script uses APP_WH).
   - TARGET_LAG controls refresh cadence for the search index.
   - The KB is intentionally derived from MAINTENANCE_HISTORY so we avoid
     inventing content; it stays grounded in the data.
@@ -83,7 +83,7 @@ FROM RAW_DATA.MAINTENANCE_HISTORY;
 CREATE OR REPLACE CORTEX SEARCH SERVICE OPERATIONS.MAINTENANCE_KB_SEARCH
   ON KB_TEXT
   ATTRIBUTES FAILURE_TYPE, RESOLUTION_TYPE, DEVICE_MODEL, ENVIRONMENT_TYPE
-  WAREHOUSE = COMPUTE_WH
+  WAREHOUSE = APP_WH
   TARGET_LAG = '1 hour'
   AS (
     SELECT

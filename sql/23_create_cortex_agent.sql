@@ -15,8 +15,8 @@
   - sql/21_cortex_search_kb.sql
 
   IMPORTANT:
-  - Update the warehouse name below if you don't have COMPUTE_WH.
-  - If you prefer a different orchestration model, change `models.orchestration`.
+  - This script uses warehouse APP_WH for Analyst execution.
+  - Orchestration model is set to "auto".
 ============================================================================*/
 
 USE DATABASE PREDICTIVE_MAINTENANCE;
@@ -28,7 +28,7 @@ CREATE OR REPLACE AGENT MAINTENANCE_OPS_AGENT
   FROM SPECIFICATION
 $$
 models:
-  orchestration: llama3.3-70B
+  orchestration: auto
 
 orchestration:
   budget:
@@ -108,23 +108,23 @@ tools:
 tool_resources:
   Analyst_Fleet:
     semantic_view: "PREDICTIVE_MAINTENANCE.ANALYTICS.SV_FLEET_STATUS"
-    warehouse: "COMPUTE_WH"
+    warehouse: "APP_WH"
     timeout_seconds: 60
   Analyst_Telemetry:
     semantic_view: "PREDICTIVE_MAINTENANCE.ANALYTICS.SV_DEVICE_TELEMETRY_DAILY"
-    warehouse: "COMPUTE_WH"
+    warehouse: "APP_WH"
     timeout_seconds: 60
   Analyst_Incidents:
     semantic_view: "PREDICTIVE_MAINTENANCE.ANALYTICS.SV_MAINTENANCE_INCIDENTS"
-    warehouse: "COMPUTE_WH"
+    warehouse: "APP_WH"
     timeout_seconds: 60
   Analyst_RemoteRates:
     semantic_view: "PREDICTIVE_MAINTENANCE.ANALYTICS.SV_REMOTE_RESOLUTION_RATES"
-    warehouse: "COMPUTE_WH"
+    warehouse: "APP_WH"
     timeout_seconds: 60
   Analyst_Baseline:
     semantic_view: "PREDICTIVE_MAINTENANCE.ANALYTICS.SV_BASELINE_PRE_ML"
-    warehouse: "COMPUTE_WH"
+    warehouse: "APP_WH"
     timeout_seconds: 60
   Search_KB:
     name: "PREDICTIVE_MAINTENANCE.OPERATIONS.MAINTENANCE_KB_SEARCH"
