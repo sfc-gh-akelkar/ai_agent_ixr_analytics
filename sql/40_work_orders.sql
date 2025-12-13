@@ -79,7 +79,15 @@ BEGIN
   UNION ALL
   SELECT
     w.DEVICE_ID,
-    'Anomaly Review' AS ISSUE_TYPE,
+    -- Map dominant anomaly domain to an operational issue type (so work orders are actionable
+    -- even when predictions are not generated for that device).
+    CASE
+      WHEN w.SCORE_DISPLAY = GREATEST(w.SCORE_THERMAL, w.SCORE_POWER, w.SCORE_NETWORK, w.SCORE_STABILITY, w.SCORE_DISPLAY) THEN 'Display Panel'
+      WHEN w.SCORE_NETWORK = GREATEST(w.SCORE_THERMAL, w.SCORE_POWER, w.SCORE_NETWORK, w.SCORE_STABILITY, w.SCORE_DISPLAY) THEN 'Network Connectivity'
+      WHEN w.SCORE_POWER = GREATEST(w.SCORE_THERMAL, w.SCORE_POWER, w.SCORE_NETWORK, w.SCORE_STABILITY, w.SCORE_DISPLAY) THEN 'Power Supply'
+      WHEN w.SCORE_THERMAL = GREATEST(w.SCORE_THERMAL, w.SCORE_POWER, w.SCORE_NETWORK, w.SCORE_STABILITY, w.SCORE_DISPLAY) THEN 'Overheating'
+      ELSE 'Software Crash'
+    END AS ISSUE_TYPE,
     w.SCORE_OVERALL AS SCORE,
     w.CONFIDENCE_BAND,
     'WATCHLIST' AS SOURCE,
@@ -122,7 +130,7 @@ BEGIN
       ELSE 'Review anomaly signals and determine next best action.'
     END AS RECOMMENDED_ACTION,
     CASE
-      WHEN ISSUE_TYPE IN ('Display Panel','Power Supply') THEN 'FIELD'
+      WHEN ISSUE_TYPE IN ('Display Panel','Power Supply','Overheating') THEN 'FIELD'
       ELSE 'REMOTE'
     END AS RECOMMENDED_CHANNEL,
     SOURCE,
