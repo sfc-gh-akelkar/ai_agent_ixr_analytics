@@ -1128,11 +1128,13 @@ RETURNS VARIANT
 LANGUAGE SQL
 AS
 $$
+DECLARE
+    result VARIANT;
 BEGIN
     INSERT INTO EXTERNAL_ACTION_LOG (
         ACTION_TYPE, TARGET_SYSTEM, TARGET_DEVICE_ID, COMMAND, PAYLOAD, INITIATED_BY, NOTES
     )
-    VALUES (
+    SELECT
         'ALERT',
         :ALERT_TYPE,
         :DEVICE_ID,
@@ -1146,14 +1148,15 @@ BEGIN
             'priority', 'HIGH'
         ),
         'AI_AGENT',
-        'Simulated notification - Would send to ' || :ALERT_TYPE || ' via External Function'
-    );
+        'Simulated notification - Would send to ' || :ALERT_TYPE || ' via External Function';
     
-    RETURN OBJECT_CONSTRUCT(
+    result := OBJECT_CONSTRUCT(
         'status', 'SIMULATED',
         'message', 'Alert would be sent to ' || :RECIPIENT || ' via ' || :ALERT_TYPE,
         'device_id', :DEVICE_ID
     );
+    
+    RETURN result;
 END;
 $$;
 
@@ -1169,13 +1172,14 @@ AS
 $$
 DECLARE
     incident_number VARCHAR;
+    result VARIANT;
 BEGIN
     incident_number := 'INC' || TO_CHAR(CURRENT_TIMESTAMP(), 'YYYYMMDDHH24MISS');
     
     INSERT INTO EXTERNAL_ACTION_LOG (
         ACTION_TYPE, TARGET_SYSTEM, TARGET_DEVICE_ID, COMMAND, PAYLOAD, INITIATED_BY, NOTES
     )
-    VALUES (
+    SELECT
         'WORK_ORDER',
         'ServiceNow',
         :DEVICE_ID,
@@ -1195,16 +1199,17 @@ BEGIN
             )
         ),
         'AI_AGENT',
-        'Simulated ServiceNow incident creation - ' || :incident_number
-    );
+        'Simulated ServiceNow incident creation - ' || :incident_number;
     
-    RETURN OBJECT_CONSTRUCT(
+    result := OBJECT_CONSTRUCT(
         'status', 'SIMULATED',
         'incident_number', :incident_number,
         'message', 'ServiceNow incident would be created via Native App or API integration',
         'device_id', :DEVICE_ID,
         'priority', :PRIORITY
     );
+    
+    RETURN result;
 END;
 $$;
 
