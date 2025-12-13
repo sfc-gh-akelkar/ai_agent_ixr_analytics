@@ -89,40 +89,41 @@ CREATE OR REPLACE TABLE DEVICE_INVENTORY (
 );
 
 -- Insert sample device inventory (100 devices across various facilities)
-INSERT INTO DEVICE_INVENTORY VALUES
-    ('DEV-001', 'HealthScreen Pro 55', 'Downtown Medical Center', 'Hospital', 'Chicago', 'IL', '2023-01-15', '2026-01-15', '2024-06-01', 'v3.2.1', 'ONLINE'),
-    ('DEV-002', 'HealthScreen Pro 55', 'Lakeside Family Practice', 'Primary Care', 'Chicago', 'IL', '2023-02-20', '2026-02-20', '2024-05-15', 'v3.2.1', 'ONLINE'),
-    ('DEV-003', 'HealthScreen Lite 32', 'North Shore Pediatrics', 'Pediatrics', 'Evanston', 'IL', '2022-11-10', '2025-11-10', '2024-04-20', 'v3.1.8', 'DEGRADED'),
-    ('DEV-004', 'HealthScreen Pro 55', 'Midwest Cardiology Associates', 'Specialty', 'Oak Park', 'IL', '2023-03-05', '2026-03-05', '2024-07-10', 'v3.2.1', 'ONLINE'),
-    ('DEV-005', 'HealthScreen Lite 32', 'Springfield Urgent Care', 'Urgent Care', 'Springfield', 'IL', '2022-08-22', '2025-08-22', '2024-03-01', 'v3.0.5', 'OFFLINE'),
-    ('DEV-006', 'HealthScreen Pro 55', 'Memorial Hospital West', 'Hospital', 'Columbus', 'OH', '2023-04-18', '2026-04-18', '2024-08-05', 'v3.2.1', 'ONLINE'),
-    ('DEV-007', 'HealthScreen Max 65', 'Cleveland Clinic Annex', 'Hospital', 'Cleveland', 'OH', '2023-06-01', '2026-06-01', '2024-09-01', 'v3.2.2', 'ONLINE'),
-    ('DEV-008', 'HealthScreen Lite 32', 'Buckeye Family Medicine', 'Primary Care', 'Columbus', 'OH', '2022-09-14', '2025-09-14', '2024-02-28', 'v3.1.2', 'DEGRADED'),
-    ('DEV-009', 'HealthScreen Pro 55', 'Cincinnati Womens Health', 'OB/GYN', 'Cincinnati', 'OH', '2023-05-22', '2026-05-22', '2024-07-20', 'v3.2.1', 'ONLINE'),
-    ('DEV-010', 'HealthScreen Pro 55', 'Dayton Orthopedic Center', 'Specialty', 'Dayton', 'OH', '2023-07-10', '2026-07-10', '2024-09-15', 'v3.2.1', 'ONLINE'),
-    ('DEV-011', 'HealthScreen Max 65', 'Henry Ford Health Detroit', 'Hospital', 'Detroit', 'MI', '2023-01-08', '2026-01-08', '2024-05-01', 'v3.2.0', 'ONLINE'),
-    ('DEV-012', 'HealthScreen Pro 55', 'Ann Arbor Family Care', 'Primary Care', 'Ann Arbor', 'MI', '2023-02-14', '2026-02-14', '2024-06-10', 'v3.2.1', 'ONLINE'),
-    ('DEV-013', 'HealthScreen Lite 32', 'Grand Rapids Pediatrics', 'Pediatrics', 'Grand Rapids', 'MI', '2022-10-05', '2025-10-05', '2024-04-15', 'v3.1.5', 'ONLINE'),
-    ('DEV-014', 'HealthScreen Pro 55', 'Lansing Cardiology Group', 'Specialty', 'Lansing', 'MI', '2023-04-01', '2026-04-01', '2024-08-01', 'v3.2.1', 'DEGRADED'),
-    ('DEV-015', 'HealthScreen Lite 32', 'Kalamazoo Walk-In Clinic', 'Urgent Care', 'Kalamazoo', 'MI', '2022-07-20', '2025-07-20', '2024-01-15', 'v3.0.3', 'ONLINE'),
-    ('DEV-016', 'HealthScreen Pro 55', 'IU Health Indianapolis', 'Hospital', 'Indianapolis', 'IN', '2023-03-12', '2026-03-12', '2024-07-05', 'v3.2.1', 'ONLINE'),
-    ('DEV-017', 'HealthScreen Max 65', 'Fort Wayne Medical Center', 'Hospital', 'Fort Wayne', 'IN', '2023-05-08', '2026-05-08', '2024-09-10', 'v3.2.2', 'ONLINE'),
-    ('DEV-018', 'HealthScreen Lite 32', 'Evansville Family Practice', 'Primary Care', 'Evansville', 'IN', '2022-12-01', '2025-12-01', '2024-05-20', 'v3.1.8', 'OFFLINE'),
-    ('DEV-019', 'HealthScreen Pro 55', 'South Bend Womens Clinic', 'OB/GYN', 'South Bend', 'IN', '2023-06-15', '2026-06-15', '2024-08-25', 'v3.2.1', 'ONLINE'),
-    ('DEV-020', 'HealthScreen Lite 32', 'Bloomington Urgent Care', 'Urgent Care', 'Bloomington', 'IN', '2022-08-10', '2025-08-10', '2024-02-10', 'v3.0.8', 'DEGRADED'),
-    ('DEV-021', 'HealthScreen Pro 55', 'Aurora Health Milwaukee', 'Hospital', 'Milwaukee', 'WI', '2023-02-28', '2026-02-28', '2024-06-20', 'v3.2.1', 'ONLINE'),
-    ('DEV-022', 'HealthScreen Max 65', 'UW Health Madison', 'Hospital', 'Madison', 'WI', '2023-04-10', '2026-04-10', '2024-08-15', 'v3.2.2', 'ONLINE'),
-    ('DEV-023', 'HealthScreen Lite 32', 'Green Bay Pediatrics', 'Pediatrics', 'Green Bay', 'WI', '2022-09-25', '2025-09-25', '2024-03-25', 'v3.1.3', 'ONLINE'),
-    ('DEV-024', 'HealthScreen Pro 55', 'Kenosha Heart Center', 'Specialty', 'Kenosha', 'WI', '2023-05-05', '2026-05-05', '2024-09-01', 'v3.2.1', 'ONLINE'),
-    ('DEV-025', 'HealthScreen Lite 32', 'Appleton Walk-In Care', 'Urgent Care', 'Appleton', 'WI', '2022-06-18', '2025-06-18', '2024-01-05', 'v3.0.2', 'DEGRADED'),
-    ('DEV-026', 'HealthScreen Pro 55', 'Mayo Clinic Rochester', 'Hospital', 'Rochester', 'MN', '2023-01-20', '2026-01-20', '2024-05-25', 'v3.2.1', 'ONLINE'),
-    ('DEV-027', 'HealthScreen Max 65', 'Hennepin Healthcare', 'Hospital', 'Minneapolis', 'MN', '2023-03-15', '2026-03-15', '2024-07-15', 'v3.2.2', 'ONLINE'),
-    ('DEV-028', 'HealthScreen Lite 32', 'St Paul Family Medicine', 'Primary Care', 'St Paul', 'MN', '2022-10-20', '2025-10-20', '2024-04-10', 'v3.1.6', 'ONLINE'),
-    ('DEV-029', 'HealthScreen Pro 55', 'Duluth Womens Health', 'OB/GYN', 'Duluth', 'MN', '2023-06-01', '2026-06-01', '2024-08-20', 'v3.2.1', 'ONLINE'),
-    ('DEV-030', 'HealthScreen Lite 32', 'Bloomington MN Urgent Care', 'Urgent Care', 'Bloomington', 'MN', '2022-07-08', '2025-07-08', '2024-01-20', 'v3.0.4', 'ONLINE');
+-- Note: HOURLY_AD_REVENUE_USD and MONTHLY_IMPRESSIONS use defaults if not specified
+INSERT INTO DEVICE_INVENTORY (DEVICE_ID, DEVICE_MODEL, FACILITY_NAME, FACILITY_TYPE, LOCATION_CITY, LOCATION_STATE, INSTALL_DATE, WARRANTY_EXPIRY, LAST_MAINTENANCE_DATE, FIRMWARE_VERSION, STATUS, HOURLY_AD_REVENUE_USD, MONTHLY_IMPRESSIONS) VALUES
+    ('DEV-001', 'HealthScreen Pro 55', 'Downtown Medical Center', 'Hospital', 'Chicago', 'IL', '2023-01-15', '2026-01-15', '2024-06-01', 'v3.2.1', 'ONLINE', 15.00, 18000),
+    ('DEV-002', 'HealthScreen Pro 55', 'Lakeside Family Practice', 'Primary Care', 'Chicago', 'IL', '2023-02-20', '2026-02-20', '2024-05-15', 'v3.2.1', 'ONLINE', 12.50, 15000),
+    ('DEV-003', 'HealthScreen Lite 32', 'North Shore Pediatrics', 'Pediatrics', 'Evanston', 'IL', '2022-11-10', '2025-11-10', '2024-04-20', 'v3.1.8', 'DEGRADED', 8.50, 10000),
+    ('DEV-004', 'HealthScreen Pro 55', 'Midwest Cardiology Associates', 'Specialty', 'Oak Park', 'IL', '2023-03-05', '2026-03-05', '2024-07-10', 'v3.2.1', 'ONLINE', 14.00, 16500),
+    ('DEV-005', 'HealthScreen Lite 32', 'Springfield Urgent Care', 'Urgent Care', 'Springfield', 'IL', '2022-08-22', '2025-08-22', '2024-03-01', 'v3.0.5', 'OFFLINE', 9.00, 11000),
+    ('DEV-006', 'HealthScreen Pro 55', 'Memorial Hospital West', 'Hospital', 'Columbus', 'OH', '2023-04-18', '2026-04-18', '2024-08-05', 'v3.2.1', 'ONLINE', 15.50, 18500),
+    ('DEV-007', 'HealthScreen Max 65', 'Cleveland Clinic Annex', 'Hospital', 'Cleveland', 'OH', '2023-06-01', '2026-06-01', '2024-09-01', 'v3.2.2', 'ONLINE', 22.00, 25000),
+    ('DEV-008', 'HealthScreen Lite 32', 'Buckeye Family Medicine', 'Primary Care', 'Columbus', 'OH', '2022-09-14', '2025-09-14', '2024-02-28', 'v3.1.2', 'DEGRADED', 8.00, 9500),
+    ('DEV-009', 'HealthScreen Pro 55', 'Cincinnati Womens Health', 'OB/GYN', 'Cincinnati', 'OH', '2023-05-22', '2026-05-22', '2024-07-20', 'v3.2.1', 'ONLINE', 13.50, 16000),
+    ('DEV-010', 'HealthScreen Pro 55', 'Dayton Orthopedic Center', 'Specialty', 'Dayton', 'OH', '2023-07-10', '2026-07-10', '2024-09-15', 'v3.2.1', 'ONLINE', 13.00, 15500),
+    ('DEV-011', 'HealthScreen Max 65', 'Henry Ford Health Detroit', 'Hospital', 'Detroit', 'MI', '2023-01-08', '2026-01-08', '2024-05-01', 'v3.2.0', 'ONLINE', 21.00, 24000),
+    ('DEV-012', 'HealthScreen Pro 55', 'Ann Arbor Family Care', 'Primary Care', 'Ann Arbor', 'MI', '2023-02-14', '2026-02-14', '2024-06-10', 'v3.2.1', 'ONLINE', 12.00, 14500),
+    ('DEV-013', 'HealthScreen Lite 32', 'Grand Rapids Pediatrics', 'Pediatrics', 'Grand Rapids', 'MI', '2022-10-05', '2025-10-05', '2024-04-15', 'v3.1.5', 'ONLINE', 8.50, 10200),
+    ('DEV-014', 'HealthScreen Pro 55', 'Lansing Cardiology Group', 'Specialty', 'Lansing', 'MI', '2023-04-01', '2026-04-01', '2024-08-01', 'v3.2.1', 'DEGRADED', 13.50, 16200),
+    ('DEV-015', 'HealthScreen Lite 32', 'Kalamazoo Walk-In Clinic', 'Urgent Care', 'Kalamazoo', 'MI', '2022-07-20', '2025-07-20', '2024-01-15', 'v3.0.3', 'ONLINE', 9.50, 11500),
+    ('DEV-016', 'HealthScreen Pro 55', 'IU Health Indianapolis', 'Hospital', 'Indianapolis', 'IN', '2023-03-12', '2026-03-12', '2024-07-05', 'v3.2.1', 'ONLINE', 16.00, 19000),
+    ('DEV-017', 'HealthScreen Max 65', 'Fort Wayne Medical Center', 'Hospital', 'Fort Wayne', 'IN', '2023-05-08', '2026-05-08', '2024-09-10', 'v3.2.2', 'ONLINE', 20.50, 23500),
+    ('DEV-018', 'HealthScreen Lite 32', 'Evansville Family Practice', 'Primary Care', 'Evansville', 'IN', '2022-12-01', '2025-12-01', '2024-05-20', 'v3.1.8', 'OFFLINE', 7.50, 9000),
+    ('DEV-019', 'HealthScreen Pro 55', 'South Bend Womens Clinic', 'OB/GYN', 'South Bend', 'IN', '2023-06-15', '2026-06-15', '2024-08-25', 'v3.2.1', 'ONLINE', 12.50, 15000),
+    ('DEV-020', 'HealthScreen Lite 32', 'Bloomington Urgent Care', 'Urgent Care', 'Bloomington', 'IN', '2022-08-10', '2025-08-10', '2024-02-10', 'v3.0.8', 'DEGRADED', 9.00, 10800),
+    ('DEV-021', 'HealthScreen Pro 55', 'Aurora Health Milwaukee', 'Hospital', 'Milwaukee', 'WI', '2023-02-28', '2026-02-28', '2024-06-20', 'v3.2.1', 'ONLINE', 15.00, 17800),
+    ('DEV-022', 'HealthScreen Max 65', 'UW Health Madison', 'Hospital', 'Madison', 'WI', '2023-04-10', '2026-04-10', '2024-08-15', 'v3.2.2', 'ONLINE', 23.00, 26000),
+    ('DEV-023', 'HealthScreen Lite 32', 'Green Bay Pediatrics', 'Pediatrics', 'Green Bay', 'WI', '2022-09-25', '2025-09-25', '2024-03-25', 'v3.1.3', 'ONLINE', 8.00, 9600),
+    ('DEV-024', 'HealthScreen Pro 55', 'Kenosha Heart Center', 'Specialty', 'Kenosha', 'WI', '2023-05-05', '2026-05-05', '2024-09-01', 'v3.2.1', 'ONLINE', 14.00, 16800),
+    ('DEV-025', 'HealthScreen Lite 32', 'Appleton Walk-In Care', 'Urgent Care', 'Appleton', 'WI', '2022-06-18', '2025-06-18', '2024-01-05', 'v3.0.2', 'DEGRADED', 8.50, 10200),
+    ('DEV-026', 'HealthScreen Pro 55', 'Mayo Clinic Rochester', 'Hospital', 'Rochester', 'MN', '2023-01-20', '2026-01-20', '2024-05-25', 'v3.2.1', 'ONLINE', 18.00, 21000),
+    ('DEV-027', 'HealthScreen Max 65', 'Hennepin Healthcare', 'Hospital', 'Minneapolis', 'MN', '2023-03-15', '2026-03-15', '2024-07-15', 'v3.2.2', 'ONLINE', 24.00, 27000),
+    ('DEV-028', 'HealthScreen Lite 32', 'St Paul Family Medicine', 'Primary Care', 'St Paul', 'MN', '2022-10-20', '2025-10-20', '2024-04-10', 'v3.1.6', 'ONLINE', 9.00, 10800),
+    ('DEV-029', 'HealthScreen Pro 55', 'Duluth Womens Health', 'OB/GYN', 'Duluth', 'MN', '2023-06-01', '2026-06-01', '2024-08-20', 'v3.2.1', 'ONLINE', 11.50, 13800),
+    ('DEV-030', 'HealthScreen Lite 32', 'Bloomington MN Urgent Care', 'Urgent Care', 'Bloomington', 'MN', '2022-07-08', '2025-07-08', '2024-01-20', 'v3.0.4', 'ONLINE', 9.50, 11400);
 
 -- Add more devices to reach ~100 for a realistic demo
-INSERT INTO DEVICE_INVENTORY 
+INSERT INTO DEVICE_INVENTORY (DEVICE_ID, DEVICE_MODEL, FACILITY_NAME, FACILITY_TYPE, LOCATION_CITY, LOCATION_STATE, INSTALL_DATE, WARRANTY_EXPIRY, LAST_MAINTENANCE_DATE, FIRMWARE_VERSION, STATUS, HOURLY_AD_REVENUE_USD, MONTHLY_IMPRESSIONS)
 SELECT 
     'DEV-' || LPAD((SEQ4() + 31)::VARCHAR, 3, '0'),
     CASE MOD(SEQ4(), 3) 
@@ -162,6 +163,18 @@ SELECT
         WHEN MOD(SEQ4(), 15) = 0 THEN 'OFFLINE'
         WHEN MOD(SEQ4(), 8) = 0 THEN 'DEGRADED'
         ELSE 'ONLINE'
+    END,
+    -- Revenue based on device model (Max > Pro > Lite)
+    CASE MOD(SEQ4(), 3) 
+        WHEN 0 THEN 12.50 + (MOD(SEQ4(), 5) * 0.50)  -- Pro 55: $12.50-$14.50
+        WHEN 1 THEN 8.00 + (MOD(SEQ4(), 4) * 0.50)   -- Lite 32: $8.00-$9.50
+        ELSE 20.00 + (MOD(SEQ4(), 6) * 0.75)         -- Max 65: $20.00-$23.75
+    END,
+    -- Impressions based on device model
+    CASE MOD(SEQ4(), 3) 
+        WHEN 0 THEN 14000 + (MOD(SEQ4(), 5) * 500)   -- Pro 55: 14000-16000
+        WHEN 1 THEN 9000 + (MOD(SEQ4(), 4) * 400)    -- Lite 32: 9000-10200
+        ELSE 22000 + (MOD(SEQ4(), 6) * 600)          -- Max 65: 22000-25000
     END
 FROM TABLE(GENERATOR(ROWCOUNT => 70));
 
