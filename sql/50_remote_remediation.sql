@@ -136,20 +136,20 @@ BEGIN
   -- Deterministic overrides for scenario devices (stable demo)
   LET forced_status STRING :=
     CASE
-      WHEN device_id = '4512' THEN 'SUCCESS'   -- network: typically remote
-      WHEN device_id IN ('4523','4556') THEN 'SUCCESS' -- software/firmware: remote
-      WHEN device_id IN ('4532','7821','4545') THEN 'ESCALATED' -- hardware/env: field
+      WHEN :device_id = '4512' THEN 'SUCCESS'   -- network: typically remote
+      WHEN :device_id IN ('4523','4556') THEN 'SUCCESS' -- software/firmware: remote
+      WHEN :device_id IN ('4532','7821','4545') THEN 'ESCALATED' -- hardware/env: field
       ELSE NULL
     END;
 
   -- Anchor to demo clock and keep strictly < DEMO_AS_OF_TS so 30-day KPI windows include it deterministically.
   LET started_at TIMESTAMP_NTZ := DATEADD('minute', -10, (SELECT DEMO_AS_OF_TS FROM PREDICTIVE_MAINTENANCE.OPERATIONS.V_DEMO_TIME));
-  LET ended_at TIMESTAMP_NTZ := DATEADD('minute', 10, started_at);
+  LET ended_at TIMESTAMP_NTZ := DATEADD('minute', 10, :started_at);
 
   LET outcome STRING :=
     COALESCE(
-      forced_status,
-      IFF(UNIFORM(0, 100, RANDOM()) < COALESCE(hist_rate, 0.70) * 100, 'SUCCESS', 'ESCALATED')
+      :forced_status,
+      IFF(UNIFORM(0, 100, RANDOM()) < COALESCE(:hist_rate, 0.70) * 100, 'SUCCESS', 'ESCALATED')
     );
 
   INSERT INTO OPERATIONS.REMOTE_EXECUTIONS (
