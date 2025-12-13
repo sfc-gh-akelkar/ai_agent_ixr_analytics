@@ -63,7 +63,7 @@ $$
 DECLARE
   run_id STRING DEFAULT UUID_STRING();
 BEGIN
-  LET as_of_ts TIMESTAMP_NTZ := COALESCE(AS_OF_TS, (SELECT DEMO_AS_OF_TS FROM OPERATIONS.V_DEMO_TIME));
+  LET demo_as_of_ts TIMESTAMP_NTZ := COALESCE(AS_OF_TS, (SELECT DEMO_AS_OF_TS FROM OPERATIONS.V_DEMO_TIME));
 
   -- Create work orders from latest predictions (preferred) and watchlist (fallback).
   CREATE OR REPLACE TEMP TABLE _candidates AS
@@ -112,15 +112,15 @@ BEGIN
   )
   SELECT
     UUID_STRING(),
-    :as_of_ts,
-    :as_of_ts,
+    :demo_as_of_ts,
+    :demo_as_of_ts,
     'OPEN',
     CASE
       WHEN SCORE >= 0.85 THEN 'P1'
       WHEN SCORE >= 0.70 THEN 'P2'
       ELSE 'P3'
     END AS PRIORITY,
-    DATEADD('hour', CASE WHEN SCORE >= 0.85 THEN 8 WHEN SCORE >= 0.70 THEN 24 ELSE 72 END, :as_of_ts) AS DUE_BY,
+    DATEADD('hour', CASE WHEN SCORE >= 0.85 THEN 8 WHEN SCORE >= 0.70 THEN 24 ELSE 72 END, :demo_as_of_ts) AS DUE_BY,
     DEVICE_ID,
     ISSUE_TYPE,
     CASE
@@ -147,7 +147,7 @@ BEGIN
   )
   QUALIFY ROW_NUMBER() OVER (ORDER BY SCORE DESC) <= :TOP_N;
 
-  RETURN 'Work orders generated ✅ run_id=' || run_id || ', as_of=' || as_of_ts;
+  RETURN 'Work orders generated ✅ run_id=' || run_id || ', as_of=' || demo_as_of_ts;
 END;
 $$;
 
