@@ -116,7 +116,12 @@ BEGIN
       -- Priority should align with operational risk:
       -- - Predictions: treat probability as risk score (more sensitive for near-term failures)
       -- - Watchlist: treat anomaly score as risk score
+      -- - SCENARIO_LOCK: Force P1 for key demo devices (4532 = critical thermal, 4556 = predicted failure)
       CASE
+        -- Demo override: ensure compelling P1 work orders for demo
+        WHEN :MODE = 'SCENARIO_LOCK' AND DEVICE_ID IN ('4532', '4556') THEN 'P1'
+        WHEN :MODE = 'SCENARIO_LOCK' AND DEVICE_ID IN ('4545', '7821') THEN 'P2'
+        -- Standard scoring-based prioritization
         WHEN SOURCE = 'PREDICTION' AND SCORE >= 0.70 THEN 'P1'
         WHEN SOURCE = 'PREDICTION' AND SCORE >= 0.55 THEN 'P2'
         WHEN SOURCE = 'WATCHLIST' AND SCORE >= 0.85 THEN 'P1'
@@ -124,6 +129,10 @@ BEGIN
         ELSE 'P3'
       END AS DERIVED_PRIORITY,
       CASE
+        -- Demo override: urgent due times for key demo devices
+        WHEN :MODE = 'SCENARIO_LOCK' AND DEVICE_ID IN ('4532', '4556') THEN 6
+        WHEN :MODE = 'SCENARIO_LOCK' AND DEVICE_ID IN ('4545', '7821') THEN 18
+        -- Standard scoring-based due times
         WHEN SOURCE = 'PREDICTION' AND SCORE >= 0.70 THEN 8
         WHEN SOURCE = 'PREDICTION' AND SCORE >= 0.55 THEN 24
         WHEN SOURCE = 'WATCHLIST' AND SCORE >= 0.85 THEN 8
@@ -168,6 +177,9 @@ BEGIN
   RETURN 'Work orders generated ✅ run_id=' || run_id || ', as_of=' || demo_as_of_ts;
 END;
 $$;
+
+-- Truncate work orders for idempotent demo re-runs
+TRUNCATE TABLE OPERATIONS.WORK_ORDERS;
 
 CALL OPERATIONS.GENERATE_WORK_ORDERS('SCENARIO_LOCK', (SELECT DEMO_AS_OF_TS FROM OPERATIONS.V_DEMO_TIME), 25);
 SELECT * FROM ANALYTICS.V_WORK_ORDERS_CURRENT ORDER BY PRIORITY, DUE_BY;
