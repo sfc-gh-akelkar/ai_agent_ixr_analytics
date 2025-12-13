@@ -465,6 +465,57 @@ SELECT * FROM SEMANTIC_VIEW(
 );
 
 -- ============================================================================
+-- ROI ANALYSIS SEMANTIC VIEW
+-- Provides natural language access to cost baseline and savings projections
+-- ============================================================================
+
+CREATE OR REPLACE SEMANTIC VIEW SV_ROI_ANALYSIS
+  TABLES (
+    roi AS V_ROI_ANALYSIS PRIMARY KEY (DEMO_DEVICE_COUNT)
+  )
+  DIMENSIONS (
+    roi.demo_device_count AS roi.DEMO_DEVICE_COUNT
+      WITH SYNONYMS = ('demo devices', 'sample size')
+      COMMENT = 'Number of devices in demo dataset',
+    
+    roi.production_device_count AS roi.PRODUCTION_DEVICE_COUNT
+      WITH SYNONYMS = ('production devices', 'total devices', 'fleet size')
+      COMMENT = 'Number of devices in production (500,000)'
+  )
+  METRICS (
+    roi.avg_field_dispatch_cost_usd AS roi.AVG_FIELD_DISPATCH_COST_USD
+      WITH SYNONYMS = ('dispatch cost', 'field visit cost')
+      COMMENT = 'Average cost per field dispatch ($185)',
+    
+    roi.avg_remote_fix_cost_usd AS roi.AVG_REMOTE_FIX_COST_USD
+      WITH SYNONYMS = ('remote cost', 'remote fix cost')
+      COMMENT = 'Average cost per remote fix ($25)',
+    
+    roi.remote_fix_rate_pct AS roi.REMOTE_FIX_RATE_PCT
+      WITH SYNONYMS = ('remote fix rate', 'remote resolution rate')
+      COMMENT = 'Percentage of issues resolved remotely',
+    
+    roi.production_annual_dispatch_cost_usd AS roi.PRODUCTION_ANNUAL_DISPATCH_COST_USD
+      WITH SYNONYMS = ('annual cost', 'yearly dispatch cost', 'current annual cost')
+      COMMENT = 'Projected annual field dispatch cost at production scale ($185M)',
+    
+    roi.projected_annual_savings_usd AS roi.PROJECTED_ANNUAL_SAVINGS_USD
+      WITH SYNONYMS = ('annual savings', 'yearly savings', 'projected savings', 'cost reduction')
+      COMMENT = 'Projected annual savings from remote fixes (~$96M)',
+    
+    roi.actual_savings_to_date_usd AS roi.ACTUAL_SAVINGS_TO_DATE_USD
+      WITH SYNONYMS = ('savings to date', 'current savings', 'achieved savings')
+      COMMENT = 'Actual cost savings achieved from maintenance data',
+    
+    roi.projected_annual_dispatches_avoided AS roi.PROJECTED_ANNUAL_DISPATCHES_AVOIDED
+      WITH SYNONYMS = ('avoided dispatches', 'prevented dispatches')
+      COMMENT = 'Number of field dispatches avoided annually through remote fixes'
+  )
+  COMMENT = 'ROI and cost analysis for executive decision-making. Shows annual cost baseline and projected savings from predictive maintenance.';
+
+GRANT SELECT ON SEMANTIC VIEW SV_ROI_ANALYSIS TO ROLE SF_INTELLIGENCE_DEMO;
+
+-- ============================================================================
 -- EXTERNAL ACTIONS SEMANTIC VIEW
 -- Provides natural language access to the action audit log
 -- ============================================================================

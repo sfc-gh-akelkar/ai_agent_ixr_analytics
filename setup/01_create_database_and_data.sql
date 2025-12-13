@@ -1013,6 +1013,44 @@ SELECT
     (SELECT ROUND(AVG(CASE WHEN RESOLUTION_TYPE = 'FIELD_DISPATCH' THEN RESOLUTION_TIME_MINS END), 1) 
      FROM V_MAINTENANCE_ANALYTICS) as AVG_DISPATCH_TIME_MINS;
 
+-- ============================================================================
+-- ROI AND COST ANALYSIS VIEW
+-- Annual cost baseline and projected savings for executive ROI questions
+-- ============================================================================
+CREATE OR REPLACE VIEW V_ROI_ANALYSIS AS
+SELECT 
+    -- Fleet scale
+    (SELECT COUNT(*) FROM DEVICE_INVENTORY) as DEMO_DEVICE_COUNT,
+    500000 as PRODUCTION_DEVICE_COUNT,
+    
+    -- Cost assumptions (industry standard)
+    185.00 as AVG_FIELD_DISPATCH_COST_USD,
+    25.00 as AVG_REMOTE_FIX_COST_USD,
+    
+    -- Current metrics (from maintenance data)
+    (SELECT COUNT(*) FROM MAINTENANCE_HISTORY) as TOTAL_MAINTENANCE_TICKETS,
+    (SELECT COUNT(*) FROM MAINTENANCE_HISTORY WHERE RESOLUTION_TYPE = 'FIELD_DISPATCH') as FIELD_DISPATCHES,
+    (SELECT COUNT(*) FROM MAINTENANCE_HISTORY WHERE RESOLUTION_TYPE = 'REMOTE_FIX') as REMOTE_FIXES,
+    (SELECT ROUND(COUNT(*) * 100.0 / NULLIF((SELECT COUNT(*) FROM MAINTENANCE_HISTORY), 0), 1) 
+     FROM MAINTENANCE_HISTORY WHERE RESOLUTION_TYPE = 'REMOTE_FIX') as REMOTE_FIX_RATE_PCT,
+    
+    -- Demo-scale annual projection (100 devices, ~24 tickets/month = ~288/year)
+    ROUND(288 * 185.00, 2) as DEMO_ANNUAL_DISPATCH_COST_USD,
+    
+    -- Production-scale annual projection (500,000 devices)
+    -- Assuming 2 issues per device per year = 1,000,000 potential dispatches
+    ROUND(1000000 * 185.00, 2) as PRODUCTION_ANNUAL_DISPATCH_COST_USD,
+    
+    -- Savings calculation with 60% remote fix rate
+    ROUND(1000000 * 0.60 * (185.00 - 25.00), 2) as PROJECTED_ANNUAL_SAVINGS_USD,
+    
+    -- Cost savings already achieved (from actual data)
+    (SELECT COALESCE(SUM(COST_SAVINGS_USD), 0) FROM V_MAINTENANCE_ANALYTICS) as ACTUAL_SAVINGS_TO_DATE_USD,
+    
+    -- Avoided dispatches
+    (SELECT COUNT(*) FROM MAINTENANCE_HISTORY WHERE RESOLUTION_TYPE = 'REMOTE_FIX') as DISPATCHES_AVOIDED,
+    ROUND(1000000 * 0.60, 0) as PROJECTED_ANNUAL_DISPATCHES_AVOIDED;
+
 -- Verify data loaded correctly
 SELECT 'DEVICE_INVENTORY' as TABLE_NAME, COUNT(*) as ROW_COUNT FROM DEVICE_INVENTORY
 UNION ALL

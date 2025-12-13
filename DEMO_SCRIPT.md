@@ -74,16 +74,27 @@ How much advertising revenue are we losing from device downtime?
 
 ---
 
-### Prompt 3: Cost Savings (addresses Challenge #2)
+### Prompt 3: ROI & Cost Baseline (addresses C-Suite #1 question) 🆕
+```
+What's our annual field service cost and projected savings with predictive maintenance?
+```
+
+**Talking Point:** *"This is the ROI story: we spend $X million annually on field dispatches. With 60%+ remote resolution, we're looking at $50M+ in avoided costs at scale."*
+
+**Transition:** *"Let me show you the actual savings we're achieving..."*
+
+---
+
+### Prompt 4: Cost Savings (addresses Challenge #2)
 ```
 How much money have we saved this month from remote fixes vs field dispatches?
 ```
 
-**Transition:** *"That's $2,500+ saved this month—on track for 40-60% reduction in field service costs. But I noticed the NPS score. Let's check customer satisfaction..."*
+**Transition:** *"That's real savings happening now—on track for 40-60% reduction in field service costs. But I noticed the NPS score. Let's check customer satisfaction..."*
 
 ---
 
-### Prompt 4: Customer Pulse (follows from NPS mention)
+### Prompt 5: Customer Pulse (follows from NPS mention)
 ```
 What is our customer satisfaction score and which facilities need follow-up?
 ```
@@ -96,7 +107,7 @@ What is our customer satisfaction score and which facilities need follow-up?
 | FOCUS Result | Metric | Demo Value | Scale Impact |
 |--------------|--------|------------|--------------|
 | 💵 **Revenue Protection** | Ad revenue loss | $0 | Millions protected |
-| 💰 **40-60% Cost Reduction** | Remote fix savings | $2,500+/month | **$15M+/year** |
+| 💰 **40-60% Cost Reduction** | Annual baseline + savings | $2,500+/month | **$50M+/year** |
 | 🎯 **>85% Prediction Accuracy** | Remote resolution | 70%+ | 350K dispatches avoided |
 | ⭐ Customer Satisfaction | NPS Score | 8.6 | Loyalty driver |
 
@@ -111,7 +122,18 @@ What is our customer satisfaction score and which facilities need follow-up?
 
 ---
 
-### Prompt 1: What's At Risk Right Now?
+### Prompt 1: Top Facilities Overview 🆕
+```
+Show me device health across our top 10 facilities by ad revenue
+```
+
+**Talking Point:** *"Operations teams need to prioritize by business impact. This shows our highest-revenue facilities and their device health."*
+
+**Transition:** *"Good overview. Now let me drill into what's at risk right now across the entire fleet..."*
+
+---
+
+### Prompt 2: What's At Risk Right Now?
 ```
 Which devices have critical or high risk levels right now?
 ```
@@ -120,7 +142,7 @@ Which devices have critical or high risk levels right now?
 
 ---
 
-### Prompt 2: Triage for Remote Fixes (follows naturally)
+### Prompt 3: Triage for Remote Fixes (follows naturally)
 ```
 Can any of these critical or high risk devices be fixed remotely?
 ```
@@ -129,7 +151,7 @@ Can any of these critical or high risk devices be fixed remotely?
 
 ---
 
-### Prompt 3: Deep Dive on Problem Device (follows from triage)
+### Prompt 4: Deep Dive on Problem Device (follows from triage)
 ```
 What's the status of device DEV-005 at Springfield Urgent Care and what's causing the issue?
 ```
@@ -138,25 +160,47 @@ What's the status of device DEV-005 at Springfield Urgent Care and what's causin
 
 ---
 
-### Prompt 4: Work Order Status (follows from device issue)
+### Prompt 5: Work Order Status (follows from device issue)
 ```
 Show me all active work orders and their priority
 ```
 
-**Transition:** *"I see there's already a CRITICAL work order for DEV-005. Good—let's make sure a technician is assigned and has what they need..."*
+**Transition:** *"I see there's already a CRITICAL work order for DEV-005. Good—let's look at our predictive capabilities..."*
 
 ---
 
-### Prompt 5: Predictive Intelligence
+### Prompt 6: Predictive Intelligence
 ```
 Which devices are predicted to fail in the next 48 hours?
 ```
 
-**Transition:** *"This is the power of predictive maintenance—we can see failures 24-48 hours before they happen. Now watch this—the agent can also trigger actions..."*
+**Transition:** *"This is the power of predictive maintenance—we can see failures before they happen. But how accurate are these predictions? Let me show you..."*
 
 ---
 
-### Prompt 6: Automated Action (Key Demo Moment! 🎯)
+### Prompt 7: Prediction Accuracy (proves AI credibility) 🆕
+```
+What's our prediction accuracy based on historical failure data?
+```
+
+**Talking Point:** *"This is the proof point—we're not just making predictions, we're validating them against actual outcomes. >85% accuracy means 8 out of 10 predictions are correct."*
+
+**Transition:** *"Strong accuracy. Now let me show you how fast we're resolving issues..."*
+
+---
+
+### Prompt 8: MTTR Performance 🆕
+```
+What's our mean time to resolution and how does it compare by resolution type?
+```
+
+**Talking Point:** *"Remote fixes average 30 minutes. Field dispatches take 4+ hours. That's 8x faster resolution—which directly impacts uptime and revenue."*
+
+**Transition:** *"Now watch this—the agent can also trigger actions automatically..."*
+
+---
+
+### Prompt 9: Automated Action (Key Demo Moment! 🎯)
 ```
 Can you attempt a remote restart on device DEV-003 to fix the high CPU issue?
 ```
@@ -179,9 +223,11 @@ Show me recent external actions that were triggered
 ### Key Takeaways for Operations
 | Capability | Demo Evidence |
 |------------|---------------|
+| 🏢 Top facility prioritization | Filter by revenue impact |
 | 🎯 Real-time risk detection | 7 devices flagged across fleet |
 | 🔧 Remote fix triage | AI recommends most cost-effective action |
-| 📍 Facility pattern recognition | Springfield flagged for network audit |
+| 📊 Prediction accuracy | >85% validated against actuals |
+| ⏱️ MTTR tracking | 8x faster with remote fixes |
 | 🔮 48-hour predictions | Lead time to prevent failures |
 
 ---
@@ -331,13 +377,18 @@ Use these if the primary flow doesn't work or if you have extra time.
 ```
 Give me an executive summary of fleet health
 How much revenue are we losing from device downtime?
+What's our annual field service cost and projected savings?
 What's our uptime percentage this month?
 How many critical issues do we have right now?
+What's the ROI on predictive maintenance?
 ```
 
 ### Operations Center
 ```
 Which devices are predicted to fail in the next 48 hours?
+What's our prediction accuracy based on historical data?
+What's our mean time to resolution by issue type?
+Show me device health across our top 10 facilities
 What's causing the most device failures this month?
 Which technicians are available for dispatch right now?
 Show me devices with the longest time since maintenance

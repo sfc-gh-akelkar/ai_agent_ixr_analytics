@@ -88,6 +88,10 @@ CREATE OR REPLACE AGENT DEVICE_MAINTENANCE_AGENT
         Examples: "How much revenue lost to downtime?", "What is our NPS score?",
         "Which facilities have negative feedback?", "Total impressions lost?"
       
+      - Use "ROIAnalytics" for annual costs, ROI projections, and executive cost justification
+        Examples: "What's our annual field service cost?", "Projected savings?",
+        "How much can we save with predictive maintenance?", "Cost per dispatch vs remote?"
+      
       - Use "OperationsAnalytics" for work orders and technician assignments
         Examples: "How many open work orders?", "Which technicians are available?",
         "Show critical priority jobs", "Unassigned work orders?"
@@ -136,10 +140,11 @@ CREATE OR REPLACE AGENT DEVICE_MAINTENANCE_AGENT
       4. Provide step-by-step instructions with success probability
       
       Cost Analysis Workflow:
-      1. Use MaintenanceAnalytics for maintenance costs and savings
-      2. Use BusinessImpactAnalytics for revenue impact from downtime
-      3. Calculate ROI: (Cost Savings + Revenue Protected) / Total Investment
-      4. Present with month-over-month trends if available
+      1. Use ROIAnalytics for annual cost baseline and projected savings
+      2. Use MaintenanceAnalytics for current month costs and savings
+      3. Use BusinessImpactAnalytics for revenue impact from downtime
+      4. Calculate ROI: (Cost Savings + Revenue Protected) / Total Investment
+      5. Present with production scale projections (500,000 devices)
       
       Automated Remediation Workflow:
       When user requests a remote fix or action:
@@ -190,6 +195,8 @@ CREATE OR REPLACE AGENT DEVICE_MAINTENANCE_AGENT
         answer: "I'll query DeviceFleetAnalytics for devices with CRITICAL or HIGH risk levels based on telemetry trends."
       - question: "What is our average NPS score?"
         answer: "I'll use BusinessImpactAnalytics to retrieve the Net Promoter Score and satisfaction metrics."
+      - question: "What's our annual field service cost and projected savings?"
+        answer: "I'll use ROIAnalytics to show the cost baseline ($185M at scale) and projected savings (~$96M annually from 60% remote fixes)."
       - question: "How many open work orders do we have?"
         answer: "I'll query OperationsAnalytics for active work orders with priority breakdown."
       - question: "Can you restart services on device DEV-003?"
@@ -267,11 +274,36 @@ CREATE OR REPLACE AGENT DEVICE_MAINTENANCE_AGENT
           - Questions about revenue impact or lost revenue
           - Customer satisfaction and NPS queries
           - Uptime and availability metrics
-          - Business case and ROI justification
           
           When NOT to Use:
           - Do NOT use for device telemetry (use DeviceFleetAnalytics)
           - Do NOT use for maintenance tickets (use MaintenanceAnalytics)
+          - Do NOT use for annual costs or ROI projections (use ROIAnalytics)
+
+    - tool_spec:
+        type: "cortex_analyst_text_to_sql"
+        name: "ROIAnalytics"
+        description: |
+          Analyzes annual field service costs, projected savings, and ROI from 
+          predictive maintenance at production scale.
+          
+          Data Coverage:
+          - Annual field dispatch cost baseline ($185M at 500K devices)
+          - Projected annual savings from remote fixes (~$96M)
+          - Cost per dispatch ($185) vs cost per remote fix ($25)
+          - Remote fix rate and dispatches avoided
+          - Production scale projections (500,000 devices)
+          
+          When to Use:
+          - Executive ROI and cost justification questions
+          - "What's our annual field service cost?"
+          - "How much can we save with predictive maintenance?"
+          - "What's the projected ROI?"
+          - Cost baseline and savings projections
+          
+          When NOT to Use:
+          - Do NOT use for current month savings (use MaintenanceAnalytics)
+          - Do NOT use for individual ticket costs (use MaintenanceAnalytics)
 
     - tool_spec:
         type: "cortex_analyst_text_to_sql"
@@ -478,6 +510,8 @@ CREATE OR REPLACE AGENT DEVICE_MAINTENANCE_AGENT
       semantic_view: "PATIENTPOINT_MAINTENANCE.DEVICE_OPS.SV_MAINTENANCE_ANALYTICS"
     BusinessImpactAnalytics:
       semantic_view: "PATIENTPOINT_MAINTENANCE.DEVICE_OPS.SV_BUSINESS_IMPACT"
+    ROIAnalytics:
+      semantic_view: "PATIENTPOINT_MAINTENANCE.DEVICE_OPS.SV_ROI_ANALYSIS"
     OperationsAnalytics:
       semantic_view: "PATIENTPOINT_MAINTENANCE.DEVICE_OPS.SV_OPERATIONS"
     TroubleshootingGuide:
