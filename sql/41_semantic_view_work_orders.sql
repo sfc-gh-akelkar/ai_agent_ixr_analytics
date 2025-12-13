@@ -19,6 +19,9 @@ CREATE OR REPLACE SEMANTIC VIEW SV_WORK_ORDERS
     wo.device_id AS wo.DEVICE_ID WITH SYNONYMS = ('device', 'screen', 'screen id'),
     wo.status AS wo.STATUS,
     wo.priority AS wo.PRIORITY,
+    wo.created_at AS wo.CREATED_AT WITH SYNONYMS = ('created', 'created at', 'opened at'),
+    wo.updated_at AS wo.UPDATED_AT WITH SYNONYMS = ('updated', 'updated at'),
+    wo.due_by AS wo.DUE_BY WITH SYNONYMS = ('due', 'due by', 'deadline', 'sla'),
     wo.issue_type AS wo.ISSUE_TYPE WITH SYNONYMS = ('issue', 'failure type'),
     wo.recommended_channel AS wo.RECOMMENDED_CHANNEL WITH SYNONYMS = ('channel', 'remote or field')
   )
