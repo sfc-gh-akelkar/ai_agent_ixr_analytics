@@ -1,178 +1,315 @@
-## PatientPoint Predictive Maintenance Demo Guide (FOCUS Framework)
+## PatientPoint Predictive Maintenance — Demo Guide
 
-### What you’re selling (one sentence)
-Snowflake turns PatientPoint’s screen telemetry + maintenance history into **early warning + predicted failures + automated remote fixes**, so PatientPoint can **protect ad revenue**, **cut field-service costs**, and **reduce operational risk**—with **governed, explainable AI**.
-
----
-
-## The Focus Framework (keep repeating this)
-
-### Challenge (WHY this matters for PatientPoint)
-- **Make money (revenue protection)**: Screen downtime = missed ad impressions for pharma partners → direct revenue leakage + partner dissatisfaction.
-- **Save money (operational efficiency)**: Reactive break/fix drives expensive field dispatches, rush parts, overtime, and wasted “hunt-and-peck” troubleshooting.
-- **Reduce risk (brand + SLA + compliance posture)**: Unpredictable outages create reputational risk with clinics and partners, plus operational risk from manual processes and inconsistent remediation.
-
-### Action (WHAT the solution does)
-- **Early warning**: Anomaly watchlist (baseline 14d vs scoring 1d) flags devices drifting before they cross thresholds.
-- **24–48h prediction**: Failure predictions + confidence (and predicted failure type) to drive proactive scheduling.
-- **Ops Center – Operationalization**: Auto-generated work orders with recommended channel (remote vs field), priority, and due-by.
-- **Automated remote resolution (simulated)**: Runbooks + executions + escalation when remote is unlikely to succeed.
-- **Snowflake Intelligence (Agent)**: One chat interface that uses **Cortex Analyst** (semantic views) + **Cortex Search** (KB) to answer exec + ops + technician questions.
-
-### Result (WHAT outcomes you show, credibly)
-- **Observed outcomes** (from the data): downtime hours, revenue impact, remote success rates by failure type.
-- **Transparent estimates** (assumption-driven): revenue protected and field cost avoided based on editable assumptions (`OPERATIONS.DEMO_ASSUMPTIONS`).
-- **Demo accuracy**: reported as “demo evaluation vs deterministic scenario incidents,” not production ML accuracy.
+### The One-Liner (memorize this)
+> "Snowflake turns screen telemetry into **early warning, predicted failures, and automated fixes**—so PatientPoint can **protect ad revenue, cut field costs, and eliminate surprise outages**."
 
 ---
 
-## What makes Snowflake special (say this early)
-- **One platform**: data + governance + AI + orchestration + semantic layer + retrieval—no brittle multi-system glue.
-- **Governed AI**: semantic views + role-based access + auditable SQL = controlled, explainable answers.
-- **Business-facing AI**: Cortex Analyst translates natural language → SQL on curated semantic views (not raw tables).
-- **Real operational workflow**: alerts → work orders → remediation steps → outcomes → KPIs, all as first-class data products.
-- **Time-to-value**: you can start with credible simulation and swap in production models later without redesigning the system.
+## Before You Present: Mindset
+
+**This is not a product demo. This is a story about money.**
+
+| PatientPoint cares about... | You show... |
+|-----------------------------|-------------|
+| **Make money** | Revenue protected by avoiding downtime |
+| **Save money** | Field dispatches avoided via remote fixes |
+| **Reduce risk** | Predictable operations, governed AI, no surprises |
+
+Every prompt you ask should tie back to one of these.
 
 ---
 
-## Demo setup (1–2 minutes)
+## Demo Setup (do this 5 minutes before)
 
-### Run order (already in repo)
-Use the ordered script list in `START_HERE.md` (setup → data → curated views → semantic views → search → watchlist → predictions → work orders → remediation → executive KPIs → agent).
+1. Open **Snowflake Intelligence → Agents → MAINTENANCE_OPS_AGENT**
+2. Clear any previous chat history
+3. Have these 8 prompts ready to copy/paste (or memorize):
 
-### Demo posture (credibility statements)
-- “This is realistic synthetic telemetry + labeled scenario incidents for demo repeatability.”
-- “Where we estimate savings, we show the assumptions table and keep it editable.”
-- “The AI Agent doesn’t guess—everything is grounded in semantic views or the KB search tool.”
-
----
-
-## Prescriptive 20‑minute demo script (verbatim, designed to WOW)
-
-### Before you start (30 seconds)
-Do this in **Snowflake Intelligence**:
-1) Open **Snowflake Intelligence** → **Agents**
-2) Open `MAINTENANCE_OPS_AGENT`
-3) Make sure you can see answers + citations/tool outputs in the chat UI
-
-### 0:00–1:00 — Opening (frame the business)
-Say:
-“PatientPoint’s screens are not just ‘IT devices’—they’re **revenue delivery endpoints**. When a screen is down, you lose impressions, partners notice, and clinic staff gets pulled into troubleshooting. Today I’m going to show how Snowflake helps you **make money, save money, and reduce risk** by moving from reactive break/fix to proactive operations.”
-
-Then say (Snowflake differentiator):
-“What’s special here is Snowflake isn’t just storing data—Snowflake is the **governed system of intelligence**: curated data + semantic layer + retrieval + orchestration—so answers are explainable and auditable.”
-
-### 1:00–3:30 — Challenge → Result preview (exec-friendly)
-Copy/paste to Agent:
-- “Show executive KPIs: fleet size, critical/warning now, watchlist count, predicted failures in the next 48 hours, downtime hours and revenue impact in the last 30 days.”
-- “In the same answer, include the assumption and estimate fields (ASSUMP_* and EST_*).”
-
-If the response shows watchlist/predictions as 0, immediately follow with:
-- “Why might watchlist count or predicted failures be zero? Check whether scoring/predictions were refreshed recently and summarize the current critical devices and their telemetry signals.”
-
-Say:
-“Two important credibility points:
-1) **Observed** downtime and revenue impact come from incident history.
-2) Any ‘avoided cost’ is **explicitly assumption-driven**—we can edit it live per PatientPoint.”
-
-Copy/paste to Agent:
-- “Which KPIs are observed vs estimated? Show the assumptions driving the estimates.”
-
-### 3:30–7:30 — Action #1: Early warning watchlist (baseline vs now)
-Say:
-“The hardest part operationally isn’t collecting telemetry—it’s deciding **what matters right now**. We compute a per-device baseline, then score what changed in the last day. The output is a ranked watchlist with ‘why flagged’ explanations.”
-
-Copy/paste to Agent:
-- “What devices should the ops team look at first today and why? Include the top abnormal signals.”
-
-If they ask “how is it explainable?” say:
-“It’s not a black box. Each device is scored across thermal, power, network, display, and stability—and we can see the underlying deltas.”
-
-Copy/paste to Agent:
-- “For device 4532, summarize the abnormal signals and the last 7–30 days of telemetry trends.”
-
-### 7:30–11:00 — Action #2: 24–48h predicted failures (and how to talk about accuracy)
-Say:
-“Early warning is great, but the real operational unlock is: **what’s likely to fail in the next 24–48 hours**, and what type of failure is it? That’s how you schedule work, parts, and staffing—before downtime hits.”
-
-Copy/paste to Agent:
-- “Which devices are likely to fail in the next 48 hours? Show probability, predicted failure type, and the reason.”
-
-If they ask “is the accuracy real?” say:
-“In the demo, the focus is business workflow: prediction → prioritization → action. In production, we validate accuracy on your labeled incident outcomes and tune the operating point to PatientPoint’s risk tolerance (missed failures vs false alarms).”
-
-### 11:00–14:00 — Action #3: Turn insight into an ops queue (work orders)
-Say:
-“This is where value becomes real: insights become **work orders** with priority, due-by time, and recommended channel—remote vs field—based on predicted failure type and historical success rates.”
-
-Copy/paste to Agent:
-- “What work orders are open right now? Which are P1 and due in the next 24 hours?”
-- “Which work orders require field dispatch vs remote remediation? Summarize counts and top examples.”
-
-Tie to PatientPoint dollars:
-“Every avoided dispatch saves real money. Every hour of avoided downtime protects ad delivery. The key is prioritization and routing—not just alerts.”
-
-### 14:00–17:00 — Action #4: Automated remote remediation (simulated) + escalation
-Say:
-“Now the ‘wow’: automated remote remediation.
-
-Important note for the demo: we’re **not going to run real commands on your endpoints in a demo**. What we *will* show is the full operating model: **how predicted failures turn into automated remediation workflows with audit trails and escalation to field service**.
-
-In production, the same workflow would call your endpoint tooling (MDM/RMM/device management APIs) and create/update tickets in your field service system (e.g., ServiceNow/Salesforce Field Service).”
-
-Copy/paste to Agent:
-- “Pick the highest priority remote work order and provide step-by-step runbook instructions.”
-- “Show recent remote remediation outcomes: successes vs escalations.”
-
-Say:
-“Escalation is not failure—it’s risk management. If the data says display panel failures rarely resolve remotely, we don’t waste time; we dispatch with the right parts.”
-
-### 17:00–19:00 — Evidence grounding (KB + historical outcomes)
-Say:
-“The agent is only valuable if it’s grounded. We combine structured telemetry and outcomes with a searchable maintenance knowledge base of similar incidents.”
-
-Copy/paste to Agent:
-- “For ‘Network Connectivity’ failures, what fixes have worked historically and what is the remote success rate?”
-- “Find similar incidents to device 4512 and summarize the top troubleshooting steps.”
-
-### 19:00–20:00 — Close (value + next steps)
-Say:
-“For PatientPoint, the value is straightforward:
-- **Make money**: fewer missed impressions and stronger partner trust through higher uptime.
-- **Save money**: fewer unnecessary dispatches and lower time-to-diagnose/resolve.
-- **Reduce risk**: predictable operations, governed answers, and an auditable workflow from signal → action → result.
-
-Next step after the demo is simple: connect to your real telemetry stream and incident history, calibrate assumptions with your finance team, and then swap the simulated scoring for production models—without changing the data product or the agent interface.”
+| # | Prompt |
+|---|--------|
+| 1 | What device is in the worst shape right now? |
+| 2 | For that device, show me the last 7 days of temperature, power, and error trends. |
+| 3 | Zoom out: show me fleet health—how many devices are critical, warning, and on the watchlist? |
+| 4 | Which devices are predicted to fail in the next 48 hours? Show probability and failure type. |
+| 5 | What P1 work orders are open? Which require field dispatch vs remote fix? |
+| 6 | For the top remote work order, show me the step-by-step runbook. |
+| 7 | What fixes have worked historically for network connectivity issues? |
+| 8 | How much revenue and cost impact have we seen in the last 30 days? Include the assumptions behind any estimates. |
 
 ---
 
----
-
-## PatientPoint-specific value mapping (use these lines)
-
-### Save money
-- “Reduce unnecessary dispatches by routing high-likelihood remote fixes first.”
-- “Lower mean-time-to-diagnose by using the agent to synthesize telemetry + history + KB instantly.”
-
-### Make money (protect revenue)
-- “Reduce unplanned downtime and missed ad delivery.”
-- “Proactively prioritize screens in high-traffic environments (lobbies/waiting rooms) that carry more revenue impact.”
-
-### Reduce risk
-- “Shift from reactive firefighting to predictable operations (SLAs, staffing, and partner trust).”
-- “Governed AI reduces risk of hallucinated answers—everything is sourced from semantic views or KB search.”
+## The 20-Minute Script
 
 ---
 
-## Questions you should expect (and how to answer)
+### 0:00–1:30 — The Hook (No Slides, No Agent—Just Story)
 
-### “Is this real ML?”
-- “The watchlist scoring and 24–48h predictions are simulated for demo speed and explainability; production would swap in Cortex ML / Snowpark ML models using the same governed data layer.”
+**Say this:**
 
-### “Are the savings real?”
-- “Observed metrics come directly from incident data. Any ‘avoided’ estimate is driven by the assumptions table—you can change it live.”
+> "Let me paint a picture.
+>
+> It's Monday morning. You get a call from a pharma partner—'Our campaign didn't hit impressions this weekend. What happened?'
+>
+> You check the system. Turns out 47 screens went down Friday night. No one knew. By the time field techs were dispatched, you lost $15,000 in ad delivery, the partner is frustrated, and your ops team spent the weekend firefighting instead of with their families.
+>
+> That's the **reactive model**. And it's expensive—not just in dollars, but in trust.
+>
+> Today I'm going to show you how to **never have that Monday morning call again**."
 
-### “What’s required to productionize?”
-- “Replace simulated scoring with production models, connect remote runbooks to endpoint tooling, and integrate with a ticketing/field-service system. The data + governance foundation remains the same.”
+**Then say (Snowflake positioning):**
 
+> "What makes this possible is Snowflake. Not just as a database—but as a **governed system of intelligence**: your data, your business logic, your AI, and your operational workflows—all in one place, all auditable, all explainable."
 
+---
+
+### 1:30–4:00 — One Device in Crisis (The Zoom-In)
+
+**Say:**
+
+> "Let's start with what matters right now. Is anything on fire?"
+
+**Prompt 1:**
+```
+What device is in the worst shape right now?
+```
+
+*Wait for response. The agent will surface a critical device (e.g., Device 4532).*
+
+**Say:**
+
+> "This is Device 4532. The system is telling us it's in trouble. But *why*? Let's look under the hood."
+
+**Prompt 2:**
+```
+For that device, show me the last 7 days of temperature, power, and error trends.
+```
+
+*Wait for response. Point to the trends.*
+
+**Say:**
+
+> "See that? Temperature climbing, power spikes, error rate doubling. In the old world, you'd find out when the clinic calls. Now you know **before it fails**—and you can do something about it."
+
+---
+
+### 4:00–6:00 — Zoom Out to the Fleet (The Scale)
+
+**Say:**
+
+> "That's one device. But PatientPoint has thousands. Let's zoom out."
+
+**Prompt 3:**
+```
+Zoom out: show me fleet health—how many devices are critical, warning, and on the watchlist?
+```
+
+*Wait for response.*
+
+**Say:**
+
+> "So right now, we have [X] critical, [Y] on the watchlist. The watchlist isn't just 'devices with problems'—it's devices **drifting from their own baseline**. That's early warning. You catch issues before they become outages."
+
+---
+
+### 6:00–9:00 — Prediction + Prioritization (The Proactive Shift)
+
+**Say:**
+
+> "Early warning is great. But the real unlock is: **what's going to fail in the next 24–48 hours?** That's how you schedule work, stage parts, and staff your team—before the downtime hits."
+
+**Prompt 4:**
+```
+Which devices are predicted to fail in the next 48 hours? Show probability and failure type.
+```
+
+*Wait for response.*
+
+**Say (pointing to a high-probability device):**
+
+> "Device 4556—61% probability of power supply failure. That's not a guess. That's based on anomaly patterns we've seen lead to failures in historical data. Now I can schedule a tech **tomorrow**, not after the screen goes black."
+
+**If asked "Is this real ML?":**
+
+> "In this demo, the scoring uses explainable heuristics so you can see exactly *why* a device is flagged. In production, you swap in Snowpark ML models—same data, same agent, same workflow. The foundation doesn't change."
+
+---
+
+### 9:00–12:00 — The Ops Queue (Turning Insight into Action)
+
+**Say:**
+
+> "Predictions are great, but operations teams don't work from predictions—they work from **work orders**. So let's see what's actionable right now."
+
+**Prompt 5:**
+```
+What P1 work orders are open? Which require field dispatch vs remote fix?
+```
+
+*Wait for response.*
+
+**Say:**
+
+> "See the split? Some of these can be fixed remotely—no truck roll, no $500 dispatch. Others need a field visit, and we've already staged the right parts because we know the failure type.
+>
+> This is where **money gets saved**. Every remote fix = one avoided dispatch. Every predicted failure = one avoided outage."
+
+---
+
+### 12:00–15:00 — The Magic Moment (Remote Fix Live)
+
+**Say:**
+
+> "Now the 'wow' moment. Let's actually fix something.
+>
+> *Important context*: In a demo, we're not running real commands on real devices. But what I'm about to show you is the **full operating model**—how a predicted failure becomes an automated fix with an audit trail.
+>
+> In production, this same workflow calls your MDM or RMM tooling and updates your ServiceNow tickets. Today, we'll walk through what that looks like."
+
+**Prompt 6:**
+```
+For the top remote work order, show me the step-by-step runbook.
+```
+
+*Wait for response.*
+
+**Say (pointing to the steps):**
+
+> "Step 1: collect network stats. Step 2: reset interface. Step 3: verify recovery. Each step is logged. If it fails, it escalates to field service automatically—with the context attached.
+>
+> **Before AI**: device fails → clinic calls → you dispatch → 6 hours of downtime → $500 cost.
+>
+> **After AI**: device flagged → remote fix triggered → resolved in minutes → no downtime → no cost.
+>
+> That's the difference."
+
+---
+
+### 15:00–17:30 — Grounding (The Agent Isn't Guessing)
+
+**Say:**
+
+> "A common question: 'How do I know the AI isn't making things up?'
+>
+> Fair question. Let me show you how it's grounded."
+
+**Prompt 7:**
+```
+What fixes have worked historically for network connectivity issues?
+```
+
+*Wait for response.*
+
+**Say:**
+
+> "The agent pulled this from a **searchable knowledge base** of past incidents. It's not hallucinating—it's citing real outcomes. 95% remote success rate for network issues. That's why we route network problems to remote first.
+>
+> Every answer is either from a **semantic view** (structured data) or the **knowledge base** (historical incidents). No raw table access. No guesswork. Governed and auditable."
+
+---
+
+### 17:30–19:30 — The ROI (Show the Money)
+
+**Say:**
+
+> "Let's bring it back to business outcomes."
+
+**Prompt 8:**
+```
+How much revenue and cost impact have we seen in the last 30 days? Include the assumptions behind any estimates.
+```
+
+*Wait for response.*
+
+**Say (pointing to the response):**
+
+> "Two things to note:
+>
+> 1. **Observed metrics**—downtime hours, revenue impact, field vs remote events—come directly from incident data. These are real.
+>
+> 2. **Estimated savings**—revenue protected, field cost avoided—are driven by an **explicit assumptions table**. You can see the assumptions right here: $120/hour ad revenue impact, $500/dispatch. We can edit these live to match PatientPoint's actual numbers.
+>
+> We don't fabricate ROI. We show you the math."
+
+---
+
+### 19:30–20:00 — The Close (Ask for Commitment)
+
+**Say:**
+
+> "So here's what we've seen today:
+>
+> - Devices in trouble **before** they fail. *(Pause)* Does that matter to you?"
+
+*Wait for nod/affirmation.*
+
+> - Automated triage so your team works on **what matters**. *(Pause)* Useful?"
+
+*Wait for nod/affirmation.*
+
+> - Field dispatches cut because **remote fixes work**. *(Pause)* Worth exploring?"
+
+*Wait for nod/affirmation.*
+
+> "Great. Here's the next step:
+>
+> A **2-hour workshop** with your real telemetry data. We connect it, run the same watchlist, and show you **your** critical devices—not demo data.
+>
+> Can we get that on the calendar this week?"
+
+---
+
+## Objection Handling (Keep These Ready)
+
+### "Is this real ML?"
+
+> "The demo uses explainable heuristics so you can see the 'why' behind every flag. In production, you plug in Snowpark ML or Cortex ML models—same data foundation, same agent, same workflow. We designed it to be swappable."
+
+### "Are the savings real?"
+
+> "Observed metrics—downtime, incidents, costs—come from your incident history. Estimated savings are driven by an assumptions table you can edit. We show the math; we don't make it up."
+
+### "What does productionization look like?"
+
+> "Three things: (1) Connect your live telemetry stream, (2) integrate remote runbooks with your MDM/RMM tooling, (3) connect work orders to your ticketing system. The Snowflake foundation—data, governance, semantic layer, agent—stays the same."
+
+### "How long to deploy?"
+
+> "The data foundation and agent can be stood up in weeks. Integration with your endpoint tooling and ticketing system depends on your existing stack—typically 4–8 weeks for a production pilot."
+
+---
+
+## Backup Prompts (If You Have Extra Time)
+
+| Scenario | Prompt |
+|----------|--------|
+| They want to see a specific device | "Show me everything about device [ID]: status, trends, predictions, and similar past incidents." |
+| They want to see the assumptions table | "What assumptions drive the cost and revenue estimates? Can I see the table?" |
+| They want to see escalation logic | "When does a remote fix escalate to field service? Show me an example." |
+| They want to see the KB search | "Find incidents similar to device 4512 and summarize the top troubleshooting steps." |
+
+---
+
+## One-Page Cheat Sheet (Print This)
+
+| Time | Beat | Prompt | Money Hook |
+|------|------|--------|------------|
+| 0–1:30 | Hook | *(Story—no prompt)* | "Never have that Monday call again" |
+| 1:30–4:00 | One device | "What device is in the worst shape?" | "Before it fails" |
+| 4:00–6:00 | Fleet | "Zoom out: fleet health" | "Early warning at scale" |
+| 6:00–9:00 | Predictions | "Predicted failures in 48h" | "Schedule work before downtime" |
+| 9:00–12:00 | Ops queue | "P1 work orders—remote vs field" | "Every remote fix = $500 saved" |
+| 12:00–15:00 | Magic moment | "Step-by-step runbook for top remote" | "Crisis to resolution in minutes" |
+| 15:00–17:30 | Grounding | "What's worked for network issues?" | "Governed, not guessing" |
+| 17:30–19:30 | ROI | "Revenue and cost impact + assumptions" | "We show the math" |
+| 19:30–20:00 | Close | *(Ask for workshop)* | "Your data, your devices, this week" |
+
+---
+
+## Final Reminders
+
+1. **Slow down.** Let the agent responses breathe. Silence is powerful.
+2. **Point to the screen.** "See that? That's the signal." Physical gestures anchor attention.
+3. **Use their language.** If they say "dispatch," you say "dispatch." If they say "truck roll," you say "truck roll."
+4. **End with a question.** Never end on a statement. "Can we get that workshop scheduled?" gets a yes or a conversation.
+
+Good luck. Go wow them.
