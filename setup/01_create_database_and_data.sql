@@ -293,62 +293,63 @@ CREATE OR REPLACE TABLE MAINTENANCE_HISTORY (
 
 -- Insert realistic maintenance history using relative dates
 -- All dates are relative to CURRENT_TIMESTAMP() so demo works regardless of when it's run
+-- Using DATEADD with hours for Snowflake compatibility
 INSERT INTO MAINTENANCE_HISTORY 
     (TICKET_ID, DEVICE_ID, CREATED_AT, RESOLVED_AT, ISSUE_TYPE, ISSUE_DESCRIPTION, RESOLUTION_TYPE, RESOLUTION_NOTES, TECHNICIAN_ID, COST_USD)
 -- 90 days ago
-SELECT 'TKT-001', 'DEV-003', DATEADD('day', -90, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 30 minutes', DATEADD('day', -90, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 15 minutes', 'DISPLAY_FREEZE', 'Screen frozen on splash screen, unresponsive to touch', 'REMOTE_FIX', 'Performed remote restart via agent. Display resumed normal operation.', 'REMOTE_AGENT', 0
+SELECT 'TKT-001', 'DEV-003', DATEADD('hour', 8, DATEADD('day', -90, CURRENT_TIMESTAMP())), DATEADD('hour', 9, DATEADD('day', -90, CURRENT_TIMESTAMP())), 'DISPLAY_FREEZE', 'Screen frozen on splash screen, unresponsive to touch', 'REMOTE_FIX', 'Performed remote restart via agent. Display resumed normal operation.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-002', 'DEV-005', DATEADD('day', -87, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 20 minutes', DATEADD('day', -86, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 'NO_NETWORK', 'Device offline, no heartbeat for 6 hours', 'FIELD_DISPATCH', 'Router failure at facility. Replaced ethernet cable and reset network config.', 'TECH-042', 185.00
+SELECT 'TKT-002', 'DEV-005', DATEADD('hour', 14, DATEADD('day', -87, CURRENT_TIMESTAMP())), DATEADD('hour', 11, DATEADD('day', -86, CURRENT_TIMESTAMP())), 'NO_NETWORK', 'Device offline, no heartbeat for 6 hours', 'FIELD_DISPATCH', 'Router failure at facility. Replaced ethernet cable and reset network config.', 'TECH-042', 185.00
 UNION ALL
-SELECT 'TKT-003', 'DEV-008', DATEADD('day', -83, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 45 minutes', DATEADD('day', -83, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 'HIGH_CPU', 'CPU usage consistently above 90%, sluggish performance', 'REMOTE_FIX', 'Killed runaway process and cleared temp files. Scheduled firmware update.', 'REMOTE_AGENT', 0
+SELECT 'TKT-003', 'DEV-008', DATEADD('hour', 10, DATEADD('day', -83, CURRENT_TIMESTAMP())), DATEADD('hour', 11, DATEADD('day', -83, CURRENT_TIMESTAMP())), 'HIGH_CPU', 'CPU usage consistently above 90%, sluggish performance', 'REMOTE_FIX', 'Killed runaway process and cleared temp files. Scheduled firmware update.', 'REMOTE_AGENT', 0
 UNION ALL
 -- 74-70 days ago
-SELECT 'TKT-004', 'DEV-014', DATEADD('day', -74, CURRENT_TIMESTAMP()) + INTERVAL '9 hours', DATEADD('day', -73, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 30 minutes', 'DISPLAY_FAILURE', 'Display showing vertical lines, hardware malfunction suspected', 'REPLACEMENT', 'Display panel replaced. Root cause: power surge damage.', 'TECH-018', 450.00
+SELECT 'TKT-004', 'DEV-014', DATEADD('hour', 9, DATEADD('day', -74, CURRENT_TIMESTAMP())), DATEADD('hour', 14, DATEADD('day', -73, CURRENT_TIMESTAMP())), 'DISPLAY_FAILURE', 'Display showing vertical lines, hardware malfunction suspected', 'REPLACEMENT', 'Display panel replaced. Root cause: power surge damage.', 'TECH-018', 450.00
 UNION ALL
-SELECT 'TKT-005', 'DEV-018', DATEADD('day', -70, CURRENT_TIMESTAMP()) + INTERVAL '16 hours 30 minutes', DATEADD('day', -69, CURRENT_TIMESTAMP()) + INTERVAL '10 hours', 'BOOT_FAILURE', 'Device stuck in boot loop', 'FIELD_DISPATCH', 'Corrupted firmware. Reflashed via USB. Recommended UPS installation.', 'TECH-025', 210.00
+SELECT 'TKT-005', 'DEV-018', DATEADD('hour', 16, DATEADD('day', -70, CURRENT_TIMESTAMP())), DATEADD('hour', 10, DATEADD('day', -69, CURRENT_TIMESTAMP())), 'BOOT_FAILURE', 'Device stuck in boot loop', 'FIELD_DISPATCH', 'Corrupted firmware. Reflashed via USB. Recommended UPS installation.', 'TECH-025', 210.00
 UNION ALL
 -- 65-50 days ago
-SELECT 'TKT-006', 'DEV-020', DATEADD('day', -65, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 15 minutes', DATEADD('day', -65, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 30 minutes', 'MEMORY_LEAK', 'Memory usage climbing to 95%, app crashes', 'REMOTE_FIX', 'Restarted application services and cleared cache. Issue resolved.', 'REMOTE_AGENT', 0
+SELECT 'TKT-006', 'DEV-020', DATEADD('hour', 11, DATEADD('day', -65, CURRENT_TIMESTAMP())), DATEADD('hour', 12, DATEADD('day', -65, CURRENT_TIMESTAMP())), 'MEMORY_LEAK', 'Memory usage climbing to 95%, app crashes', 'REMOTE_FIX', 'Restarted application services and cleared cache. Issue resolved.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-007', 'DEV-025', DATEADD('day', -60, CURRENT_TIMESTAMP()) + INTERVAL '8 hours', DATEADD('day', -60, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 20 minutes', 'CONNECTIVITY', 'Intermittent WiFi disconnections', 'REMOTE_FIX', 'Reset network adapter and updated WiFi driver remotely.', 'REMOTE_AGENT', 0
+SELECT 'TKT-007', 'DEV-025', DATEADD('hour', 8, DATEADD('day', -60, CURRENT_TIMESTAMP())), DATEADD('hour', 9, DATEADD('day', -60, CURRENT_TIMESTAMP())), 'CONNECTIVITY', 'Intermittent WiFi disconnections', 'REMOTE_FIX', 'Reset network adapter and updated WiFi driver remotely.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-008', 'DEV-003', DATEADD('day', -55, CURRENT_TIMESTAMP()) + INTERVAL '13 hours 45 minutes', DATEADD('day', -54, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', 'DISPLAY_FREEZE', 'Recurring freeze issue, third occurrence this month', 'FIELD_DISPATCH', 'Replaced thermal paste and cleaned internal fans. Overheating was root cause.', 'TECH-042', 165.00
+SELECT 'TKT-008', 'DEV-003', DATEADD('hour', 13, DATEADD('day', -55, CURRENT_TIMESTAMP())), DATEADD('hour', 9, DATEADD('day', -54, CURRENT_TIMESTAMP())), 'DISPLAY_FREEZE', 'Recurring freeze issue, third occurrence this month', 'FIELD_DISPATCH', 'Replaced thermal paste and cleaned internal fans. Overheating was root cause.', 'TECH-042', 165.00
 UNION ALL
-SELECT 'TKT-009', 'DEV-012', DATEADD('day', -50, CURRENT_TIMESTAMP()) + INTERVAL '10 hours', DATEADD('day', -50, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 10 minutes', 'SOFTWARE_UPDATE', 'Scheduled firmware update to v3.2.2', 'REMOTE_FIX', 'Successfully pushed firmware update remotely.', 'REMOTE_AGENT', 0
+SELECT 'TKT-009', 'DEV-012', DATEADD('hour', 10, DATEADD('day', -50, CURRENT_TIMESTAMP())), DATEADD('hour', 10, DATEADD('day', -50, CURRENT_TIMESTAMP())), 'SOFTWARE_UPDATE', 'Scheduled firmware update to v3.2.2', 'REMOTE_FIX', 'Successfully pushed firmware update remotely.', 'REMOTE_AGENT', 0
 UNION ALL
 -- 45-30 days ago
-SELECT 'TKT-010', 'DEV-007', DATEADD('day', -44, CURRENT_TIMESTAMP()) + INTERVAL '14 hours', DATEADD('day', -44, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 15 minutes', 'DISPLAY_CALIBRATION', 'Touch calibration off, users reporting missed inputs', 'REMOTE_FIX', 'Ran remote touch calibration routine. Accuracy restored.', 'REMOTE_AGENT', 0
+SELECT 'TKT-010', 'DEV-007', DATEADD('hour', 14, DATEADD('day', -44, CURRENT_TIMESTAMP())), DATEADD('hour', 14, DATEADD('day', -44, CURRENT_TIMESTAMP())), 'DISPLAY_CALIBRATION', 'Touch calibration off, users reporting missed inputs', 'REMOTE_FIX', 'Ran remote touch calibration routine. Accuracy restored.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-011', 'DEV-005', DATEADD('day', -40, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', DATEADD('day', -40, CURRENT_TIMESTAMP()) + INTERVAL '16 hours 45 minutes', 'NO_NETWORK', 'Device offline again, same facility as TKT-002', 'FIELD_DISPATCH', 'Facility network infrastructure unstable. Recommended network audit to facility manager.', 'TECH-042', 185.00
+SELECT 'TKT-011', 'DEV-005', DATEADD('hour', 9, DATEADD('day', -40, CURRENT_TIMESTAMP())), DATEADD('hour', 16, DATEADD('day', -40, CURRENT_TIMESTAMP())), 'NO_NETWORK', 'Device offline again, same facility as TKT-002', 'FIELD_DISPATCH', 'Facility network infrastructure unstable. Recommended network audit to facility manager.', 'TECH-042', 185.00
 UNION ALL
-SELECT 'TKT-012', 'DEV-019', DATEADD('day', -35, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', DATEADD('day', -35, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 5 minutes', 'HIGH_MEMORY', 'Memory at 88%, preemptive maintenance flag', 'REMOTE_FIX', 'Cleared application cache and restarted services proactively.', 'REMOTE_AGENT', 0
+SELECT 'TKT-012', 'DEV-019', DATEADD('hour', 11, DATEADD('day', -35, CURRENT_TIMESTAMP())), DATEADD('hour', 11, DATEADD('day', -35, CURRENT_TIMESTAMP())), 'HIGH_MEMORY', 'Memory at 88%, preemptive maintenance flag', 'REMOTE_FIX', 'Cleared application cache and restarted services proactively.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-013', 'DEV-022', DATEADD('day', -30, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 45 minutes', DATEADD('day', -30, CURRENT_TIMESTAMP()) + INTERVAL '9 hours', 'SLOW_RESPONSE', 'UI lag reported by staff', 'REMOTE_FIX', 'Optimized database queries and cleared log files.', 'REMOTE_AGENT', 0
+SELECT 'TKT-013', 'DEV-022', DATEADD('hour', 8, DATEADD('day', -30, CURRENT_TIMESTAMP())), DATEADD('hour', 9, DATEADD('day', -30, CURRENT_TIMESTAMP())), 'SLOW_RESPONSE', 'UI lag reported by staff', 'REMOTE_FIX', 'Optimized database queries and cleared log files.', 'REMOTE_AGENT', 0
 UNION ALL
 -- 25-15 days ago
-SELECT 'TKT-014', 'DEV-008', DATEADD('day', -25, CURRENT_TIMESTAMP()) + INTERVAL '15 hours 30 minutes', DATEADD('day', -24, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 'OVERHEATING', 'CPU temp above 80C, automatic shutdown triggered', 'FIELD_DISPATCH', 'Replaced cooling fan and cleaned dust filters.', 'TECH-018', 195.00
+SELECT 'TKT-014', 'DEV-008', DATEADD('hour', 15, DATEADD('day', -25, CURRENT_TIMESTAMP())), DATEADD('hour', 11, DATEADD('day', -24, CURRENT_TIMESTAMP())), 'OVERHEATING', 'CPU temp above 80C, automatic shutdown triggered', 'FIELD_DISPATCH', 'Replaced cooling fan and cleaned dust filters.', 'TECH-018', 195.00
 UNION ALL
-SELECT 'TKT-015', 'DEV-014', DATEADD('day', -20, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 15 minutes', DATEADD('day', -20, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 30 minutes', 'DISPLAY_FLICKER', 'Occasional screen flicker', 'REMOTE_FIX', 'Adjusted display refresh rate settings remotely.', 'REMOTE_AGENT', 0
+SELECT 'TKT-015', 'DEV-014', DATEADD('hour', 10, DATEADD('day', -20, CURRENT_TIMESTAMP())), DATEADD('hour', 10, DATEADD('day', -20, CURRENT_TIMESTAMP())), 'DISPLAY_FLICKER', 'Occasional screen flicker', 'REMOTE_FIX', 'Adjusted display refresh rate settings remotely.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-016', 'DEV-001', DATEADD('day', -17, CURRENT_TIMESTAMP()) + INTERVAL '9 hours', DATEADD('day', -17, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 12 minutes', 'HIGH_CPU', 'CPU usage spike detected by AI monitoring', 'REMOTE_FIX', 'AI agent proactively restarted services before user impact.', 'REMOTE_AGENT', 0
+SELECT 'TKT-016', 'DEV-001', DATEADD('hour', 9, DATEADD('day', -17, CURRENT_TIMESTAMP())), DATEADD('hour', 9, DATEADD('day', -17, CURRENT_TIMESTAMP())), 'HIGH_CPU', 'CPU usage spike detected by AI monitoring', 'REMOTE_FIX', 'AI agent proactively restarted services before user impact.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-017', 'DEV-006', DATEADD('day', -16, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 30 minutes', DATEADD('day', -16, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 45 minutes', 'CONNECTIVITY', 'Brief network latency spike', 'REMOTE_FIX', 'Reset network stack and DNS cache remotely.', 'REMOTE_AGENT', 0
+SELECT 'TKT-017', 'DEV-006', DATEADD('hour', 14, DATEADD('day', -16, CURRENT_TIMESTAMP())), DATEADD('hour', 15, DATEADD('day', -16, CURRENT_TIMESTAMP())), 'CONNECTIVITY', 'Brief network latency spike', 'REMOTE_FIX', 'Reset network stack and DNS cache remotely.', 'REMOTE_AGENT', 0
 UNION ALL
 -- Current month (last 14 days) - These will show up in "this month" queries
-SELECT 'TKT-018', 'DEV-011', DATEADD('day', -12, CURRENT_TIMESTAMP()) + INTERVAL '10 hours', DATEADD('day', -12, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 8 minutes', 'MEMORY_LEAK', 'Predictive alert: memory trending high', 'REMOTE_FIX', 'Proactive cache clear prevented potential crash.', 'REMOTE_AGENT', 0
+SELECT 'TKT-018', 'DEV-011', DATEADD('hour', 10, DATEADD('day', -12, CURRENT_TIMESTAMP())), DATEADD('hour', 10, DATEADD('day', -12, CURRENT_TIMESTAMP())), 'MEMORY_LEAK', 'Predictive alert: memory trending high', 'REMOTE_FIX', 'Proactive cache clear prevented potential crash.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-019', 'DEV-016', DATEADD('day', -10, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 15 minutes', DATEADD('day', -10, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 25 minutes', 'SOFTWARE_UPDATE', 'Scheduled security patch deployment', 'REMOTE_FIX', 'Successfully applied security patches across batch.', 'REMOTE_AGENT', 0
+SELECT 'TKT-019', 'DEV-016', DATEADD('hour', 11, DATEADD('day', -10, CURRENT_TIMESTAMP())), DATEADD('hour', 11, DATEADD('day', -10, CURRENT_TIMESTAMP())), 'SOFTWARE_UPDATE', 'Scheduled security patch deployment', 'REMOTE_FIX', 'Successfully applied security patches across batch.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-020', 'DEV-021', DATEADD('day', -8, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 30 minutes', DATEADD('day', -8, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 42 minutes', 'SLOW_RESPONSE', 'AI detected performance degradation', 'REMOTE_FIX', 'Optimized application settings and cleared temp files.', 'REMOTE_AGENT', 0
+SELECT 'TKT-020', 'DEV-021', DATEADD('hour', 8, DATEADD('day', -8, CURRENT_TIMESTAMP())), DATEADD('hour', 9, DATEADD('day', -8, CURRENT_TIMESTAMP())), 'SLOW_RESPONSE', 'AI detected performance degradation', 'REMOTE_FIX', 'Optimized application settings and cleared temp files.', 'REMOTE_AGENT', 0
 UNION ALL
 -- Very recent (last week)
-SELECT 'TKT-021', 'DEV-002', DATEADD('day', -5, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', DATEADD('day', -5, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 45 minutes', 'HIGH_CPU', 'Proactive CPU throttling detected', 'REMOTE_FIX', 'Restarted background services, performance restored.', 'REMOTE_AGENT', 0
+SELECT 'TKT-021', 'DEV-002', DATEADD('hour', 9, DATEADD('day', -5, CURRENT_TIMESTAMP())), DATEADD('hour', 10, DATEADD('day', -5, CURRENT_TIMESTAMP())), 'HIGH_CPU', 'Proactive CPU throttling detected', 'REMOTE_FIX', 'Restarted background services, performance restored.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-022', 'DEV-009', DATEADD('day', -3, CURRENT_TIMESTAMP()) + INTERVAL '14 hours', DATEADD('day', -3, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 12 minutes', 'CONNECTIVITY', 'Intermittent connection drops', 'REMOTE_FIX', 'Reset network adapter and cleared DNS cache.', 'REMOTE_AGENT', 0
+SELECT 'TKT-022', 'DEV-009', DATEADD('hour', 14, DATEADD('day', -3, CURRENT_TIMESTAMP())), DATEADD('hour', 14, DATEADD('day', -3, CURRENT_TIMESTAMP())), 'CONNECTIVITY', 'Intermittent connection drops', 'REMOTE_FIX', 'Reset network adapter and cleared DNS cache.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-023', 'DEV-015', DATEADD('day', -2, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 30 minutes', DATEADD('day', -2, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 40 minutes', 'MEMORY_LEAK', 'AI predictive alert: memory trending upward', 'REMOTE_FIX', 'Proactive cache clear and service restart.', 'REMOTE_AGENT', 0
+SELECT 'TKT-023', 'DEV-015', DATEADD('hour', 10, DATEADD('day', -2, CURRENT_TIMESTAMP())), DATEADD('hour', 11, DATEADD('day', -2, CURRENT_TIMESTAMP())), 'MEMORY_LEAK', 'AI predictive alert: memory trending upward', 'REMOTE_FIX', 'Proactive cache clear and service restart.', 'REMOTE_AGENT', 0
 UNION ALL
-SELECT 'TKT-024', 'DEV-023', DATEADD('day', -1, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', DATEADD('day', -1, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 15 minutes', 'DISPLAY_FREEZE', 'Brief display freeze reported', 'REMOTE_FIX', 'Remote restart resolved issue within 15 minutes.', 'REMOTE_AGENT', 0;
+SELECT 'TKT-024', 'DEV-023', DATEADD('hour', 11, DATEADD('day', -1, CURRENT_TIMESTAMP())), DATEADD('hour', 11, DATEADD('day', -1, CURRENT_TIMESTAMP())), 'DISPLAY_FREEZE', 'Brief display freeze reported', 'REMOTE_FIX', 'Remote restart resolved issue within 15 minutes.', 'REMOTE_AGENT', 0;
 
 -- ============================================================================
 -- TROUBLESHOOTING KNOWLEDGE BASE
@@ -446,27 +447,28 @@ CREATE OR REPLACE TABLE DEVICE_DOWNTIME (
 
 -- Insert sample downtime records (correlate with maintenance history)
 -- Insert downtime data using relative dates to match maintenance history
+-- Using DATEADD with hours for Snowflake compatibility
 INSERT INTO DEVICE_DOWNTIME (DEVICE_ID, DOWNTIME_START, DOWNTIME_END, DOWNTIME_HOURS, CAUSE, TICKET_ID, REVENUE_LOSS_USD, IMPRESSIONS_LOST)
-SELECT 'DEV-005', DATEADD('day', -87, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 20 minutes', DATEADD('day', -86, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 20.67, 'NETWORK_OUTAGE', 'TKT-002', 258.38, 430
+SELECT 'DEV-005', DATEADD('hour', 14, DATEADD('day', -87, CURRENT_TIMESTAMP())), DATEADD('hour', 11, DATEADD('day', -86, CURRENT_TIMESTAMP())), 20.67, 'NETWORK_OUTAGE', 'TKT-002', 258.38, 430
 UNION ALL
-SELECT 'DEV-014', DATEADD('day', -74, CURRENT_TIMESTAMP()) + INTERVAL '9 hours', DATEADD('day', -73, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 30 minutes', 29.5, 'HARDWARE_FAILURE', 'TKT-004', 368.75, 615
+SELECT 'DEV-014', DATEADD('hour', 9, DATEADD('day', -74, CURRENT_TIMESTAMP())), DATEADD('hour', 14, DATEADD('day', -73, CURRENT_TIMESTAMP())), 29.5, 'HARDWARE_FAILURE', 'TKT-004', 368.75, 615
 UNION ALL
-SELECT 'DEV-018', DATEADD('day', -70, CURRENT_TIMESTAMP()) + INTERVAL '16 hours 30 minutes', DATEADD('day', -69, CURRENT_TIMESTAMP()) + INTERVAL '10 hours', 17.5, 'SOFTWARE_ISSUE', 'TKT-005', 218.75, 365
+SELECT 'DEV-018', DATEADD('hour', 16, DATEADD('day', -70, CURRENT_TIMESTAMP())), DATEADD('hour', 10, DATEADD('day', -69, CURRENT_TIMESTAMP())), 17.5, 'SOFTWARE_ISSUE', 'TKT-005', 218.75, 365
 UNION ALL
-SELECT 'DEV-003', DATEADD('day', -55, CURRENT_TIMESTAMP()) + INTERVAL '13 hours 45 minutes', DATEADD('day', -54, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', 19.75, 'HARDWARE_FAILURE', 'TKT-008', 246.88, 410
+SELECT 'DEV-003', DATEADD('hour', 13, DATEADD('day', -55, CURRENT_TIMESTAMP())), DATEADD('hour', 9, DATEADD('day', -54, CURRENT_TIMESTAMP())), 19.75, 'HARDWARE_FAILURE', 'TKT-008', 246.88, 410
 UNION ALL
-SELECT 'DEV-005', DATEADD('day', -40, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', DATEADD('day', -40, CURRENT_TIMESTAMP()) + INTERVAL '16 hours 45 minutes', 7.25, 'NETWORK_OUTAGE', 'TKT-011', 90.63, 150
+SELECT 'DEV-005', DATEADD('hour', 9, DATEADD('day', -40, CURRENT_TIMESTAMP())), DATEADD('hour', 16, DATEADD('day', -40, CURRENT_TIMESTAMP())), 7.25, 'NETWORK_OUTAGE', 'TKT-011', 90.63, 150
 UNION ALL
-SELECT 'DEV-008', DATEADD('day', -25, CURRENT_TIMESTAMP()) + INTERVAL '15 hours 30 minutes', DATEADD('day', -24, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 19.5, 'HARDWARE_FAILURE', 'TKT-014', 243.75, 405
+SELECT 'DEV-008', DATEADD('hour', 15, DATEADD('day', -25, CURRENT_TIMESTAMP())), DATEADD('hour', 11, DATEADD('day', -24, CURRENT_TIMESTAMP())), 19.5, 'HARDWARE_FAILURE', 'TKT-014', 243.75, 405
 UNION ALL
 -- Some unplanned downtime without tickets (discovered by monitoring)
-SELECT 'DEV-020', DATEADD('day', -67, CURRENT_TIMESTAMP()) + INTERVAL '2 hours', DATEADD('day', -67, CURRENT_TIMESTAMP()) + INTERVAL '6 hours 30 minutes', 4.5, 'SOFTWARE_ISSUE', NULL, 56.25, 95
+SELECT 'DEV-020', DATEADD('hour', 2, DATEADD('day', -67, CURRENT_TIMESTAMP())), DATEADD('hour', 6, DATEADD('day', -67, CURRENT_TIMESTAMP())), 4.5, 'SOFTWARE_ISSUE', NULL, 56.25, 95
 UNION ALL
-SELECT 'DEV-025', DATEADD('day', -53, CURRENT_TIMESTAMP()) + INTERVAL '22 hours', DATEADD('day', -52, CURRENT_TIMESTAMP()) + INTERVAL '1 hour 30 minutes', 3.5, 'NETWORK_OUTAGE', NULL, 43.75, 75
+SELECT 'DEV-025', DATEADD('hour', 22, DATEADD('day', -53, CURRENT_TIMESTAMP())), DATEADD('hour', 1, DATEADD('day', -52, CURRENT_TIMESTAMP())), 3.5, 'NETWORK_OUTAGE', NULL, 43.75, 75
 UNION ALL
-SELECT 'DEV-014', DATEADD('day', -43, CURRENT_TIMESTAMP()) + INTERVAL '8 hours', DATEADD('day', -43, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 15 minutes', 1.25, 'SOFTWARE_ISSUE', NULL, 15.63, 25
+SELECT 'DEV-014', DATEADD('hour', 8, DATEADD('day', -43, CURRENT_TIMESTAMP())), DATEADD('hour', 9, DATEADD('day', -43, CURRENT_TIMESTAMP())), 1.25, 'SOFTWARE_ISSUE', NULL, 15.63, 25
 UNION ALL
-SELECT 'DEV-003', DATEADD('day', -27, CURRENT_TIMESTAMP()) + INTERVAL '14 hours', DATEADD('day', -27, CURRENT_TIMESTAMP()) + INTERVAL '15 hours 30 minutes', 1.5, 'SOFTWARE_ISSUE', NULL, 18.75, 30;
+SELECT 'DEV-003', DATEADD('hour', 14, DATEADD('day', -27, CURRENT_TIMESTAMP())), DATEADD('hour', 15, DATEADD('day', -27, CURRENT_TIMESTAMP())), 1.5, 'SOFTWARE_ISSUE', NULL, 18.75, 30;
 
 -- ============================================================================
 -- PROVIDER FEEDBACK TABLE
