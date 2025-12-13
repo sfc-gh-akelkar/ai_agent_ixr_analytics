@@ -210,8 +210,39 @@ $$;
 -- Truncate executions for idempotent demo re-runs
 TRUNCATE TABLE OPERATIONS.REMOTE_EXECUTIONS;
 
--- Convenience: execute a few remote work orders so exec KPIs have non-zero "estimated" metrics.
-CALL OPERATIONS.EXECUTE_REMOTE_QUEUE(3);
+-- Note: The auto-execute of remote work orders is disabled due to procedure complexity.
+-- To populate remote executions for exec KPIs, manually insert a few demo records:
+INSERT INTO OPERATIONS.REMOTE_EXECUTIONS (
+  EXECUTION_ID, WORK_ORDER_ID, DEVICE_ID, FAILURE_TYPE, RUNBOOK_ID,
+  STARTED_AT, ENDED_AT, STATUS, OUTCOME_NOTES, SIGNALS
+)
+SELECT
+  UUID_STRING(),
+  wo.WORK_ORDER_ID,
+  wo.DEVICE_ID,
+  wo.ISSUE_TYPE,
+  rb.RUNBOOK_ID,
+  DATEADD('minute', -10, (SELECT DEMO_AS_OF_TS FROM PREDICTIVE_MAINTENANCE.OPERATIONS.V_DEMO_TIME)),
+  DATEADD('minute', -5, (SELECT DEMO_AS_OF_TS FROM PREDICTIVE_MAINTENANCE.OPERATIONS.V_DEMO_TIME)),
+  'SUCCESS',
+  'Remote runbook completed successfully (demo seed).',
+  wo.CONTEXT
+FROM PREDICTIVE_MAINTENANCE.ANALYTICS.V_WORK_ORDERS_CURRENT wo
+LEFT JOIN PREDICTIVE_MAINTENANCE.OPERATIONS.REMOTE_RUNBOOKS rb
+  ON wo.ISSUE_TYPE = rb.FAILURE_TYPE
+WHERE wo.RECOMMENDED_CHANNEL = 'REMOTE'
+LIMIT 3;
+
+-- Update executed work orders to COMPLETED
+UPDATE OPERATIONS.WORK_ORDERS wo
+SET
+  STATUS = 'COMPLETED',
+  UPDATED_AT = DATEADD('minute', -5, (SELECT DEMO_AS_OF_TS FROM PREDICTIVE_MAINTENANCE.OPERATIONS.V_DEMO_TIME)),
+  NOTES = COALESCE(NOTES, '') || ' | Remote execution: SUCCESS (demo seed)'
+WHERE EXISTS (
+  SELECT 1 FROM OPERATIONS.REMOTE_EXECUTIONS re
+  WHERE re.WORK_ORDER_ID = wo.WORK_ORDER_ID
+);
 
 SELECT 'Remote remediation objects created ✅' AS STATUS;
 
