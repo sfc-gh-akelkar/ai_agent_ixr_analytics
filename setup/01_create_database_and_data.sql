@@ -1029,3 +1029,217 @@ SELECT 'TECHNICIANS', COUNT(*) FROM TECHNICIANS
 UNION ALL
 SELECT 'WORK_ORDERS', COUNT(*) FROM WORK_ORDERS;
 
+-- ============================================================================
+-- SIMULATED EXTERNAL SERVICE INTEGRATION
+-- This demonstrates how Cortex Agents can trigger external actions
+-- In production, these would be actual API calls via External Functions
+-- For demo purposes, we log what WOULD be sent to external systems
+-- ============================================================================
+
+-- Table to log simulated external API calls
+CREATE OR REPLACE TABLE EXTERNAL_ACTION_LOG (
+    ACTION_ID VARCHAR(36) DEFAULT UUID_STRING() PRIMARY KEY,
+    TIMESTAMP TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+    ACTION_TYPE VARCHAR(50),      -- DEVICE_COMMAND, ALERT, WORK_ORDER, NOTIFICATION
+    TARGET_SYSTEM VARCHAR(100),   -- Device Management API, ServiceNow, Slack, PagerDuty
+    TARGET_DEVICE_ID VARCHAR(20),
+    COMMAND VARCHAR(100),         -- RESTART_SERVICES, CLEAR_CACHE, UPDATE_FIRMWARE, etc.
+    PAYLOAD VARIANT,              -- Full JSON payload that would be sent
+    STATUS VARCHAR(20) DEFAULT 'SIMULATED',  -- SIMULATED, PENDING, SENT, FAILED
+    INITIATED_BY VARCHAR(100),    -- AI_AGENT, SCHEDULED_TASK, MANUAL
+    NOTES TEXT
+);
+
+-- Stored procedure to simulate sending a device command
+-- In production, this would call an External Function to hit the device management API
+CREATE OR REPLACE PROCEDURE SEND_DEVICE_COMMAND(
+    DEVICE_ID VARCHAR,
+    COMMAND VARCHAR,
+    REASON VARCHAR
+)
+RETURNS VARIANT
+LANGUAGE SQL
+AS
+$$
+DECLARE
+    action_id VARCHAR;
+    device_info VARIANT;
+    result VARIANT;
+BEGIN
+    -- Get device information
+    SELECT OBJECT_CONSTRUCT(
+        'device_id', DEVICE_ID,
+        'facility', FACILITY_NAME,
+        'location', CONCAT(LOCATION_CITY, ', ', LOCATION_STATE),
+        'model', DEVICE_MODEL,
+        'current_status', STATUS
+    ) INTO device_info
+    FROM DEVICE_INVENTORY
+    WHERE DEVICE_ID = :DEVICE_ID;
+    
+    -- Log the simulated action
+    INSERT INTO EXTERNAL_ACTION_LOG (
+        ACTION_TYPE, TARGET_SYSTEM, TARGET_DEVICE_ID, COMMAND, PAYLOAD, INITIATED_BY, NOTES
+    )
+    SELECT 
+        'DEVICE_COMMAND',
+        'PatientPoint Device Management API',
+        :DEVICE_ID,
+        :COMMAND,
+        OBJECT_CONSTRUCT(
+            'api_endpoint', 'https://api.patientpoint.com/v1/devices/' || :DEVICE_ID || '/command',
+            'method', 'POST',
+            'headers', OBJECT_CONSTRUCT('Authorization', 'Bearer ***', 'Content-Type', 'application/json'),
+            'body', OBJECT_CONSTRUCT(
+                'device_id', :DEVICE_ID,
+                'command', :COMMAND,
+                'reason', :REASON,
+                'initiated_by', 'CORTEX_AGENT',
+                'timestamp', CURRENT_TIMESTAMP()
+            ),
+            'device_info', :device_info
+        ),
+        'AI_AGENT',
+        'Simulated API call - In production, this would send command to device via External Function';
+    
+    -- Return what would be sent
+    result := OBJECT_CONSTRUCT(
+        'status', 'SIMULATED',
+        'message', 'Command logged successfully. In production, this would trigger: ' || :COMMAND || ' on device ' || :DEVICE_ID,
+        'device_id', :DEVICE_ID,
+        'command', :COMMAND,
+        'reason', :REASON,
+        'api_endpoint', 'https://api.patientpoint.com/v1/devices/' || :DEVICE_ID || '/command',
+        'note', 'To implement in production: Create External Function connected to Device Management API'
+    );
+    
+    RETURN result;
+END;
+$$;
+
+-- Stored procedure to simulate sending an alert/notification
+CREATE OR REPLACE PROCEDURE SEND_ALERT(
+    ALERT_TYPE VARCHAR,      -- SLACK, PAGERDUTY, EMAIL, SMS
+    RECIPIENT VARCHAR,       -- Channel name, email, phone
+    DEVICE_ID VARCHAR,
+    MESSAGE VARCHAR
+)
+RETURNS VARIANT
+LANGUAGE SQL
+AS
+$$
+BEGIN
+    INSERT INTO EXTERNAL_ACTION_LOG (
+        ACTION_TYPE, TARGET_SYSTEM, TARGET_DEVICE_ID, COMMAND, PAYLOAD, INITIATED_BY, NOTES
+    )
+    VALUES (
+        'ALERT',
+        :ALERT_TYPE,
+        :DEVICE_ID,
+        'SEND_NOTIFICATION',
+        OBJECT_CONSTRUCT(
+            'alert_type', :ALERT_TYPE,
+            'recipient', :RECIPIENT,
+            'device_id', :DEVICE_ID,
+            'message', :MESSAGE,
+            'timestamp', CURRENT_TIMESTAMP(),
+            'priority', 'HIGH'
+        ),
+        'AI_AGENT',
+        'Simulated notification - Would send to ' || :ALERT_TYPE || ' via External Function'
+    );
+    
+    RETURN OBJECT_CONSTRUCT(
+        'status', 'SIMULATED',
+        'message', 'Alert would be sent to ' || :RECIPIENT || ' via ' || :ALERT_TYPE,
+        'device_id', :DEVICE_ID
+    );
+END;
+$$;
+
+-- Stored procedure to simulate creating a ServiceNow incident
+CREATE OR REPLACE PROCEDURE CREATE_SERVICENOW_INCIDENT(
+    DEVICE_ID VARCHAR,
+    PRIORITY VARCHAR,
+    DESCRIPTION VARCHAR
+)
+RETURNS VARIANT
+LANGUAGE SQL
+AS
+$$
+DECLARE
+    incident_number VARCHAR;
+BEGIN
+    incident_number := 'INC' || TO_CHAR(CURRENT_TIMESTAMP(), 'YYYYMMDDHH24MISS');
+    
+    INSERT INTO EXTERNAL_ACTION_LOG (
+        ACTION_TYPE, TARGET_SYSTEM, TARGET_DEVICE_ID, COMMAND, PAYLOAD, INITIATED_BY, NOTES
+    )
+    VALUES (
+        'WORK_ORDER',
+        'ServiceNow',
+        :DEVICE_ID,
+        'CREATE_INCIDENT',
+        OBJECT_CONSTRUCT(
+            'incident_number', :incident_number,
+            'api_endpoint', 'https://patientpoint.service-now.com/api/now/table/incident',
+            'method', 'POST',
+            'body', OBJECT_CONSTRUCT(
+                'short_description', 'Device ' || :DEVICE_ID || ' requires attention',
+                'description', :DESCRIPTION,
+                'priority', :PRIORITY,
+                'category', 'Hardware',
+                'subcategory', 'HealthScreen Device',
+                'assignment_group', 'Field Services',
+                'caller_id', 'AI_AGENT'
+            )
+        ),
+        'AI_AGENT',
+        'Simulated ServiceNow incident creation - ' || :incident_number
+    );
+    
+    RETURN OBJECT_CONSTRUCT(
+        'status', 'SIMULATED',
+        'incident_number', :incident_number,
+        'message', 'ServiceNow incident would be created via Native App or API integration',
+        'device_id', :DEVICE_ID,
+        'priority', :PRIORITY
+    );
+END;
+$$;
+
+-- View to show recent external actions (for demo)
+CREATE OR REPLACE VIEW V_RECENT_EXTERNAL_ACTIONS AS
+SELECT 
+    TIMESTAMP,
+    ACTION_TYPE,
+    TARGET_SYSTEM,
+    TARGET_DEVICE_ID as DEVICE_ID,
+    COMMAND,
+    STATUS,
+    INITIATED_BY,
+    PAYLOAD:api_endpoint::VARCHAR as API_ENDPOINT,
+    NOTES
+FROM EXTERNAL_ACTION_LOG
+ORDER BY TIMESTAMP DESC
+LIMIT 20;
+
+-- Insert some sample historical actions to show the pattern
+INSERT INTO EXTERNAL_ACTION_LOG (TIMESTAMP, ACTION_TYPE, TARGET_SYSTEM, TARGET_DEVICE_ID, COMMAND, PAYLOAD, STATUS, INITIATED_BY, NOTES)
+SELECT DATEADD('hour', -2, CURRENT_TIMESTAMP()), 'DEVICE_COMMAND', 'PatientPoint Device Management API', 'DEV-003', 'RESTART_SERVICES', 
+    PARSE_JSON('{"api_endpoint": "https://api.patientpoint.com/v1/devices/DEV-003/command", "command": "RESTART_SERVICES"}'),
+    'SIMULATED', 'AI_AGENT', 'High CPU detected - AI agent initiated remote restart'
+UNION ALL
+SELECT DATEADD('hour', -1, CURRENT_TIMESTAMP()), 'ALERT', 'Slack', 'DEV-005', 'SEND_NOTIFICATION',
+    PARSE_JSON('{"channel": "#device-alerts", "message": "DEV-005 at Springfield showing degraded status"}'),
+    'SIMULATED', 'AI_AGENT', 'Proactive alert sent to operations team'
+UNION ALL
+SELECT DATEADD('minute', -30, CURRENT_TIMESTAMP()), 'WORK_ORDER', 'ServiceNow', 'DEV-008', 'CREATE_INCIDENT',
+    PARSE_JSON('{"incident_number": "INC20241213143000", "priority": "HIGH", "description": "Overheating detected"}'),
+    'SIMULATED', 'AI_AGENT', 'Work order created for field dispatch';
+
+-- Grant execute on procedures
+GRANT USAGE ON PROCEDURE SEND_DEVICE_COMMAND(VARCHAR, VARCHAR, VARCHAR) TO ROLE SF_INTELLIGENCE_DEMO;
+GRANT USAGE ON PROCEDURE SEND_ALERT(VARCHAR, VARCHAR, VARCHAR, VARCHAR) TO ROLE SF_INTELLIGENCE_DEMO;
+GRANT USAGE ON PROCEDURE CREATE_SERVICENOW_INCIDENT(VARCHAR, VARCHAR, VARCHAR) TO ROLE SF_INTELLIGENCE_DEMO;
+

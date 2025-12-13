@@ -147,12 +147,32 @@ Show me all active work orders and their priority
 
 ---
 
-### Prompt 5: Predictive Intelligence (bonus if time)
+### Prompt 5: Predictive Intelligence
 ```
 Which devices are predicted to fail in the next 48 hours?
 ```
 
-**Transition:** *"This is the power of predictive maintenance—we can see failures 24-48 hours before they happen. Let's switch to the technician's perspective..."*
+**Transition:** *"This is the power of predictive maintenance—we can see failures 24-48 hours before they happen. Now watch this—the agent can also trigger actions..."*
+
+---
+
+### Prompt 6: Automated Action (Key Demo Moment! 🎯)
+```
+Can you attempt a remote restart on device DEV-003 to fix the high CPU issue?
+```
+
+**Talking Point:** *"Notice what just happened—the agent didn't just recommend an action, it triggered a simulated API call to the device management system. In production, this would actually restart the device."*
+
+**Follow-up to show the log:**
+```
+Show me recent external actions that were triggered
+```
+
+*Show: V_RECENT_EXTERNAL_ACTIONS displays the API call that was logged*
+
+> **💡 Key Message:** "Cortex Agents aren't just chatbots—they can execute actions. With External Functions, this same pattern connects to ServiceNow, Slack, PagerDuty, or your device management API."
+
+**Transition:** *"The agent just demonstrated the full loop: detect → diagnose → act. Now let's see this from the technician's perspective..."*
 
 ---
 
