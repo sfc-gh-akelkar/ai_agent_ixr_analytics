@@ -141,19 +141,18 @@ CREATE OR REPLACE AGENT DEVICE_MAINTENANCE_AGENT
       3. Calculate ROI: (Cost Savings + Revenue Protected) / Total Investment
       4. Present with month-over-month trends if available
       
-      Automated Remediation Workflow (Simulated for Demo):
+      Automated Remediation Workflow:
       When user requests a remote fix or action:
-      1. Use DeviceFleetAnalytics to identify the device and issue
-      2. Search TroubleshootingGuide to determine if remote fix is possible
-      3. Describe the action that WOULD be taken:
-         - For remote fixes: "Sending RESTART_SERVICES command to DEV-XXX via Device API"
-         - For alerts: "Sending alert to #device-alerts channel via Slack integration"
-         - For tickets: "Creating ServiceNow incident INC-XXXXX for field dispatch"
-      4. Explain the expected outcome and next steps
-      5. Use ViewRecentActions to show the audit log of past actions
+      1. Use DeviceFleetAnalytics to identify the device and current issue
+      2. Search TroubleshootingGuide to determine if remote fix is possible and get commands
+      3. If remote fix is appropriate (success rate >70%), use SendDeviceCommand to execute it
+      4. Use SendAlert to notify the operations team of the action taken
+      5. If remote fix not possible or failed, use CreateServiceNowIncident for field dispatch
+      6. Use ViewRecentActions to confirm the action was logged and show the audit trail
       
-      Note: In production, these actions would call stored procedures that integrate
-      with external systems (Device API, Slack, ServiceNow, PagerDuty, etc.).
+      Note: These actions are SIMULATED for demo purposes. The procedures log what
+      WOULD be sent to external systems (Device API, Slack, ServiceNow, PagerDuty, etc.)
+      In production, these would make actual API calls to those systems.
 
     response: |
       Style:
@@ -346,9 +345,118 @@ CREATE OR REPLACE AGENT DEVICE_MAINTENANCE_AGENT
         description: "Generates visualizations from data for trends, distributions, and comparisons"
 
     # =========================================================================
-    # ACTION AUDIT TOOL - View logged actions from external systems
-    # Note: Actual action execution is handled by stored procedures that can be
-    # called directly from SQL. The agent describes what actions would be taken.
+    # CUSTOM ACTION TOOLS - Execute remote fixes and create tickets (simulated)
+    # These are stored procedures that log what WOULD be sent to external systems
+    # =========================================================================
+
+    - tool_spec:
+        type: "generic"
+        name: "SendDeviceCommand"
+        description: |
+          Sends a remote command to a device for automated remediation.
+          This is SIMULATED for demo purposes - logs what would be sent to the Device API.
+          
+          Available Commands:
+          - RESTART_SERVICES: Restart application services (fixes HIGH_CPU, MEMORY_LEAK)
+          - CLEAR_CACHE: Clear application cache (fixes SLOW_RESPONSE)
+          - RESET_NETWORK: Reset network adapter (fixes CONNECTIVITY issues)
+          - FORCE_REBOOT: Full device restart (last resort)
+          
+          When to Use:
+          - User explicitly requests a remote fix attempt
+          - Device has issue that can be fixed remotely (check TroubleshootingGuide first)
+          - Issue has >70% remote fix success rate
+        input_schema:
+          type: "object"
+          properties:
+            device_id:
+              type: "string"
+              description: "Device ID to send command to (e.g., DEV-003)"
+            command:
+              type: "string"
+              description: "Command to execute: RESTART_SERVICES, CLEAR_CACHE, RESET_NETWORK, or FORCE_REBOOT"
+            reason:
+              type: "string"
+              description: "Reason for the command (e.g., High CPU detected by monitoring)"
+          required:
+            - device_id
+            - command
+            - reason
+
+    - tool_spec:
+        type: "generic"
+        name: "SendAlert"
+        description: |
+          Sends an alert notification to operations teams via Slack, PagerDuty, or email.
+          This is SIMULATED for demo purposes - logs what would be sent.
+          
+          Alert Types:
+          - SLACK: Send to a Slack channel (e.g., #device-alerts)
+          - PAGERDUTY: Create a PagerDuty incident for on-call
+          - EMAIL: Send email notification
+          
+          When to Use:
+          - Critical device issue detected that needs human attention
+          - Automated fix failed and escalation is needed
+          - Pattern detected (e.g., multiple failures at same facility)
+        input_schema:
+          type: "object"
+          properties:
+            alert_type:
+              type: "string"
+              description: "Type of alert: SLACK, PAGERDUTY, or EMAIL"
+            recipient:
+              type: "string"
+              description: "Recipient: channel name (e.g., #device-alerts), email, or on-call"
+            device_id:
+              type: "string"
+              description: "Device ID this alert is about"
+            message:
+              type: "string"
+              description: "Alert message content"
+          required:
+            - alert_type
+            - recipient
+            - device_id
+            - message
+
+    - tool_spec:
+        type: "generic"
+        name: "CreateServiceNowIncident"
+        description: |
+          Creates a ServiceNow incident/work order for field dispatch or tracking.
+          This is SIMULATED for demo purposes - logs what would be created.
+          
+          Priority Levels:
+          - CRITICAL: Device offline, revenue impacted, dispatch within 4 hours
+          - HIGH: Device degraded, failure imminent, dispatch within 24 hours
+          - MEDIUM: Preventive maintenance, schedule within 1 week
+          - LOW: Routine check, schedule at convenience
+          
+          When to Use:
+          - Remote fix not possible (hardware issue)
+          - Remote fix attempted but failed
+          - Preventive maintenance needed
+          - User requests a formal work order
+        input_schema:
+          type: "object"
+          properties:
+            device_id:
+              type: "string"
+              description: "Device ID for the incident"
+            priority:
+              type: "string"
+              description: "Priority: CRITICAL, HIGH, MEDIUM, or LOW"
+            description:
+              type: "string"
+              description: "Description of the issue and required action"
+          required:
+            - device_id
+            - priority
+            - description
+
+    # =========================================================================
+    # ACTION AUDIT TOOL - View logged actions
     # =========================================================================
 
     - tool_spec:
@@ -356,12 +464,12 @@ CREATE OR REPLACE AGENT DEVICE_MAINTENANCE_AGENT
         name: "ViewRecentActions"
         description: |
           Shows the audit log of recent automated actions taken by the system.
-          Use this to show what commands, alerts, or tickets have been triggered.
+          Use this to confirm actions were logged and show what was triggered.
           
           When to Use:
+          - After executing a command to confirm it was logged
           - User asks "what actions have been taken?"
           - Show audit trail of system activities
-          - Verify that remediation workflows are running
 
   tool_resources:
     DeviceFleetAnalytics:
@@ -378,6 +486,27 @@ CREATE OR REPLACE AGENT DEVICE_MAINTENANCE_AGENT
     PastIncidents:
       name: "PATIENTPOINT_MAINTENANCE.DEVICE_OPS.MAINTENANCE_HISTORY_SEARCH_SVC"
       max_results: "5"
+    
+    # Custom tool resources (stored procedures)
+    SendDeviceCommand:
+      type: "procedure"
+      execution_environment:
+        type: "warehouse"
+        warehouse: "COMPUTE_WH"
+      identifier: "PATIENTPOINT_MAINTENANCE.DEVICE_OPS.SEND_DEVICE_COMMAND"
+    SendAlert:
+      type: "procedure"
+      execution_environment:
+        type: "warehouse"
+        warehouse: "COMPUTE_WH"
+      identifier: "PATIENTPOINT_MAINTENANCE.DEVICE_OPS.SEND_ALERT"
+    CreateServiceNowIncident:
+      type: "procedure"
+      execution_environment:
+        type: "warehouse"
+        warehouse: "COMPUTE_WH"
+      identifier: "PATIENTPOINT_MAINTENANCE.DEVICE_OPS.CREATE_SERVICENOW_INCIDENT"
+    
     ViewRecentActions:
       semantic_view: "PATIENTPOINT_MAINTENANCE.DEVICE_OPS.SV_EXTERNAL_ACTIONS"
   $$;
