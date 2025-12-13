@@ -14,7 +14,7 @@ Snowflake turns PatientPoint’s screen telemetry + maintenance history into **e
 
 ### Action (WHAT the solution does)
 - **Early warning**: Anomaly watchlist (baseline 14d vs scoring 1d) flags devices drifting before they cross thresholds.
-- **24–48h prediction**: Failure predictions + confidence + demo evaluation metrics vs deterministic scenario incidents.
+- **24–48h prediction**: Failure predictions + confidence (and predicted failure type) to drive proactive scheduling.
 - **Ops Center – Operationalization**: Auto-generated work orders with recommended channel (remote vs field), priority, and due-by.
 - **Automated remote resolution (simulated)**: Runbooks + executions + escalation when remote is unlikely to succeed.
 - **Snowflake Intelligence (Agent)**: One chat interface that uses **Cortex Analyst** (semantic views) + **Cortex Search** (KB) to answer exec + ops + technician questions.
@@ -99,12 +99,7 @@ Copy/paste to Agent:
 - “Which devices are likely to fail in the next 48 hours? Show probability, predicted failure type, and the reason.”
 
 If they ask “is the accuracy real?” say:
-“For the demo, we track **demo evaluation metrics** against a deterministic scenario set so the demo is repeatable. In production, accuracy comes from evaluation on your labeled incident outcomes.”
-
-Copy/paste to Agent:
-- “Show the latest prediction evaluation metrics and explain what they represent.”
-Say (one line, if asked “why not 100%?”):
-“In real operations we *choose* an operating point; for PatientPoint we typically prefer a **balanced** setting that catches most failures while keeping false alarms manageable.”
+“In the demo, the focus is business workflow: prediction → prioritization → action. In production, we validate accuracy on your labeled incident outcomes and tune the operating point to PatientPoint’s risk tolerance (missed failures vs false alarms).”
 
 ### 11:00–14:00 — Action #3: Turn insight into an ops queue (work orders)
 Say:
