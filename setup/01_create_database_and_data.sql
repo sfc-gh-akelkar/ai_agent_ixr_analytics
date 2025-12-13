@@ -181,6 +181,18 @@ SELECT
     END
 FROM TABLE(GENERATOR(ROWCOUNT => 70));
 
+-- Normalize all LAST_MAINTENANCE_DATE values to be relative to current date
+-- This ensures "days since maintenance" calculations work regardless of when demo is run
+UPDATE DEVICE_INVENTORY
+SET LAST_MAINTENANCE_DATE = DATEADD('day', -1 * (5 + MOD(ABS(HASH(DEVICE_ID)), 55)), CURRENT_DATE())
+WHERE LAST_MAINTENANCE_DATE IS NOT NULL;
+
+-- Also update INSTALL_DATE and WARRANTY_EXPIRY to be relative
+UPDATE DEVICE_INVENTORY
+SET 
+    INSTALL_DATE = DATEADD('month', -1 * (12 + MOD(ABS(HASH(DEVICE_ID)), 24)), CURRENT_DATE()),
+    WARRANTY_EXPIRY = DATEADD('year', 3, DATEADD('month', -1 * (12 + MOD(ABS(HASH(DEVICE_ID)), 24)), CURRENT_DATE()));
+
 -- ============================================================================
 -- DEVICE TELEMETRY TABLE
 -- Real-time health metrics from each device (IoT data)
@@ -279,29 +291,64 @@ CREATE OR REPLACE TABLE MAINTENANCE_HISTORY (
     CONSTRAINT fk_device_maint FOREIGN KEY (DEVICE_ID) REFERENCES DEVICE_INVENTORY(DEVICE_ID)
 );
 
--- Insert realistic maintenance history
-INSERT INTO MAINTENANCE_HISTORY VALUES
-    ('TKT-2024-001', 'DEV-003', '2024-09-15 08:30:00', '2024-09-15 09:15:00', 'DISPLAY_FREEZE', 'Screen frozen on splash screen, unresponsive to touch', 'REMOTE_FIX', 'Performed remote restart via agent. Display resumed normal operation.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-002', 'DEV-005', '2024-09-18 14:20:00', '2024-09-19 11:00:00', 'NO_NETWORK', 'Device offline, no heartbeat for 6 hours', 'FIELD_DISPATCH', 'Router failure at facility. Replaced ethernet cable and reset network config.', 'TECH-042', 185.00),
-    ('TKT-2024-003', 'DEV-008', '2024-09-22 10:45:00', '2024-09-22 11:00:00', 'HIGH_CPU', 'CPU usage consistently above 90%, sluggish performance', 'REMOTE_FIX', 'Killed runaway process and cleared temp files. Scheduled firmware update.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-004', 'DEV-014', '2024-10-01 09:00:00', '2024-10-02 14:30:00', 'DISPLAY_FAILURE', 'Display showing vertical lines, hardware malfunction suspected', 'REPLACEMENT', 'Display panel replaced. Root cause: power surge damage.', 'TECH-018', 450.00),
-    ('TKT-2024-005', 'DEV-018', '2024-10-05 16:30:00', '2024-10-06 10:00:00', 'BOOT_FAILURE', 'Device stuck in boot loop', 'FIELD_DISPATCH', 'Corrupted firmware. Reflashed via USB. Recommended UPS installation.', 'TECH-025', 210.00),
-    ('TKT-2024-006', 'DEV-020', '2024-10-10 11:15:00', '2024-10-10 11:30:00', 'MEMORY_LEAK', 'Memory usage climbing to 95%, app crashes', 'REMOTE_FIX', 'Restarted application services and cleared cache. Issue resolved.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-007', 'DEV-025', '2024-10-15 08:00:00', '2024-10-15 08:20:00', 'CONNECTIVITY', 'Intermittent WiFi disconnections', 'REMOTE_FIX', 'Reset network adapter and updated WiFi driver remotely.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-008', 'DEV-003', '2024-10-20 13:45:00', '2024-10-21 09:30:00', 'DISPLAY_FREEZE', 'Recurring freeze issue, third occurrence this month', 'FIELD_DISPATCH', 'Replaced thermal paste and cleaned internal fans. Overheating was root cause.', 'TECH-042', 165.00),
-    ('TKT-2024-009', 'DEV-012', '2024-10-25 10:00:00', '2024-10-25 10:10:00', 'SOFTWARE_UPDATE', 'Scheduled firmware update to v3.2.2', 'REMOTE_FIX', 'Successfully pushed firmware update remotely.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-010', 'DEV-007', '2024-11-01 14:00:00', '2024-11-01 14:15:00', 'DISPLAY_CALIBRATION', 'Touch calibration off, users reporting missed inputs', 'REMOTE_FIX', 'Ran remote touch calibration routine. Accuracy restored.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-011', 'DEV-005', '2024-11-05 09:30:00', '2024-11-05 16:45:00', 'NO_NETWORK', 'Device offline again, same facility as TKT-2024-002', 'FIELD_DISPATCH', 'Facility network infrastructure unstable. Recommended network audit to facility manager.', 'TECH-042', 185.00),
-    ('TKT-2024-012', 'DEV-019', '2024-11-10 11:00:00', '2024-11-10 11:05:00', 'HIGH_MEMORY', 'Memory at 88%, preemptive maintenance flag', 'REMOTE_FIX', 'Cleared application cache and restarted services proactively.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-013', 'DEV-022', '2024-11-15 08:45:00', '2024-11-15 09:00:00', 'SLOW_RESPONSE', 'UI lag reported by staff', 'REMOTE_FIX', 'Optimized database queries and cleared log files.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-014', 'DEV-008', '2024-11-20 15:30:00', '2024-11-21 11:00:00', 'OVERHEATING', 'CPU temp above 80C, automatic shutdown triggered', 'FIELD_DISPATCH', 'Replaced cooling fan and cleaned dust filters.', 'TECH-018', 195.00),
-    ('TKT-2024-015', 'DEV-014', '2024-11-25 10:15:00', '2024-11-25 10:30:00', 'DISPLAY_FLICKER', 'Occasional screen flicker', 'REMOTE_FIX', 'Adjusted display refresh rate settings remotely.', 'REMOTE_AGENT', 0),
-    -- DEMO-OPTIMIZED: Additional successful remote fixes to boost resolution rate
-    ('TKT-2024-016', 'DEV-001', '2024-11-28 09:00:00', '2024-11-28 09:12:00', 'HIGH_CPU', 'CPU usage spike detected by AI monitoring', 'REMOTE_FIX', 'AI agent proactively restarted services before user impact.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-017', 'DEV-006', '2024-11-29 14:30:00', '2024-11-29 14:45:00', 'CONNECTIVITY', 'Brief network latency spike', 'REMOTE_FIX', 'Reset network stack and DNS cache remotely.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-018', 'DEV-011', '2024-12-01 10:00:00', '2024-12-01 10:08:00', 'MEMORY_LEAK', 'Predictive alert: memory trending high', 'REMOTE_FIX', 'Proactive cache clear prevented potential crash.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-019', 'DEV-016', '2024-12-03 11:15:00', '2024-12-03 11:25:00', 'SOFTWARE_UPDATE', 'Scheduled security patch deployment', 'REMOTE_FIX', 'Successfully applied security patches across batch.', 'REMOTE_AGENT', 0),
-    ('TKT-2024-020', 'DEV-021', '2024-12-05 08:30:00', '2024-12-05 08:42:00', 'SLOW_RESPONSE', 'AI detected performance degradation', 'REMOTE_FIX', 'Optimized application settings and cleared temp files.', 'REMOTE_AGENT', 0);
+-- Insert realistic maintenance history using relative dates
+-- All dates are relative to CURRENT_TIMESTAMP() so demo works regardless of when it's run
+INSERT INTO MAINTENANCE_HISTORY 
+    (TICKET_ID, DEVICE_ID, CREATED_AT, RESOLVED_AT, ISSUE_TYPE, ISSUE_DESCRIPTION, RESOLUTION_TYPE, RESOLUTION_NOTES, TECHNICIAN_ID, COST_USD)
+-- 90 days ago
+SELECT 'TKT-001', 'DEV-003', DATEADD('day', -90, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 30 minutes', DATEADD('day', -90, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 15 minutes', 'DISPLAY_FREEZE', 'Screen frozen on splash screen, unresponsive to touch', 'REMOTE_FIX', 'Performed remote restart via agent. Display resumed normal operation.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-002', 'DEV-005', DATEADD('day', -87, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 20 minutes', DATEADD('day', -86, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 'NO_NETWORK', 'Device offline, no heartbeat for 6 hours', 'FIELD_DISPATCH', 'Router failure at facility. Replaced ethernet cable and reset network config.', 'TECH-042', 185.00
+UNION ALL
+SELECT 'TKT-003', 'DEV-008', DATEADD('day', -83, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 45 minutes', DATEADD('day', -83, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 'HIGH_CPU', 'CPU usage consistently above 90%, sluggish performance', 'REMOTE_FIX', 'Killed runaway process and cleared temp files. Scheduled firmware update.', 'REMOTE_AGENT', 0
+UNION ALL
+-- 74-70 days ago
+SELECT 'TKT-004', 'DEV-014', DATEADD('day', -74, CURRENT_TIMESTAMP()) + INTERVAL '9 hours', DATEADD('day', -73, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 30 minutes', 'DISPLAY_FAILURE', 'Display showing vertical lines, hardware malfunction suspected', 'REPLACEMENT', 'Display panel replaced. Root cause: power surge damage.', 'TECH-018', 450.00
+UNION ALL
+SELECT 'TKT-005', 'DEV-018', DATEADD('day', -70, CURRENT_TIMESTAMP()) + INTERVAL '16 hours 30 minutes', DATEADD('day', -69, CURRENT_TIMESTAMP()) + INTERVAL '10 hours', 'BOOT_FAILURE', 'Device stuck in boot loop', 'FIELD_DISPATCH', 'Corrupted firmware. Reflashed via USB. Recommended UPS installation.', 'TECH-025', 210.00
+UNION ALL
+-- 65-50 days ago
+SELECT 'TKT-006', 'DEV-020', DATEADD('day', -65, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 15 minutes', DATEADD('day', -65, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 30 minutes', 'MEMORY_LEAK', 'Memory usage climbing to 95%, app crashes', 'REMOTE_FIX', 'Restarted application services and cleared cache. Issue resolved.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-007', 'DEV-025', DATEADD('day', -60, CURRENT_TIMESTAMP()) + INTERVAL '8 hours', DATEADD('day', -60, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 20 minutes', 'CONNECTIVITY', 'Intermittent WiFi disconnections', 'REMOTE_FIX', 'Reset network adapter and updated WiFi driver remotely.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-008', 'DEV-003', DATEADD('day', -55, CURRENT_TIMESTAMP()) + INTERVAL '13 hours 45 minutes', DATEADD('day', -54, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', 'DISPLAY_FREEZE', 'Recurring freeze issue, third occurrence this month', 'FIELD_DISPATCH', 'Replaced thermal paste and cleaned internal fans. Overheating was root cause.', 'TECH-042', 165.00
+UNION ALL
+SELECT 'TKT-009', 'DEV-012', DATEADD('day', -50, CURRENT_TIMESTAMP()) + INTERVAL '10 hours', DATEADD('day', -50, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 10 minutes', 'SOFTWARE_UPDATE', 'Scheduled firmware update to v3.2.2', 'REMOTE_FIX', 'Successfully pushed firmware update remotely.', 'REMOTE_AGENT', 0
+UNION ALL
+-- 45-30 days ago
+SELECT 'TKT-010', 'DEV-007', DATEADD('day', -44, CURRENT_TIMESTAMP()) + INTERVAL '14 hours', DATEADD('day', -44, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 15 minutes', 'DISPLAY_CALIBRATION', 'Touch calibration off, users reporting missed inputs', 'REMOTE_FIX', 'Ran remote touch calibration routine. Accuracy restored.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-011', 'DEV-005', DATEADD('day', -40, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', DATEADD('day', -40, CURRENT_TIMESTAMP()) + INTERVAL '16 hours 45 minutes', 'NO_NETWORK', 'Device offline again, same facility as TKT-002', 'FIELD_DISPATCH', 'Facility network infrastructure unstable. Recommended network audit to facility manager.', 'TECH-042', 185.00
+UNION ALL
+SELECT 'TKT-012', 'DEV-019', DATEADD('day', -35, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', DATEADD('day', -35, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 5 minutes', 'HIGH_MEMORY', 'Memory at 88%, preemptive maintenance flag', 'REMOTE_FIX', 'Cleared application cache and restarted services proactively.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-013', 'DEV-022', DATEADD('day', -30, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 45 minutes', DATEADD('day', -30, CURRENT_TIMESTAMP()) + INTERVAL '9 hours', 'SLOW_RESPONSE', 'UI lag reported by staff', 'REMOTE_FIX', 'Optimized database queries and cleared log files.', 'REMOTE_AGENT', 0
+UNION ALL
+-- 25-15 days ago
+SELECT 'TKT-014', 'DEV-008', DATEADD('day', -25, CURRENT_TIMESTAMP()) + INTERVAL '15 hours 30 minutes', DATEADD('day', -24, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 'OVERHEATING', 'CPU temp above 80C, automatic shutdown triggered', 'FIELD_DISPATCH', 'Replaced cooling fan and cleaned dust filters.', 'TECH-018', 195.00
+UNION ALL
+SELECT 'TKT-015', 'DEV-014', DATEADD('day', -20, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 15 minutes', DATEADD('day', -20, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 30 minutes', 'DISPLAY_FLICKER', 'Occasional screen flicker', 'REMOTE_FIX', 'Adjusted display refresh rate settings remotely.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-016', 'DEV-001', DATEADD('day', -17, CURRENT_TIMESTAMP()) + INTERVAL '9 hours', DATEADD('day', -17, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 12 minutes', 'HIGH_CPU', 'CPU usage spike detected by AI monitoring', 'REMOTE_FIX', 'AI agent proactively restarted services before user impact.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-017', 'DEV-006', DATEADD('day', -16, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 30 minutes', DATEADD('day', -16, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 45 minutes', 'CONNECTIVITY', 'Brief network latency spike', 'REMOTE_FIX', 'Reset network stack and DNS cache remotely.', 'REMOTE_AGENT', 0
+UNION ALL
+-- Current month (last 14 days) - These will show up in "this month" queries
+SELECT 'TKT-018', 'DEV-011', DATEADD('day', -12, CURRENT_TIMESTAMP()) + INTERVAL '10 hours', DATEADD('day', -12, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 8 minutes', 'MEMORY_LEAK', 'Predictive alert: memory trending high', 'REMOTE_FIX', 'Proactive cache clear prevented potential crash.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-019', 'DEV-016', DATEADD('day', -10, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 15 minutes', DATEADD('day', -10, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 25 minutes', 'SOFTWARE_UPDATE', 'Scheduled security patch deployment', 'REMOTE_FIX', 'Successfully applied security patches across batch.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-020', 'DEV-021', DATEADD('day', -8, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 30 minutes', DATEADD('day', -8, CURRENT_TIMESTAMP()) + INTERVAL '8 hours 42 minutes', 'SLOW_RESPONSE', 'AI detected performance degradation', 'REMOTE_FIX', 'Optimized application settings and cleared temp files.', 'REMOTE_AGENT', 0
+UNION ALL
+-- Very recent (last week)
+SELECT 'TKT-021', 'DEV-002', DATEADD('day', -5, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', DATEADD('day', -5, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 45 minutes', 'HIGH_CPU', 'Proactive CPU throttling detected', 'REMOTE_FIX', 'Restarted background services, performance restored.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-022', 'DEV-009', DATEADD('day', -3, CURRENT_TIMESTAMP()) + INTERVAL '14 hours', DATEADD('day', -3, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 12 minutes', 'CONNECTIVITY', 'Intermittent connection drops', 'REMOTE_FIX', 'Reset network adapter and cleared DNS cache.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-023', 'DEV-015', DATEADD('day', -2, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 30 minutes', DATEADD('day', -2, CURRENT_TIMESTAMP()) + INTERVAL '10 hours 40 minutes', 'MEMORY_LEAK', 'AI predictive alert: memory trending upward', 'REMOTE_FIX', 'Proactive cache clear and service restart.', 'REMOTE_AGENT', 0
+UNION ALL
+SELECT 'TKT-024', 'DEV-023', DATEADD('day', -1, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', DATEADD('day', -1, CURRENT_TIMESTAMP()) + INTERVAL '11 hours 15 minutes', 'DISPLAY_FREEZE', 'Brief display freeze reported', 'REMOTE_FIX', 'Remote restart resolved issue within 15 minutes.', 'REMOTE_AGENT', 0;
 
 -- ============================================================================
 -- TROUBLESHOOTING KNOWLEDGE BASE
@@ -398,18 +445,28 @@ CREATE OR REPLACE TABLE DEVICE_DOWNTIME (
 );
 
 -- Insert sample downtime records (correlate with maintenance history)
-INSERT INTO DEVICE_DOWNTIME (DEVICE_ID, DOWNTIME_START, DOWNTIME_END, DOWNTIME_HOURS, CAUSE, TICKET_ID, REVENUE_LOSS_USD, IMPRESSIONS_LOST) VALUES
-    ('DEV-005', '2024-09-18 14:20:00', '2024-09-19 11:00:00', 20.67, 'NETWORK_OUTAGE', 'TKT-2024-002', 258.38, 430),
-    ('DEV-014', '2024-10-01 09:00:00', '2024-10-02 14:30:00', 29.5, 'HARDWARE_FAILURE', 'TKT-2024-004', 368.75, 615),
-    ('DEV-018', '2024-10-05 16:30:00', '2024-10-06 10:00:00', 17.5, 'SOFTWARE_ISSUE', 'TKT-2024-005', 218.75, 365),
-    ('DEV-003', '2024-10-20 13:45:00', '2024-10-21 09:30:00', 19.75, 'HARDWARE_FAILURE', 'TKT-2024-008', 246.88, 410),
-    ('DEV-005', '2024-11-05 09:30:00', '2024-11-05 16:45:00', 7.25, 'NETWORK_OUTAGE', 'TKT-2024-011', 90.63, 150),
-    ('DEV-008', '2024-11-20 15:30:00', '2024-11-21 11:00:00', 19.5, 'HARDWARE_FAILURE', 'TKT-2024-014', 243.75, 405),
-    -- Some unplanned downtime without tickets (discovered by monitoring)
-    ('DEV-020', '2024-10-08 02:00:00', '2024-10-08 06:30:00', 4.5, 'SOFTWARE_ISSUE', NULL, 56.25, 95),
-    ('DEV-025', '2024-10-22 22:00:00', '2024-10-23 01:30:00', 3.5, 'NETWORK_OUTAGE', NULL, 43.75, 75),
-    ('DEV-014', '2024-11-02 08:00:00', '2024-11-02 09:15:00', 1.25, 'SOFTWARE_ISSUE', NULL, 15.63, 25),
-    ('DEV-003', '2024-11-18 14:00:00', '2024-11-18 15:30:00', 1.5, 'SOFTWARE_ISSUE', NULL, 18.75, 30);
+-- Insert downtime data using relative dates to match maintenance history
+INSERT INTO DEVICE_DOWNTIME (DEVICE_ID, DOWNTIME_START, DOWNTIME_END, DOWNTIME_HOURS, CAUSE, TICKET_ID, REVENUE_LOSS_USD, IMPRESSIONS_LOST)
+SELECT 'DEV-005', DATEADD('day', -87, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 20 minutes', DATEADD('day', -86, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 20.67, 'NETWORK_OUTAGE', 'TKT-002', 258.38, 430
+UNION ALL
+SELECT 'DEV-014', DATEADD('day', -74, CURRENT_TIMESTAMP()) + INTERVAL '9 hours', DATEADD('day', -73, CURRENT_TIMESTAMP()) + INTERVAL '14 hours 30 minutes', 29.5, 'HARDWARE_FAILURE', 'TKT-004', 368.75, 615
+UNION ALL
+SELECT 'DEV-018', DATEADD('day', -70, CURRENT_TIMESTAMP()) + INTERVAL '16 hours 30 minutes', DATEADD('day', -69, CURRENT_TIMESTAMP()) + INTERVAL '10 hours', 17.5, 'SOFTWARE_ISSUE', 'TKT-005', 218.75, 365
+UNION ALL
+SELECT 'DEV-003', DATEADD('day', -55, CURRENT_TIMESTAMP()) + INTERVAL '13 hours 45 minutes', DATEADD('day', -54, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', 19.75, 'HARDWARE_FAILURE', 'TKT-008', 246.88, 410
+UNION ALL
+SELECT 'DEV-005', DATEADD('day', -40, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 30 minutes', DATEADD('day', -40, CURRENT_TIMESTAMP()) + INTERVAL '16 hours 45 minutes', 7.25, 'NETWORK_OUTAGE', 'TKT-011', 90.63, 150
+UNION ALL
+SELECT 'DEV-008', DATEADD('day', -25, CURRENT_TIMESTAMP()) + INTERVAL '15 hours 30 minutes', DATEADD('day', -24, CURRENT_TIMESTAMP()) + INTERVAL '11 hours', 19.5, 'HARDWARE_FAILURE', 'TKT-014', 243.75, 405
+UNION ALL
+-- Some unplanned downtime without tickets (discovered by monitoring)
+SELECT 'DEV-020', DATEADD('day', -67, CURRENT_TIMESTAMP()) + INTERVAL '2 hours', DATEADD('day', -67, CURRENT_TIMESTAMP()) + INTERVAL '6 hours 30 minutes', 4.5, 'SOFTWARE_ISSUE', NULL, 56.25, 95
+UNION ALL
+SELECT 'DEV-025', DATEADD('day', -53, CURRENT_TIMESTAMP()) + INTERVAL '22 hours', DATEADD('day', -52, CURRENT_TIMESTAMP()) + INTERVAL '1 hour 30 minutes', 3.5, 'NETWORK_OUTAGE', NULL, 43.75, 75
+UNION ALL
+SELECT 'DEV-014', DATEADD('day', -43, CURRENT_TIMESTAMP()) + INTERVAL '8 hours', DATEADD('day', -43, CURRENT_TIMESTAMP()) + INTERVAL '9 hours 15 minutes', 1.25, 'SOFTWARE_ISSUE', NULL, 15.63, 25
+UNION ALL
+SELECT 'DEV-003', DATEADD('day', -27, CURRENT_TIMESTAMP()) + INTERVAL '14 hours', DATEADD('day', -27, CURRENT_TIMESTAMP()) + INTERVAL '15 hours 30 minutes', 1.5, 'SOFTWARE_ISSUE', NULL, 18.75, 30;
 
 -- ============================================================================
 -- PROVIDER FEEDBACK TABLE
@@ -431,44 +488,55 @@ CREATE OR REPLACE TABLE PROVIDER_FEEDBACK (
 );
 
 -- Insert sample provider feedback
+-- Insert feedback data using relative dates
 INSERT INTO PROVIDER_FEEDBACK (FACILITY_NAME, DEVICE_ID, FEEDBACK_DATE, NPS_SCORE, SATISFACTION_RATING, 
                                 RESPONSE_TIME_RATING, DEVICE_RELIABILITY_RATING, FEEDBACK_CATEGORY, 
-                                FEEDBACK_TEXT, FOLLOW_UP_REQUIRED) VALUES
-    -- Positive feedback
-    ('Downtown Medical Center', 'DEV-001', '2024-11-15', 9, 5, 5, 5, 'POSITIVE', 
-     'The screen has been running flawlessly. Patients love the health tips displayed.', FALSE),
-    ('Lakeside Family Practice', 'DEV-002', '2024-11-10', 8, 4, 5, 4, 'POSITIVE', 
-     'Quick response when we had a minor issue. Very satisfied with the service.', FALSE),
-    ('Memorial Hospital West', 'DEV-006', '2024-11-20', 10, 5, 5, 5, 'POSITIVE', 
-     'Excellent product and support. The remote fix capability saved us a lot of hassle.', FALSE),
-    ('Cleveland Clinic Annex', 'DEV-007', '2024-11-18', 9, 5, 4, 5, 'POSITIVE', 
-     'Large screen is perfect for our waiting area. Great visibility for all patients.', FALSE),
-    ('Ann Arbor Family Care', 'DEV-012', '2024-11-12', 8, 4, 4, 4, 'POSITIVE', 
-     'Reliable device. The educational content is very helpful for patient engagement.', FALSE),
-    ('Mayo Clinic Rochester', 'DEV-026', '2024-11-22', 10, 5, 5, 5, 'POSITIVE', 
-     'Top-notch equipment and support. Exactly what we expect from a premium partner.', FALSE),
-    
-    -- Additional positive feedback (DEMO-OPTIMIZED for higher satisfaction scores)
-    ('Henry Ford Health Detroit', 'DEV-011', '2024-11-25', 9, 5, 5, 5, 'POSITIVE', 
-     'Outstanding reliability. The device has been running perfectly for months.', FALSE),
-    ('IU Health Indianapolis', 'DEV-016', '2024-11-28', 10, 5, 5, 5, 'POSITIVE', 
-     'Best digital signage solution we have used. Patients and staff love it.', FALSE),
-    ('Fort Wayne Medical Center', 'DEV-017', '2024-11-30', 9, 4, 5, 5, 'POSITIVE', 
-     'The predictive maintenance alerts have been incredibly helpful.', FALSE),
-    ('UW Health Madison', 'DEV-022', '2024-12-01', 10, 5, 5, 5, 'POSITIVE', 
-     'World-class support team. Issues get resolved before we even notice them.', FALSE),
-    ('Hennepin Healthcare', 'DEV-027', '2024-12-05', 9, 5, 4, 5, 'POSITIVE', 
-     'Remote fix capability is a game changer. No more waiting for technicians.', FALSE),
-    
-    -- Neutral feedback (only 2 for realistic balance)
-    ('North Shore Pediatrics', 'DEV-003', '2024-10-25', 7, 4, 4, 4, 'NEUTRAL', 
-     'Device works well. Would love to see more pediatric-focused content options.', FALSE),
-    ('Lansing Cardiology Group', 'DEV-014', '2024-10-15', 7, 4, 4, 4, 'NEUTRAL', 
-     'Solid performance. Recent firmware update improved responsiveness.', FALSE),
-    
-    -- Negative feedback (only 1 to show opportunity for improvement)
-    ('Springfield Urgent Care', 'DEV-005', '2024-11-10', 5, 3, 3, 3, 'NEGATIVE', 
-     'Had a brief network outage last month. Support resolved it quickly but would prefer proactive alerts.', TRUE);
+                                FEEDBACK_TEXT, FOLLOW_UP_REQUIRED)
+-- Positive feedback (recent)
+SELECT 'Downtown Medical Center', 'DEV-001', DATEADD('day', -30, CURRENT_DATE())::DATE, 9, 5, 5, 5, 'POSITIVE', 
+     'The screen has been running flawlessly. Patients love the health tips displayed.', FALSE
+UNION ALL
+SELECT 'Lakeside Family Practice', 'DEV-002', DATEADD('day', -35, CURRENT_DATE())::DATE, 8, 4, 5, 4, 'POSITIVE', 
+     'Quick response when we had a minor issue. Very satisfied with the service.', FALSE
+UNION ALL
+SELECT 'Memorial Hospital West', 'DEV-006', DATEADD('day', -25, CURRENT_DATE())::DATE, 10, 5, 5, 5, 'POSITIVE', 
+     'Excellent product and support. The remote fix capability saved us a lot of hassle.', FALSE
+UNION ALL
+SELECT 'Cleveland Clinic Annex', 'DEV-007', DATEADD('day', -27, CURRENT_DATE())::DATE, 9, 5, 4, 5, 'POSITIVE', 
+     'Large screen is perfect for our waiting area. Great visibility for all patients.', FALSE
+UNION ALL
+SELECT 'Ann Arbor Family Care', 'DEV-012', DATEADD('day', -33, CURRENT_DATE())::DATE, 8, 4, 4, 4, 'POSITIVE', 
+     'Reliable device. The educational content is very helpful for patient engagement.', FALSE
+UNION ALL
+SELECT 'Mayo Clinic Rochester', 'DEV-026', DATEADD('day', -23, CURRENT_DATE())::DATE, 10, 5, 5, 5, 'POSITIVE', 
+     'Top-notch equipment and support. Exactly what we expect from a premium partner.', FALSE
+UNION ALL
+-- Additional positive feedback (DEMO-OPTIMIZED for higher satisfaction scores)
+SELECT 'Henry Ford Health Detroit', 'DEV-011', DATEADD('day', -20, CURRENT_DATE())::DATE, 9, 5, 5, 5, 'POSITIVE', 
+     'Outstanding reliability. The device has been running perfectly for months.', FALSE
+UNION ALL
+SELECT 'IU Health Indianapolis', 'DEV-016', DATEADD('day', -17, CURRENT_DATE())::DATE, 10, 5, 5, 5, 'POSITIVE', 
+     'Best digital signage solution we have used. Patients and staff love it.', FALSE
+UNION ALL
+SELECT 'Fort Wayne Medical Center', 'DEV-017', DATEADD('day', -15, CURRENT_DATE())::DATE, 9, 4, 5, 5, 'POSITIVE', 
+     'The predictive maintenance alerts have been incredibly helpful.', FALSE
+UNION ALL
+SELECT 'UW Health Madison', 'DEV-022', DATEADD('day', -12, CURRENT_DATE())::DATE, 10, 5, 5, 5, 'POSITIVE', 
+     'World-class support team. Issues get resolved before we even notice them.', FALSE
+UNION ALL
+SELECT 'Hennepin Healthcare', 'DEV-027', DATEADD('day', -8, CURRENT_DATE())::DATE, 9, 5, 4, 5, 'POSITIVE', 
+     'Remote fix capability is a game changer. No more waiting for technicians.', FALSE
+UNION ALL
+-- Neutral feedback (only 2 for realistic balance)
+SELECT 'North Shore Pediatrics', 'DEV-003', DATEADD('day', -50, CURRENT_DATE())::DATE, 7, 4, 4, 4, 'NEUTRAL', 
+     'Device works well. Would love to see more pediatric-focused content options.', FALSE
+UNION ALL
+SELECT 'Lansing Cardiology Group', 'DEV-014', DATEADD('day', -60, CURRENT_DATE())::DATE, 7, 4, 4, 4, 'NEUTRAL', 
+     'Solid performance. Recent firmware update improved responsiveness.', FALSE
+UNION ALL
+-- Negative feedback (only 1 to show opportunity for improvement)
+SELECT 'Springfield Urgent Care', 'DEV-005', DATEADD('day', -35, CURRENT_DATE())::DATE, 5, 3, 3, 3, 'NEGATIVE', 
+     'Had a brief network outage last month. Support resolved it quickly but would prefer proactive alerts.', TRUE;
 
 -- ============================================================================
 -- REVENUE IMPACT VIEW
