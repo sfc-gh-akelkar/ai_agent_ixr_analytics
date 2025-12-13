@@ -65,6 +65,7 @@ Then say (Snowflake differentiator):
 ### 1:00–3:30 — Challenge → Result preview (exec-friendly)
 Copy/paste to Agent:
 - “Show executive KPIs: fleet size, critical/warning now, watchlist count, predicted failures in the next 48 hours, downtime hours and revenue impact in the last 30 days.”
+- “In the same answer, include the assumption and estimate fields (ASSUMP_* and EST_*).”
 
 If the response shows watchlist/predictions as 0, immediately follow with:
 - “Why might watchlist count or predicted failures be zero? Check whether scoring/predictions were refreshed recently and summarize the current critical devices and their telemetry signals.”

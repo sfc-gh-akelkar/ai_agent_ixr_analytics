@@ -142,7 +142,8 @@ BEGIN
       ELSE NULL
     END;
 
-  LET started_at TIMESTAMP_NTZ := (SELECT DEMO_AS_OF_TS FROM PREDICTIVE_MAINTENANCE.OPERATIONS.V_DEMO_TIME);
+  -- Anchor to demo clock and keep strictly < DEMO_AS_OF_TS so 30-day KPI windows include it deterministically.
+  LET started_at TIMESTAMP_NTZ := DATEADD('minute', -10, (SELECT DEMO_AS_OF_TS FROM PREDICTIVE_MAINTENANCE.OPERATIONS.V_DEMO_TIME));
   LET ended_at TIMESTAMP_NTZ := DATEADD('minute', 10, started_at);
 
   LET outcome STRING :=
@@ -171,7 +172,7 @@ BEGIN
   -- Update work order state
   UPDATE OPERATIONS.WORK_ORDERS
   SET
-    UPDATED_AT = (SELECT DEMO_AS_OF_TS FROM PREDICTIVE_MAINTENANCE.OPERATIONS.V_DEMO_TIME),
+    UPDATED_AT = DATEADD('minute', -10, (SELECT DEMO_AS_OF_TS FROM PREDICTIVE_MAINTENANCE.OPERATIONS.V_DEMO_TIME)),
     STATUS = IFF(outcome = 'SUCCESS', 'COMPLETED', 'IN_PROGRESS'),
     NOTES = CONCAT(COALESCE(NOTES, ''), ' | Remote execution: ', outcome)
   WHERE WORK_ORDER_ID = :WORK_ORDER_ID;
@@ -180,8 +181,35 @@ BEGIN
 END;
 $$;
 
--- Convenience: execute remote work for currently remote-recommended work orders
--- (scenario lock for deterministic outcomes)
+CREATE OR REPLACE PROCEDURE OPERATIONS.EXECUTE_REMOTE_QUEUE(
+  TOP_N INT DEFAULT 3
+)
+RETURNS STRING
+LANGUAGE SQL
+AS
+$$
+DECLARE
+  ran INT DEFAULT 0;
+BEGIN
+  FOR r IN (
+    SELECT WORK_ORDER_ID
+    FROM PREDICTIVE_MAINTENANCE.ANALYTICS.V_WORK_ORDERS_CURRENT
+    WHERE RECOMMENDED_CHANNEL = 'REMOTE'
+    ORDER BY PRIORITY, DUE_BY
+    LIMIT :TOP_N
+  )
+  DO
+    CALL OPERATIONS.EXECUTE_REMOTE_WORK_ORDER(r.WORK_ORDER_ID);
+    ran := ran + 1;
+  END FOR;
+
+  RETURN 'Remote queue executed ✅ count=' || ran;
+END;
+$$;
+
+-- Convenience: execute a few remote work orders so exec KPIs have non-zero “estimated” metrics.
+CALL OPERATIONS.EXECUTE_REMOTE_QUEUE(3);
+
 SELECT 'Remote remediation objects created ✅' AS STATUS;
 
 

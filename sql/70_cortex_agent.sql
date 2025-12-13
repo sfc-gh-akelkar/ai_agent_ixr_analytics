@@ -73,6 +73,7 @@ instructions:
     - Use Analyst_WorkOrders for the operational queue (what to do next; remote vs field).
     - Use Analyst_RemoteRemediation for remote runbook executions and outcomes (simulated).
     - Use Analyst_ExecKPIs for executive KPIs (observed + assumption-driven estimates).
+    - If asked about "assumptions" or "observed vs estimated", always cite the explicit ASSUMP_* and EST_* fields from Analyst_ExecKPIs. Do not invent per-failure-type cost or revenue assumptions.
     - Use Search_KB to retrieve similar incidents and troubleshooting knowledge; prefer filters by FAILURE_TYPE when applicable.
 
     Workflow for device deep dive:
