@@ -215,17 +215,22 @@ What's the average engagement score for churned patients vs active patients?
 Do providers with higher patient engagement have lower churn risk from PatientPoint?
 ```
 
-**Expected Response:**
-- Correlation between average patient engagement at a facility and provider churn risk
-- Examples showing high-engagement facilities have lower provider churn
+**Validated Response:**
+| Risk Category | Avg Patient Engagement | Provider Count |
+|---------------|------------------------|----------------|
+| LOW Risk | 66.5 | 328 |
+| MEDIUM Risk | 64.8 | 121 |
+| HIGH Risk | 59.0 | 26 |
+| **Gap** | **7.5 points** | - |
 
 > 💡 **WHY THIS MATTERS TO C-LEVEL:**
-> - This is the **flywheel**: Better patient engagement → Happier providers → They stay with PatientPoint
-> - CFO cares about: This protects **your own revenue**, not just the provider's
-> - CEO cares about: This proves PatientPoint creates a **network effect**—the more patients engage, the stickier your platform becomes
-> - Board cares about: This is **defensible moat** that compounds over time
+> - **7.5-point engagement gap** proves the flywheel: Engaged patients → Lower provider churn
+> - This protects **PatientPoint's own revenue**, not just the provider's patients
+> - CFO cares about: Provider retention = **recurring revenue protection**
+> - CEO cares about: This proves PatientPoint creates a **network effect**—engagement makes the platform stickier
+> - Board cares about: This is a **defensible moat** that compounds over time
 
-**Talking Point:** *"This validates our hypothesis H3—providers whose patients engage more are less likely to churn from PatientPoint. This is the flywheel: engagement drives retention at every level."*
+**Talking Point:** *"LOW risk providers have 66.5 avg patient engagement vs 59 for HIGH risk. That 7.5-point gap proves the flywheel: when patients engage more, providers stay with PatientPoint. This is how we protect our own revenue."*
 
 ---
 
@@ -235,7 +240,7 @@ Do providers with higher patient engagement have lower churn risk from PatientPo
 |------------|---------|-----------------|-----------------|
 | H1: Patient→Provider Retention | Engaged patients stay with providers | 45-point gap | Provider sales pitch |
 | H2: Patient Outcomes | Engagement improves health | 3.8pp improvement | Pharma partner value |
-| H3: Provider→PatientPoint Retention | Engaged providers stay | Correlation proven | Revenue protection |
+| H3: Provider→PatientPoint Retention | Engaged patients = lower provider churn | 7.5-point gap | Revenue protection |
 
 ---
 
@@ -369,8 +374,8 @@ What's the financial impact if we improve patient engagement by 20%?
 > "In 20 minutes, we validated three critical hypotheses with real data:
 >
 > 1. **Patient→Provider Retention (H1):** 45-point engagement gap between active and churned patients
-> 2. **Patient Outcomes (H2):** 3.8 percentage point better health improvements for engaged patients
-> 3. **Provider→PatientPoint Retention (H3):** Providers with engaged patients have lower churn risk
+> 2. **Patient Outcomes (H2):** 40-point improvement rate gap (76% vs 36%) for engaged patients
+> 3. **Provider→PatientPoint Retention (H3):** 7.5-point gap—engaged patients mean lower provider churn
 >
 > This creates a flywheel: **Better engagement → Better outcomes → Happier providers → Protected revenue**"
 
@@ -380,7 +385,7 @@ What's the financial impact if we improve patient engagement by 20%?
 |-----------------|-----------------|-------------------|
 | 📈 **Revenue Protection** | $60K at-risk identified | Quantified for board reporting |
 | 🎯 **Prediction Accuracy** | 45-point engagement gap | Actionable leading indicator |
-| 💊 **Pharma Partner Value** | 3.8pp outcome improvement | Premium pricing justification |
+| 💊 **Pharma Partner Value** | 40pp outcome improvement (76% vs 36%) | Premium pricing justification |
 | ⚡ **Time to Insight** | Seconds vs. weeks | CSM productivity multiplier |
 
 ### ROI Statement
