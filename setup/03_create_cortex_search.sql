@@ -76,48 +76,36 @@ GRANT USAGE ON CORTEX SEARCH SERVICE CONTENT_SEARCH_SVC TO ROLE SF_INTELLIGENCE_
 -- ============================================================================
 
 -- Create a searchable view of churn patterns
+-- Note: Simplified to avoid outer joins with non-equality predicates (not supported by Cortex Search change tracking)
 CREATE OR REPLACE VIEW V_CHURN_INSIGHTS AS
 SELECT 
-    ce.EVENT_ID,
-    ce.ENTITY_TYPE,
-    ce.ENTITY_ID,
-    ce.CHURN_DATE,
-    ce.DAYS_SINCE_LAST_ACTIVITY,
-    ce.ENGAGEMENT_SCORE_AT_CHURN,
-    ce.PREDICTED_CHURN_PROBABILITY,
-    ce.CHURN_REASON,
-    ce.WIN_BACK_ATTEMPTED,
-    ce.WIN_BACK_SUCCESSFUL,
-    -- Add context for providers
-    CASE WHEN ce.ENTITY_TYPE = 'PROVIDER' THEN p.FACILITY_NAME ELSE NULL END as FACILITY_NAME,
-    CASE WHEN ce.ENTITY_TYPE = 'PROVIDER' THEN p.FACILITY_TYPE ELSE NULL END as FACILITY_TYPE,
-    CASE WHEN ce.ENTITY_TYPE = 'PROVIDER' THEN p.CITY ELSE NULL END as CITY,
-    CASE WHEN ce.ENTITY_TYPE = 'PROVIDER' THEN p.STATE ELSE NULL END as STATE,
-    -- Add context for patients
-    CASE WHEN ce.ENTITY_TYPE = 'PATIENT' THEN pat.PRIMARY_CONDITION ELSE NULL END as PRIMARY_CONDITION,
-    CASE WHEN ce.ENTITY_TYPE = 'PATIENT' THEN pat.AGE_GROUP ELSE NULL END as AGE_GROUP,
-    -- Searchable text
+    EVENT_ID,
+    ENTITY_TYPE,
+    ENTITY_ID,
+    CHURN_DATE,
+    DAYS_SINCE_LAST_ACTIVITY,
+    ENGAGEMENT_SCORE_AT_CHURN,
+    PREDICTED_CHURN_PROBABILITY,
+    CHURN_REASON,
+    WIN_BACK_ATTEMPTED,
+    WIN_BACK_SUCCESSFUL,
+    -- Searchable text (without joined data to support change tracking)
     CONCAT(
-        ce.ENTITY_TYPE, ' churn event. ',
-        'Reason: ', COALESCE(ce.CHURN_REASON, 'Unknown'), '. ',
-        'Engagement at churn: ', ROUND(ce.ENGAGEMENT_SCORE_AT_CHURN, 1), '/100. ',
-        'Days inactive before churn: ', ce.DAYS_SINCE_LAST_ACTIVITY, '. ',
-        'Predicted probability: ', ROUND(ce.PREDICTED_CHURN_PROBABILITY * 100, 1), '%. ',
-        CASE WHEN ce.WIN_BACK_ATTEMPTED THEN 'Win-back was attempted. ' ELSE '' END,
-        CASE WHEN ce.WIN_BACK_SUCCESSFUL THEN 'Win-back successful!' ELSE '' END,
-        CASE WHEN ce.ENTITY_TYPE = 'PROVIDER' 
-            THEN CONCAT('Facility: ', COALESCE(p.FACILITY_NAME, 'Unknown'), ' (', COALESCE(p.FACILITY_TYPE, 'Unknown'), ').')
-            ELSE CONCAT('Patient condition: ', COALESCE(pat.PRIMARY_CONDITION, 'Unknown'), '.')
-        END
+        ENTITY_TYPE, ' churn event. ',
+        'Entity ID: ', ENTITY_ID, '. ',
+        'Reason: ', COALESCE(CHURN_REASON, 'Unknown'), '. ',
+        'Engagement at churn: ', ROUND(ENGAGEMENT_SCORE_AT_CHURN, 1), '/100. ',
+        'Days inactive before churn: ', DAYS_SINCE_LAST_ACTIVITY, '. ',
+        'Predicted probability: ', ROUND(PREDICTED_CHURN_PROBABILITY * 100, 1), '%. ',
+        CASE WHEN WIN_BACK_ATTEMPTED THEN 'Win-back was attempted. ' ELSE '' END,
+        CASE WHEN WIN_BACK_SUCCESSFUL THEN 'Win-back successful!' ELSE '' END
     ) as SEARCH_TEXT
-FROM CHURN_EVENTS ce
-LEFT JOIN PROVIDERS p ON ce.ENTITY_TYPE = 'PROVIDER' AND ce.ENTITY_ID = p.PROVIDER_ID
-LEFT JOIN PATIENTS pat ON ce.ENTITY_TYPE = 'PATIENT' AND ce.ENTITY_ID = pat.PATIENT_ID;
+FROM CHURN_EVENTS;
 
 -- Create Cortex Search service for churn insights
 CREATE OR REPLACE CORTEX SEARCH SERVICE CHURN_INSIGHTS_SVC
     ON SEARCH_TEXT
-    ATTRIBUTES ENTITY_TYPE, CHURN_REASON, FACILITY_TYPE, PRIMARY_CONDITION
+    ATTRIBUTES ENTITY_TYPE, CHURN_REASON
     WAREHOUSE = COMPUTE_WH
     TARGET_LAG = '1 hour'
     AS (
@@ -131,9 +119,6 @@ CREATE OR REPLACE CORTEX SEARCH SERVICE CHURN_INSIGHTS_SVC
             CHURN_REASON,
             WIN_BACK_ATTEMPTED,
             WIN_BACK_SUCCESSFUL,
-            FACILITY_NAME,
-            FACILITY_TYPE,
-            PRIMARY_CONDITION,
             SEARCH_TEXT
         FROM V_CHURN_INSIGHTS
     );
