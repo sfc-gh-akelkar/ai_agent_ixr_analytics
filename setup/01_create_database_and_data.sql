@@ -536,6 +536,36 @@ SELECT
     1 + MOD(SEQ4(), 100) as PERCENTILE_RANK
 FROM TABLE(GENERATOR(ROWCOUNT => 500));
 
+-- ============================================================================
+-- UPDATE PROVIDER CHURN RISK BASED ON PATIENT ENGAGEMENT (H3 Correlation)
+-- Creates the flywheel: High patient engagement = Lower provider churn risk
+-- ============================================================================
+
+UPDATE PROVIDERS p
+SET CHURN_RISK_SCORE = (
+    CASE 
+        -- High avg patient engagement (70+): Very low churn risk (5-25)
+        WHEN avg_eng >= 70 THEN 5 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 20
+        -- Medium-high engagement (60-70): Low churn risk (20-40)
+        WHEN avg_eng >= 60 THEN 20 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 20
+        -- Medium engagement (50-60): Medium churn risk (35-55)
+        WHEN avg_eng >= 50 THEN 35 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 20
+        -- Low engagement (40-50): High churn risk (50-70)
+        WHEN avg_eng >= 40 THEN 50 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 20
+        -- Very low engagement (<40): Critical churn risk (65-90)
+        ELSE 65 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 25
+    END
+)
+FROM (
+    SELECT 
+        pt.PROVIDER_ID,
+        AVG(pt.ENGAGEMENT_SCORE) as avg_eng
+    FROM PATIENTS pt
+    GROUP BY pt.PROVIDER_ID
+) patient_stats
+WHERE p.PROVIDER_ID = patient_stats.PROVIDER_ID
+  AND p.CONTRACT_STATUS != 'CHURNED';  -- Don't update churned providers
+
 -- Generate Churn Events (historical for model validation)
 INSERT INTO CHURN_EVENTS (EVENT_ID, ENTITY_TYPE, ENTITY_ID, CHURN_DATE,
     DAYS_SINCE_LAST_ACTIVITY, ENGAGEMENT_SCORE_AT_CHURN, PREDICTED_CHURN_PROBABILITY,
