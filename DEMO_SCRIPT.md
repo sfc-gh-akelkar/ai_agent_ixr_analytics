@@ -168,19 +168,21 @@ Does patient engagement correlate with health outcome improvements?
 ```
 
 **Validated Response:**
-| Engagement Level | Improvement Rate | Patient Outcomes |
-|------------------|------------------|------------------|
-| High Engagement | 57.92% | 2,345 |
-| Low Engagement | 54.12% | 2,473 |
-| **Difference** | **3.8 percentage points** | - |
+| Engagement Level | Improvement Rate | Patient Count |
+|------------------|------------------|---------------|
+| HIGH Engagement | 76.02% | 2,460 |
+| MEDIUM Engagement | 55.20% | 2,069 |
+| LOW Engagement | 35.88% | 471 |
+| **Difference** | **40 percentage points** | - |
 
 > 💡 **WHY THIS MATTERS TO C-LEVEL:**
-> - **3.8pp improvement** in health outcomes for engaged patients is statistically significant
+> - **40pp improvement** in health outcomes for engaged patients—this is massive, not marginal
+> - **2.1x better outcomes**: Engaged patients are twice as likely to improve
 > - **Pharma partners pay for this proof**: Their content drives measurable health improvements
 > - VP of Partnerships cares about: This data justifies **premium pricing** for pharma content placement
 > - CMO cares about: This is the **marketing story**—PatientPoint improves health, not just displays ads
 
-**Talking Point:** *"High engagement patients have a 3.8 percentage point better improvement rate. That's the difference between a pharma partner seeing their investment work—and not. This data is what pharma pays for."*
+**Talking Point:** *"Look at this—76% of highly engaged patients show health improvements vs only 36% of low engagement. That's a 40 percentage point difference. Pharma partners pay for this data because it proves their content works."*
 
 ---
 
@@ -457,7 +459,7 @@ Show me underperforming content that should be archived
 | At-Risk Providers | 25 (5%) | V_PROVIDER_HEALTH |
 | Revenue at Risk | $60,000 | V_ENGAGEMENT_ROI |
 | Engagement Gap | 55 points | V_PATIENT_ENGAGEMENT |
-| Outcome Improvement | 3.8pp | V_ENGAGEMENT_OUTCOMES_CORRELATION |
+| Outcome Improvement | 40pp (HIGH vs LOW) | V_ENGAGEMENT_OUTCOMES_CORRELATION |
 
 ---
 
