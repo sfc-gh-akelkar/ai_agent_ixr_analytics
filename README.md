@@ -87,7 +87,8 @@ ai_agent_ixr_analytics/
 │   ├── 04_create_agent.sql                # Cortex Agent configuration
 │   └── 05_add_statistical_metrics.sql     # Statistical validation + model metrics
 ├── streamlit_app/
-│   └── hypothesis_testing_app.py          # Interactive hypothesis testing UI
+│   ├── streamlit_app.py                   # Interactive hypothesis testing UI
+│   └── environment.yml                    # Package dependencies for SiS
 ├── assets/
 │   └── snowpark_ml_slide_content.md       # Slide content for ML capabilities
 ├── DEMO_SCRIPT.md
