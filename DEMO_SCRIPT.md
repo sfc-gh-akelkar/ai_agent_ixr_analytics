@@ -473,6 +473,65 @@ Show me underperforming content that should be archived
 | "How do we know the model is accurate?" | "We validate against historical churn events. The 45-point engagement gap is a consistent, measurable signal." |
 | "We already have dashboards" | "Dashboards show what happened. This tells you what will happen—and what to do about it." |
 | "How long to implement?" | "The data model is built. With your data in Snowflake, we can have a working POC in 2-3 weeks." |
-| "How was the engagement-outcome correlation determined?" | "We analyzed 5,000 health outcomes and compared improvement rates by engagement tier. 76% of high-engagement patients improved vs 36% of low-engagement. That 40-point gap is statistically significant." |
-| "Is this causation or correlation?" | "Correlation—but a 40-point gap across 5,000 patients is a strong predictive signal. Engaged patients *have* better outcomes. That's what matters for ROI." |
-| "What data is required?" | "Three sources: interaction data (clicks, dwell time), engagement scores (computed from interactions), and outcome data (from EHR or claims). The interaction data you already have." |
+
+---
+
+## 📊 Deep-Dive: H2 Methodology Questions
+
+*These questions often come from data-savvy executives or technical stakeholders:*
+
+### "How was the engagement-outcome correlation determined?"
+
+> "We analyzed 5,000 patient health outcomes over 6 months and compared improvement rates across three engagement tiers:
+> - **High engagement (score 70+):** 76% showed improvement
+> - **Medium engagement (40-69):** 55% showed improvement
+> - **Low engagement (below 40):** 36% showed improvement
+>
+> The 40-percentage-point gap between high and low is statistically significant with this sample size."
+
+### "Is this causation or correlation?"
+
+> "Correlation—we can't prove engagement *causes* better outcomes. But a 40-point gap across 5,000 patients is a strong predictive signal. What matters for business decisions: engaged patients *have* better outcomes. That's the ROI story."
+
+### "What data is required to do this analysis?"
+
+> "Three data sources:
+> 1. **Interaction data** (clicks, swipes, dwell time) — you already collect this
+> 2. **Engagement scores** (computed from interactions) — we calculate this
+> 3. **Outcome data** (health metrics) — from EHR integration or claims data
+>
+> The hardest part is outcome data integration. For a POC, we can start with satisfaction surveys or appointment compliance."
+
+### "What health outcomes are you measuring?"
+
+> "Five types in this analysis:
+> - A1C levels (diabetes management)
+> - Blood pressure control
+> - Medication adherence
+> - Appointment compliance
+> - Patient satisfaction
+>
+> The correlation holds across all five outcome types—it's not cherry-picked."
+
+### "Is 5,000 patients statistically significant?"
+
+> "Yes. We have 2,400+ patients in the high-engagement tier alone. For a 40-percentage-point difference, we'd need only ~100 patients per group for 95% confidence. With 5,000 records, we're well beyond statistical significance."
+
+### "How do you calculate the engagement score?"
+
+> "It's a composite of four factors:
+> - **Interaction frequency** — how often they engage
+> - **Dwell time** — how long they spend on content
+> - **Completion rate** — do they finish what they start
+> - **Session count** — how many separate visits
+>
+> Each factor is weighted based on its predictive power for retention and outcomes."
+
+### "Where does the outcome data come from?"
+
+> "In production, this integrates with:
+> - EHR systems (Epic, Cerner)
+> - Claims data (pharmacy fills, lab results)
+> - Patient surveys (satisfaction, adherence)
+>
+> For this demo, we're using simulated data that mirrors real-world patterns. A POC would use your actual data sources."
