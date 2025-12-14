@@ -339,9 +339,12 @@ GRANT SELECT ON SEMANTIC VIEW SV_CONTENT_PERFORMANCE TO ROLE SF_INTELLIGENCE_DEM
 
 CREATE OR REPLACE SEMANTIC VIEW SV_ENGAGEMENT_ROI
   TABLES (
-    roi AS V_ENGAGEMENT_ROI PRIMARY KEY (TOTAL_PATIENTS)
+    roi AS V_ENGAGEMENT_ROI PRIMARY KEY (ROI_ID)
   )
   DIMENSIONS (
+    roi.roi_id AS roi.ROI_ID
+      COMMENT = 'Summary record identifier',
+    
     roi.patient_churn_rate AS roi.PATIENT_CHURN_RATE_PCT
       WITH SYNONYMS = ('churn rate', 'attrition rate')
       COMMENT = 'Patient churn rate percentage'

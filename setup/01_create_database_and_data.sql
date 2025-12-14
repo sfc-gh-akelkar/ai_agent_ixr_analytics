@@ -683,6 +683,9 @@ GROUP BY 1,2,3,4,5,6,7,8,9;
 -- ROI Analysis View
 CREATE OR REPLACE VIEW V_ENGAGEMENT_ROI AS
 SELECT 
+    -- Synthetic key for semantic view compatibility
+    'ROI_SUMMARY' as ROI_ID,
+    
     -- Patient Metrics
     (SELECT COUNT(*) FROM PATIENTS) as TOTAL_PATIENTS,
     (SELECT COUNT(*) FROM PATIENTS WHERE STATUS = 'ACTIVE') as ACTIVE_PATIENTS,
