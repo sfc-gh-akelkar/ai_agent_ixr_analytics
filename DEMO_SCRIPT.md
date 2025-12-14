@@ -440,6 +440,193 @@ Show me underperforming content that should be archived
 
 ---
 
+## 📋 Data Deep-Dive: What Was Used, Why It Matters, How to Leverage
+
+*Use this section to prepare for customer questions about data sources and implementation.*
+
+---
+
+### **Prompt 1: Business Summary**
+**"Give me a summary of patient engagement and business impact"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | PATIENTS (10K records), PROVIDERS (500), ENGAGEMENT_SCORES, PATIENT_OUTCOMES |
+| **Key Tables** | `V_PATIENT_ENGAGEMENT`, `V_PROVIDER_HEALTH`, `V_ENGAGEMENT_ROI` |
+| **Why It Matters to PatientPoint** | Provides executive-level visibility into platform health. Quantifies the value of engagement in revenue terms. Creates board-ready metrics. |
+| **What PatientPoint Needs** | IXR interaction data (already collected), patient-provider mappings, contract/revenue data per provider |
+| **Implementation Effort** | Low—PatientPoint already has IXR data; need to connect to billing/contract systems |
+
+---
+
+### **Prompt 2: Revenue at Risk**
+**"How much annual revenue is at risk from providers likely to churn?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | PROVIDERS (contract status, monthly fees), churn risk scores |
+| **Key Tables** | `V_PROVIDER_HEALTH`, `V_ENGAGEMENT_ROI` |
+| **Why It Matters to PatientPoint** | Identifies exactly which provider contracts are at risk BEFORE renewal conversations. Enables proactive retention instead of reactive firefighting. |
+| **What PatientPoint Needs** | Provider contract data (ARR, contract dates), historical churn events for model training |
+| **Implementation Effort** | Medium—need to integrate contract management data with analytics platform |
+
+---
+
+### **Prompt 3: H1 - Patient Retention Correlation**
+**"What's the average engagement score for churned vs active patients?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | PATIENTS (engagement scores, status), PATIENT_INTERACTIONS (100K events) |
+| **Key Tables** | `V_PATIENT_ENGAGEMENT` |
+| **Why It Matters to PatientPoint** | Proves to providers that PatientPoint devices help retain patients. Creates competitive differentiation—"Our platform reduces your patient churn." |
+| **What PatientPoint Needs** | Patient status data (active/churned from provider EHR or claims), interaction data mapped to patients |
+| **Implementation Effort** | Medium—requires patient-level outcome data from provider partners |
+
+---
+
+### **Prompt 4: H2 - Health Outcomes Correlation**
+**"Does patient engagement correlate with health outcome improvements?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | PATIENT_OUTCOMES (5K records: A1C, BP, adherence), PATIENTS (engagement scores) |
+| **Key Tables** | `V_ENGAGEMENT_OUTCOMES_CORRELATION` |
+| **Why It Matters to PatientPoint** | This is the pharma partner value proposition. Proves that content drives measurable health improvements. Justifies premium pricing for pharma placements. |
+| **What PatientPoint Needs** | Health outcome data from EHR integration, claims data, or patient surveys. This is the hardest data to obtain but highest value. |
+| **Implementation Effort** | High—requires healthcare data partnerships or EHR integrations (Epic, Cerner). Can start with satisfaction surveys as proxy. |
+
+---
+
+### **Prompt 5: H3 - Provider Retention Flywheel**
+**"Do providers with higher patient engagement have lower churn risk?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | PROVIDERS (churn risk), PATIENTS (engagement by facility) |
+| **Key Tables** | `V_PROVIDER_HEALTH` with aggregated patient engagement |
+| **Why It Matters to PatientPoint** | The flywheel that protects PatientPoint's own revenue. Proves that investing in patient engagement directly reduces provider churn. Board-level strategic insight. |
+| **What PatientPoint Needs** | Provider contract status, average patient engagement per facility (already derivable from IXR) |
+| **Implementation Effort** | Low—all data exists; just need to connect the correlation |
+
+---
+
+### **Prompt 6: At-Risk Providers**
+**"Which providers are at high or critical risk of churning?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | PROVIDERS (churn scores, account managers), ENGAGEMENT_SCORES |
+| **Key Tables** | `V_PROVIDER_HEALTH` |
+| **Why It Matters to PatientPoint** | Transforms customer success from reactive to proactive. Prioritizes account manager time. Identifies patterns (e.g., Sarah Johnson has 61.5% of high-risk accounts—workload issue). |
+| **What PatientPoint Needs** | Account manager assignments, contract status, NPS scores from provider surveys |
+| **Implementation Effort** | Low—connect existing CRM/Salesforce data to analytics |
+
+---
+
+### **Prompt 7: Best Practices**
+**"What are the best practices to reduce provider churn risk?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | BEST_PRACTICES knowledge base (10 documents), historical intervention outcomes |
+| **Key Tables** | `BEST_PRACTICES_SVC` (Cortex Search) |
+| **Why It Matters to PatientPoint** | Captures institutional knowledge. New CSMs get immediate access to proven strategies. Scales expertise across the organization. |
+| **What PatientPoint Needs** | Document best practices from top-performing CSMs. Track intervention outcomes to validate success rates. |
+| **Implementation Effort** | Low—document existing knowledge; no new data sources required |
+
+---
+
+### **Prompt 8: Content Recommendations**
+**"What content should we recommend for diabetes patients?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | CONTENT_LIBRARY (200 items), interaction performance by condition |
+| **Key Tables** | `V_CONTENT_PERFORMANCE`, `CONTENT_SEARCH_SVC` |
+| **Why It Matters to PatientPoint** | Personalizes content strategy per provider. Enables data-driven conversations: "Your diabetes patients engage 45% more with these specific titles." |
+| **What PatientPoint Needs** | Content metadata (condition targeting, type), interaction data by content piece |
+| **Implementation Effort** | Low—PatientPoint already has content library; need to track performance by condition segment |
+
+---
+
+### **Prompt 9: Pharma Partner ROI**
+**"Which pharma sponsor's content has the highest engagement?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | CONTENT_LIBRARY (sponsor field), PATIENT_INTERACTIONS (by content) |
+| **Key Tables** | `V_CONTENT_PERFORMANCE` |
+| **Why It Matters to PatientPoint** | This is what pharma partners pay for. Provides proof of ROI for Eli Lilly, Merck, etc. Justifies premium placement fees. Drives renewal conversations. |
+| **What PatientPoint Needs** | Content tagged with pharma sponsor, interaction data aggregated by sponsor |
+| **Implementation Effort** | Low—add sponsor metadata to content library if not already present |
+
+---
+
+### **Prompt 10: Geographic Analysis**
+**"Which states have the highest patient churn rates?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | PATIENTS (status, state), PROVIDERS (location) |
+| **Key Tables** | `V_PATIENT_ENGAGEMENT` |
+| **Why It Matters to PatientPoint** | Identifies regional patterns for resource allocation. Reveals competitive threats or market-specific issues. Enables targeted intervention strategies. |
+| **What PatientPoint Needs** | Provider location data (already have), patient-provider mapping |
+| **Implementation Effort** | Low—data already exists |
+
+---
+
+### **Prompt 11: What-If Financial Impact**
+**"What's the financial impact if we improve engagement by 20%?"**
+
+| Aspect | Details |
+|--------|---------|
+| **Data Used** | Historical engagement-churn correlations, revenue data, improvement rates |
+| **Key Tables** | `V_ENGAGEMENT_ROI`, `V_WHATIF_ENGAGEMENT_IMPROVEMENT` |
+| **Why It Matters to PatientPoint** | Quantifies ROI of engagement initiatives BEFORE investing. Builds business cases for board approval. Models different scenarios for strategic planning. |
+| **What PatientPoint Needs** | Historical correlation data (already generated), revenue by provider |
+| **Implementation Effort** | Low—use existing correlations to build financial models |
+
+---
+
+## 📊 Data Source Summary
+
+| Data Source | Records | Already Have? | Effort to Obtain |
+|-------------|---------|---------------|------------------|
+| **IXR Interactions** | 100K+ | ✅ Yes | N/A - core business |
+| **Patient Demographics** | 10K | ✅ Yes | N/A - from devices |
+| **Provider Contracts** | 500 | ⚠️ Partial | Low - CRM integration |
+| **Content Library** | 200 | ✅ Yes | N/A - existing assets |
+| **Health Outcomes (EHR)** | 5K | ❌ No | High - partnership required |
+| **Best Practices Docs** | 10 | ⚠️ Partial | Low - document existing knowledge |
+
+---
+
+## 🎯 Implementation Roadmap for PatientPoint
+
+**Phase 1 (Weeks 1-2): Foundation**
+- Connect IXR data to Snowflake
+- Import provider contract data from CRM
+- Deploy semantic views and agent
+
+**Phase 2 (Weeks 3-4): Enhancement**
+- Add content performance tracking
+- Document best practices knowledge base
+- Enable pharma partner reporting
+
+**Phase 3 (Months 2-3): Advanced**
+- Integrate health outcome data (EHR or surveys)
+- Build predictive churn models
+- Deploy automated intervention triggers
+
+**Expected ROI Timeline:**
+- Month 1: Visibility into at-risk providers
+- Month 2: First proactive interventions
+- Month 3: Measurable churn reduction
+- Quarter 2: Full flywheel operational
+
+---
+
 ## 🛠️ Pre-Demo Checklist
 
 - [ ] **Re-run script 01 the day before demo** (keeps dates fresh)
