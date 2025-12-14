@@ -73,7 +73,7 @@
 
 ### Prompt 1: The Business Case
 ```
-Give me an executive summary of patient engagement and business impact
+Give me a summary of patient engagement and business impact
 ```
 
 **Expected Response:**

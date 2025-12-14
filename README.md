@@ -85,15 +85,18 @@ ai_agent_ixr_analytics/
 │   ├── 02_create_semantic_views.sql       # Semantic views for Cortex Analyst
 │   ├── 03_create_cortex_search.sql        # Content and best practices search
 │   ├── 04_create_agent.sql                # Cortex Agent configuration
-│   └── 05_add_statistical_metrics.sql     # Statistical validation + model metrics
-├── streamlit_app/
-│   ├── streamlit_app.py                   # Interactive hypothesis testing UI
-│   └── environment.yml                    # Package dependencies for SiS
+│   ├── 05_add_statistical_metrics.sql     # Statistical validation + model metrics
+│   └── 06_add_whatif_analysis.sql         # What-if scenario analysis views
+├── streamlit_app/                          # Optional: Streamlit UI (backup)
+│   ├── streamlit_app.py                   
+│   └── environment.yml                    
 ├── assets/
 │   └── snowpark_ml_slide_content.md       # Slide content for ML capabilities
 ├── DEMO_SCRIPT.md
 └── README.md
 ```
+
+> **Demo Approach:** The primary demo uses **Snowflake Intelligence (Cortex Agent)** for a conversational experience. The Streamlit app is available as a backup but the agent can answer all the same questions interactively.
 
 ---
 

@@ -87,6 +87,10 @@ CREATE OR REPLACE AGENT PATIENT_ENGAGEMENT_AGENT
         Examples: "Total revenue at risk?", "Churn prediction accuracy?",
         "ROI of engagement improvement?", "Patient vs provider churn rates?"
       
+      - Use "WhatIfAnalysis" for hypothetical scenario questions
+        Examples: "What if we improve engagement by 20%?", "ROI of reducing churn?",
+        "Which providers should we prioritize?", "Quick executive summary?"
+      
       - Use "ContentSearch" to find specific content recommendations
         Examples: "Find diabetes content", "Heart health videos?",
         "Interactive content for mental health?"
@@ -268,6 +272,24 @@ CREATE OR REPLACE AGENT PATIENT_ENGAGEMENT_AGENT
           - Total revenue at risk
           - Model accuracy metrics
           - Business case justification
+
+    - tool_spec:
+        type: "cortex_analyst_text_to_sql"
+        name: "WhatIfAnalysis"
+        description: |
+          Answers hypothetical "what-if" questions about engagement improvements and churn reduction.
+          
+          Data Coverage:
+          - V_WHATIF_ENGAGEMENT_IMPROVEMENT: Impact of improving engagement by 5-30%
+          - V_WHATIF_CHURN_REDUCTION: ROI of reducing churn by 10-50%
+          - V_INTERVENTION_PRIORITY: Prioritized list of providers needing attention
+          - V_EXECUTIVE_QUICK_STATS: Key metrics summary
+          
+          When to Use:
+          - "What's the financial impact of improving engagement by 20%?"
+          - "What's the ROI of reducing churn by 25%?"
+          - "Which providers should we focus on first?"
+          - "Give me a quick executive summary"
 
     - tool_spec:
         type: "cortex_search"
