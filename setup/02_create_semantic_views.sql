@@ -238,7 +238,6 @@ CREATE OR REPLACE SEMANTIC VIEW SV_OUTCOMES_CORRELATION
     
     outcomes.outcome_date AS outcomes.OUTCOME_DATE
       WITH SYNONYMS = ('date', 'measurement date', 'when')
-      AS TIME
       COMMENT = 'Date of outcome measurement'
   )
   METRICS (
