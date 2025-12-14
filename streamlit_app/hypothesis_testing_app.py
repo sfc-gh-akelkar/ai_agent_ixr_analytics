@@ -69,6 +69,13 @@ with col1:
 
 with col2:
     # Query and visualize
+    # Build condition filter separately to avoid f-string backslash issues
+    if "All" in condition_filter:
+        condition_clause = ""
+    else:
+        quoted_conditions = ["'" + c + "'" for c in condition_filter]
+        condition_clause = "AND PRIMARY_CONDITION IN (" + ",".join(quoted_conditions) + ")"
+    
     query = f"""
     SELECT 
         ENGAGEMENT_TIER,
@@ -76,7 +83,7 @@ with col2:
         ROUND(AVG(CASE WHEN IS_IMPROVED THEN 1 ELSE 0 END) * 100, 1) as improvement_rate
     FROM V_ENGAGEMENT_OUTCOMES_CORRELATION
     WHERE OUTCOME_TYPE = '{outcome_type}'
-    {"" if "All" in condition_filter else f"AND PRIMARY_CONDITION IN ({','.join([f\"'{c}'\" for c in condition_filter])})"}
+    {condition_clause}
     GROUP BY ENGAGEMENT_TIER
     ORDER BY CASE ENGAGEMENT_TIER WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 ELSE 3 END
     """
