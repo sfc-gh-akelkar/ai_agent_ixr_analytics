@@ -466,14 +466,28 @@ SELECT
         WHEN 3 THEN 90.0  -- Appointment target
         ELSE 4.0          -- Satisfaction target
     END as BENCHMARK_VALUE,
-    CASE 
-        WHEN MOD(SEQ4(), 5) = 0 THEN (5.5 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 4.5) < 7.5
-        WHEN MOD(SEQ4(), 5) = 1 THEN (110 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 50) < 130
-        WHEN MOD(SEQ4(), 5) = 2 THEN (50 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 50) > 75
-        WHEN MOD(SEQ4(), 5) = 3 THEN UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) > 0.15
-        ELSE UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) > 0.3
-    END as IS_IMPROVED
+    -- Placeholder - will be updated based on engagement correlation
+    FALSE as IS_IMPROVED
 FROM TABLE(GENERATOR(ROWCOUNT => 5000));
+
+-- ============================================================================
+-- UPDATE IS_IMPROVED BASED ON ENGAGEMENT SCORE
+-- Creates strong correlation: High engagement = Higher improvement probability
+-- ============================================================================
+
+UPDATE PATIENT_OUTCOMES o
+SET IS_IMPROVED = (
+    CASE 
+        -- High engagement (score >= 70): 70-85% improvement rate
+        WHEN p.ENGAGEMENT_SCORE >= 70 THEN UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) < 0.75
+        -- Medium engagement (score 40-70): 50-60% improvement rate  
+        WHEN p.ENGAGEMENT_SCORE >= 40 THEN UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) < 0.55
+        -- Low engagement (score < 40): 30-40% improvement rate
+        ELSE UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) < 0.35
+    END
+)
+FROM PATIENTS p
+WHERE o.PATIENT_ID = p.PATIENT_ID;
 
 -- Generate Engagement Scores (for patients and providers)
 -- Patient engagement scores
