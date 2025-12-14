@@ -234,7 +234,12 @@ CREATE OR REPLACE SEMANTIC VIEW SV_OUTCOMES_CORRELATION
     
     outcomes.is_improved AS outcomes.IS_IMPROVED
       WITH SYNONYMS = ('improved', 'better')
-      COMMENT = 'Whether outcome improved'
+      COMMENT = 'Whether outcome improved',
+    
+    outcomes.outcome_date AS outcomes.OUTCOME_DATE
+      WITH SYNONYMS = ('date', 'measurement date', 'when')
+      AS TIME
+      COMMENT = 'Date of outcome measurement'
   )
   METRICS (
     outcomes.engagement_score AS AVG(outcomes.ENGAGEMENT_SCORE)
