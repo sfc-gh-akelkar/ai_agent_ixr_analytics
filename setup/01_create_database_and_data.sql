@@ -256,16 +256,16 @@ SELECT
     END as ACCOUNT_MANAGER,
     -- NPS: Higher for ACTIVE/RENEWED, lower for AT_RISK/CHURNED
     CASE 
-        WHEN MOD(SEQ4(), 20) = 0 THEN 3 + (RANDOM() / POW(10, 18)) * 3  -- Churned: 3-6
-        WHEN MOD(SEQ4(), 10) = 0 THEN 5 + (RANDOM() / POW(10, 18)) * 3  -- At Risk: 5-8
-        ELSE 7 + (RANDOM() / POW(10, 18)) * 3  -- Active: 7-10
+        WHEN MOD(SEQ4(), 20) = 0 THEN 3 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 3  -- Churned: 3-6
+        WHEN MOD(SEQ4(), 10) = 0 THEN 5 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 3  -- At Risk: 5-8
+        ELSE 7 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 3  -- Active: 7-10
     END as NPS_SCORE,
     DATEADD('day', -1 * MOD(SEQ4(), 60), CURRENT_DATE()) as LAST_ENGAGEMENT_REVIEW,
     -- Churn risk: Higher for AT_RISK/CHURNED
     CASE 
-        WHEN MOD(SEQ4(), 20) = 0 THEN 85 + (RANDOM() / POW(10, 18)) * 15  -- Churned: 85-100
-        WHEN MOD(SEQ4(), 10) = 0 THEN 60 + (RANDOM() / POW(10, 18)) * 25  -- At Risk: 60-85
-        ELSE 5 + (RANDOM() / POW(10, 18)) * 40  -- Active: 5-45
+        WHEN MOD(SEQ4(), 20) = 0 THEN 85 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 15  -- Churned: 85-100
+        WHEN MOD(SEQ4(), 10) = 0 THEN 60 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 25  -- At Risk: 60-85
+        ELSE 5 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 40  -- Active: 5-45
     END as CHURN_RISK_SCORE
 FROM TABLE(GENERATOR(ROWCOUNT => 500));
 
@@ -313,11 +313,11 @@ SELECT
     END as CHURNED_DATE,
     -- Engagement score: Higher for ACTIVE, lower for CHURNED
     CASE 
-        WHEN MOD(SEQ4(), 15) = 0 THEN 15 + (RANDOM() / POW(10, 18)) * 30  -- Churned: 15-45
-        WHEN MOD(SEQ4(), 8) = 0 THEN 30 + (RANDOM() / POW(10, 18)) * 30   -- Inactive: 30-60
-        ELSE 50 + (RANDOM() / POW(10, 18)) * 50  -- Active: 50-100
+        WHEN MOD(SEQ4(), 15) = 0 THEN 15 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 30  -- Churned: 15-45
+        WHEN MOD(SEQ4(), 8) = 0 THEN 30 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 30   -- Inactive: 30-60
+        ELSE 50 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 50  -- Active: 50-100
     END as ENGAGEMENT_SCORE,
-    3.0 + (RANDOM() / POW(10, 18)) * 2.0 as SATISFACTION_SCORE
+    3.0 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 2.0 as SATISFACTION_SCORE
 FROM TABLE(GENERATOR(ROWCOUNT => 10000));
 
 -- Generate Content Library (200 content items)
@@ -393,7 +393,7 @@ SELECT
     30 + MOD(SEQ4(), 150) as DURATION_SECONDS,
     DATEADD('day', -1 * MOD(SEQ4(), 365), CURRENT_DATE()) as PUBLISH_DATE,
     CASE WHEN MOD(SEQ4(), 20) = 0 THEN 'ARCHIVED' ELSE 'ACTIVE' END as STATUS,
-    40 + (RANDOM() / POW(10, 18)) * 60 as EFFECTIVENESS_SCORE
+    40 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 60 as EFFECTIVENESS_SCORE
 FROM TABLE(GENERATOR(ROWCOUNT => 200));
 
 -- Generate Patient Interactions (100,000 interaction records)
@@ -421,9 +421,9 @@ SELECT
         ELSE 10 + MOD(SEQ4(), 60)          -- Others: 10-70 seconds
     END as DWELL_TIME_SECONDS,
     CASE MOD(SEQ4(), 6)
-        WHEN 4 THEN 90 + (RANDOM() / POW(10, 18)) * 10  -- COMPLETE: 90-100%
-        WHEN 5 THEN (RANDOM() / POW(10, 18)) * 20       -- SKIP: 0-20%
-        ELSE 20 + (RANDOM() / POW(10, 18)) * 70         -- Others: 20-90%
+        WHEN 4 THEN 90 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 10  -- COMPLETE: 90-100%
+        WHEN 5 THEN UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 20       -- SKIP: 0-20%
+        ELSE 20 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 70         -- Others: 20-90%
     END as COMPLETION_PERCENTAGE,
     UUID_STRING() as SESSION_ID,
     CASE MOD(SEQ4(), 3)
@@ -447,11 +447,11 @@ SELECT
         ELSE 'SATISFACTION_SCORE'
     END as OUTCOME_TYPE,
     CASE MOD(SEQ4(), 5)
-        WHEN 0 THEN 5.5 + (RANDOM() / POW(10, 18)) * 4.5  -- A1C: 5.5-10%
-        WHEN 1 THEN 110 + (RANDOM() / POW(10, 18)) * 50   -- BP: 110-160
-        WHEN 2 THEN 50 + (RANDOM() / POW(10, 18)) * 50    -- Adherence: 50-100%
-        WHEN 3 THEN (RANDOM() / POW(10, 18)) * 100        -- Appointment: 0-100%
-        ELSE 3 + (RANDOM() / POW(10, 18)) * 2             -- Satisfaction: 3-5
+        WHEN 0 THEN 5.5 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 4.5  -- A1C: 5.5-10%
+        WHEN 1 THEN 110 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 50   -- BP: 110-160
+        WHEN 2 THEN 50 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 50    -- Adherence: 50-100%
+        WHEN 3 THEN UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 100        -- Appointment: 0-100%
+        ELSE 3 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 2             -- Satisfaction: 3-5
     END as OUTCOME_VALUE,
     DATEADD('day', -1 * MOD(SEQ4(), 180), CURRENT_DATE()) as OUTCOME_DATE,
     CASE MOD(SEQ4(), 3)
@@ -467,11 +467,11 @@ SELECT
         ELSE 4.0          -- Satisfaction target
     END as BENCHMARK_VALUE,
     CASE 
-        WHEN MOD(SEQ4(), 5) = 0 THEN (5.5 + (RANDOM() / POW(10, 18)) * 4.5) < 7.5
-        WHEN MOD(SEQ4(), 5) = 1 THEN (110 + (RANDOM() / POW(10, 18)) * 50) < 130
-        WHEN MOD(SEQ4(), 5) = 2 THEN (50 + (RANDOM() / POW(10, 18)) * 50) > 75
-        WHEN MOD(SEQ4(), 5) = 3 THEN (RANDOM() / POW(10, 18)) > 0.15
-        ELSE (RANDOM() / POW(10, 18)) > 0.3
+        WHEN MOD(SEQ4(), 5) = 0 THEN (5.5 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 4.5) < 7.5
+        WHEN MOD(SEQ4(), 5) = 1 THEN (110 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 50) < 130
+        WHEN MOD(SEQ4(), 5) = 2 THEN (50 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 50) > 75
+        WHEN MOD(SEQ4(), 5) = 3 THEN UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) > 0.15
+        ELSE UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) > 0.3
     END as IS_IMPROVED
 FROM TABLE(GENERATOR(ROWCOUNT => 5000));
 
@@ -487,10 +487,10 @@ SELECT
     CURRENT_DATE() as CALCULATION_DATE,
     10 + MOD(SEQ4(), 100) as TOTAL_INTERACTIONS,
     300 + MOD(SEQ4(), 3000) as TOTAL_DWELL_TIME_SECONDS,
-    30 + (RANDOM() / POW(10, 18)) * 70 as AVG_COMPLETION_RATE,
+    30 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 70 as AVG_COMPLETION_RATE,
     5 + MOD(SEQ4(), 30) as UNIQUE_CONTENT_VIEWED,
     2 + MOD(SEQ4(), 15) as SESSIONS_COUNT,
-    20 + (RANDOM() / POW(10, 18)) * 80 as ENGAGEMENT_SCORE,
+    20 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 80 as ENGAGEMENT_SCORE,
     CASE MOD(SEQ4(), 3)
         WHEN 0 THEN 'INCREASING'
         WHEN 1 THEN 'STABLE'
@@ -510,10 +510,10 @@ SELECT
     CURRENT_DATE() as CALCULATION_DATE,
     500 + MOD(SEQ4(), 5000) as TOTAL_INTERACTIONS,
     15000 + MOD(SEQ4(), 150000) as TOTAL_DWELL_TIME_SECONDS,
-    40 + (RANDOM() / POW(10, 18)) * 60 as AVG_COMPLETION_RATE,
+    40 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 60 as AVG_COMPLETION_RATE,
     20 + MOD(SEQ4(), 150) as UNIQUE_CONTENT_VIEWED,
     50 + MOD(SEQ4(), 500) as SESSIONS_COUNT,
-    30 + (RANDOM() / POW(10, 18)) * 70 as ENGAGEMENT_SCORE,
+    30 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 70 as ENGAGEMENT_SCORE,
     CASE MOD(SEQ4(), 3)
         WHEN 0 THEN 'INCREASING'
         WHEN 1 THEN 'STABLE'
@@ -535,8 +535,8 @@ SELECT
     END as ENTITY_ID,
     DATEADD('day', -1 * (30 + MOD(SEQ4(), 300)), CURRENT_DATE()) as CHURN_DATE,
     60 + MOD(SEQ4(), 120) as DAYS_SINCE_LAST_ACTIVITY,
-    15 + (RANDOM() / POW(10, 18)) * 35 as ENGAGEMENT_SCORE_AT_CHURN,  -- Low engagement at churn
-    0.6 + (RANDOM() / POW(10, 18)) * 0.4 as PREDICTED_CHURN_PROBABILITY,  -- Model predicted high churn
+    15 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 35 as ENGAGEMENT_SCORE_AT_CHURN,  -- Low engagement at churn
+    0.6 + UNIFORM(0::FLOAT, 1::FLOAT, RANDOM()) * 0.4 as PREDICTED_CHURN_PROBABILITY,  -- Model predicted high churn
     TRUE as ACTUAL_CHURN,
     CASE MOD(SEQ4(), 5)
         WHEN 0 THEN 'Switched provider'
