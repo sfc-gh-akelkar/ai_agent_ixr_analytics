@@ -1,101 +1,43 @@
-# 🏥 PatientPoint AI Agent Demos
+# 🏥 PatientPoint AI Agent Demo
 
-**AI Agents for Healthcare Digital Health Operations**
+**AI-Powered Engagement Analysis for PatientPoint Digital Health Platforms**
 
-Two Snowflake Cortex Agent demos for **Snowflake Intelligence** showcasing AI-powered analytics for PatientPoint's digital health platform.
+A Snowflake Cortex Agent demo for **Snowflake Intelligence** showcasing AI-powered analytics for PatientPoint's digital health platform.
 
----
-
-## 📋 Use Cases Overview
-
-| Use Case | Focus | Business Value |
-|----------|-------|----------------|
-| [**01: Predictive Maintenance**](use_cases/01_predictive_maintenance/) | IoT device health & automated fixes | $96M annual savings |
-| [**02: Patient Engagement**](use_cases/02_patient_engagement/) | Engagement analytics & churn prediction | Revenue protection |
+> **Demo Note:** This demo uses simulated data representing PatientPoint's real-world scenario of processing billions of patient interaction records (IXR). The synthetic dataset (100K interactions, 10K patients, 500 providers) demonstrates analytical capabilities that scale to production data.
 
 ---
 
-## 🔧 Use Case 1: Predictive Device Maintenance
+## 📊 Overview
 
-**AI-powered IoT device maintenance for 500,000 HealthScreen displays**
+PatientPoint operates digital health displays in healthcare waiting rooms and exam rooms, collecting billions of patient interactions (clicks, swipes, dwell time). This demo validates the hypothesis that **patient engagement correlates with better provider retention and improved patient outcomes**.
 
-### The Challenge
-| Pain Point | Impact |
-|------------|--------|
-| **High Costs** | Field technician dispatches cost $150-300+ per visit |
-| **Lost Revenue** | Device downtime = lost advertising impressions |
-| **Reactive Model** | Issues discovered after failure, not before |
+### The Primary Challenge
 
-### The Solution
-- **Predictive Failure Detection** - 24-48 hour advance warning
-- **Automated Remote Remediation** - 60%+ issues fixed without dispatch
-- **AI-Powered Triage** - Intelligent routing to remote fix vs. field dispatch
-
-### Business Impact
-| Metric | Value |
-|--------|-------|
-| Annual Cost Baseline | $185M |
-| Projected Savings | $96M (52% reduction) |
-| Remote Fix Rate | 60%+ |
-| Prediction Accuracy | >85% |
-
-📁 **[View Use Case 1 →](use_cases/01_predictive_maintenance/)**
-
----
-
-## 📊 Use Case 2: Patient Engagement Analytics
-
-**Validate that patient engagement drives retention and outcomes**
+PatientPoint needs to validate whether device interaction patterns can predict and influence key business outcomes.
 
 ### The Three Hypotheses
+
 | Hypothesis | Question | Business Impact |
 |------------|----------|-----------------|
-| **H1: Patient Retention** | Do engaged patients stay with providers? | Prove value to providers |
-| **H2: Patient Outcomes** | Does engagement improve health metrics? | Prove value to pharma |
-| **H3: Provider Retention** | Does patient engagement predict provider retention? | Protect PatientPoint revenue |
+| **H1: Patient→Provider Retention** | Are patients who engage more with digital content less likely to switch healthcare providers? | Prove value to providers |
+| **H2: Patient Outcomes** | Does digital engagement correlate with better health metrics, treatment adherence, or satisfaction? | Prove value to pharma |
+| **H3: Provider→PatientPoint Retention** | Do providers with higher patient engagement stay with PatientPoint longer? | Protect PatientPoint revenue |
 
 ### The Solution
+
 - **Churn Prediction** - Identify at-risk providers before they leave
 - **Correlation Analysis** - Statistically validate engagement-outcome links
 - **Best Practices Search** - AI-powered intervention recommendations
 
 ### Business Impact
+
 | Metric | Value |
 |--------|-------|
-| Revenue at Risk | Identified proactively |
+| At-Risk Revenue | Identified proactively |
 | Churn Prediction | >85% accuracy |
+| Outcome Correlation | Statistically validated |
 | Intervention Time | Seconds vs weeks |
-
-📁 **[View Use Case 2 →](use_cases/02_patient_engagement/)**
-
----
-
-## 📁 Project Structure
-
-```
-ai_agent_device_maintenance/
-├── use_cases/
-│   ├── 01_predictive_maintenance/
-│   │   ├── setup/
-│   │   │   ├── 01_create_database_and_data.sql
-│   │   │   ├── 02_create_semantic_views.sql
-│   │   │   ├── 03_create_cortex_search.sql
-│   │   │   ├── 04_create_agent.sql
-│   │   │   └── 05_predictive_simulation.sql
-│   │   ├── DEMO_SCRIPT.md
-│   │   └── README.md
-│   │
-│   └── 02_patient_engagement/
-│       ├── setup/
-│       │   ├── 01_create_database_and_data.sql
-│       │   ├── 02_create_semantic_views.sql
-│       │   ├── 03_create_cortex_search.sql
-│       │   └── 04_create_agent.sql
-│       ├── DEMO_SCRIPT.md
-│       └── README.md
-│
-└── README.md                 # This file
-```
 
 ---
 
@@ -104,53 +46,84 @@ ai_agent_device_maintenance/
 ### Prerequisites
 - Snowflake account with **Cortex** access
 - ACCOUNTADMIN role (for initial setup)
-- The demos use the `SF_INTELLIGENCE_DEMO` role (created automatically)
+- The demo uses the `SF_INTELLIGENCE_DEMO` role (created automatically)
 
 ### Setup Steps
 
-**For Use Case 1 (Predictive Maintenance):**
+Run scripts in order from the `setup/` folder:
+
 ```bash
-cd use_cases/01_predictive_maintenance/setup/
-# Run scripts 01-05 in order
+cd setup/
+# 01_create_database_and_data.sql    # Database, tables, simulated data
+# 02_create_semantic_views.sql       # Semantic views for Cortex Analyst
+# 03_create_cortex_search.sql        # Content and best practices search
+# 04_create_agent.sql                # Agent configuration
 ```
 
-**For Use Case 2 (Patient Engagement):**
-```bash
-cd use_cases/02_patient_engagement/setup/
-# Run scripts 01-04 in order
-```
-
-### Access the Agents
+### Access the Agent
 
 1. Navigate to **AI & ML → Snowflake Intelligence**
-2. Select the agent:
-   - **Device Maintenance Assistant** (Use Case 1)
-   - **Patient Engagement Analyst** (Use Case 2)
+2. Select **Patient Engagement Analyst**
 3. Start asking questions!
 
 ---
 
-## 🎬 Demo Scripts
+## 🎬 Demo Script
 
-Each use case includes a detailed 20-minute demo script:
+A detailed 20-minute demo script is available:
 
-| Use Case | Demo Script |
-|----------|-------------|
-| Predictive Maintenance | [DEMO_SCRIPT.md](use_cases/01_predictive_maintenance/DEMO_SCRIPT.md) |
-| Patient Engagement | [DEMO_SCRIPT.md](use_cases/02_patient_engagement/DEMO_SCRIPT.md) |
+📁 **[View Demo Script →](DEMO_SCRIPT.md)**
+
+---
+
+## 📁 Project Structure
+
+```
+ai_agent_ixr_analytics/
+├── setup/
+│   ├── 01_create_database_and_data.sql    # Database, tables, simulated IXR data
+│   ├── 02_create_semantic_views.sql       # Semantic views for Cortex Analyst
+│   ├── 03_create_cortex_search.sql        # Content and best practices search
+│   ├── 04_create_agent.sql                # Cortex Agent configuration
+│   └── 05_add_statistical_metrics.sql     # Statistical validation + model metrics
+├── streamlit_app/
+│   └── hypothesis_testing_app.py          # Interactive hypothesis testing UI
+├── assets/
+│   └── snowpark_ml_slide_content.md       # Slide content for ML capabilities
+├── DEMO_SCRIPT.md
+└── README.md
+```
+
+---
+
+## 📊 Data Model
+
+### Core Tables
+
+| Table | Records | Description |
+|-------|---------|-------------|
+| PROVIDERS | 500 | Healthcare facilities with contracts |
+| PATIENTS | 10,000 | Anonymized patient profiles |
+| PATIENT_INTERACTIONS | 100,000 | Click/swipe/dwell events (IXR) |
+| CONTENT_LIBRARY | 200 | Health education content |
+| PATIENT_OUTCOMES | 5,000 | Health metrics and outcomes |
+| ENGAGEMENT_SCORES | 10,500 | Aggregated engagement metrics |
+| CHURN_EVENTS | 1,000 | Historical churn records |
+
+### Key Views
+
+| View | Purpose |
+|------|---------|
+| V_PATIENT_ENGAGEMENT | Patient-level engagement and churn risk |
+| V_PROVIDER_HEALTH | Provider retention and revenue metrics |
+| V_ENGAGEMENT_OUTCOMES_CORRELATION | Engagement-outcome analysis |
+| V_CONTENT_PERFORMANCE | Content effectiveness metrics |
+| V_ENGAGEMENT_ROI | Executive business impact |
 
 ---
 
 ## 🎯 Key Personas
 
-### Use Case 1: Predictive Maintenance
-| Persona | Focus |
-|---------|-------|
-| Executive (C-Suite) | ROI, fleet health, revenue protection |
-| Operations Center | Risk triage, predictions, dispatch decisions |
-| Field Technician | Work orders, troubleshooting, repair guidance |
-
-### Use Case 2: Patient Engagement
 | Persona | Focus |
 |---------|-------|
 | Executive (C-Suite) | Revenue at risk, churn prediction, ROI |
@@ -160,14 +133,37 @@ Each use case includes a detailed 20-minute demo script:
 
 ---
 
-## 💰 Combined Business Value
+## 💬 Sample Questions
 
-| Metric | Use Case 1 | Use Case 2 | Total Impact |
-|--------|------------|------------|--------------|
-| **Cost Savings** | $96M/year | - | $96M/year |
-| **Revenue Protected** | Ad revenue | Provider contracts | Millions |
-| **Prediction Accuracy** | >85% | >85% | Enterprise AI |
-| **Time to Insight** | Seconds | Seconds | 10x faster |
+### Executive-Level
+```
+"What's the financial impact of improving patient engagement by 20%?"
+"How accurately can we predict which patients are at risk of switching providers?"
+"How much revenue is at risk from provider churn?"
+"What's the ROI of reducing churn by 10%?"
+```
+
+### Technical Validation
+```
+"What confidence level do we have in the correlation between engagement and outcomes?"
+"What are the precision and recall rates of our churn prediction model?"
+"Does engagement correlate with health outcome improvements?"
+"Compare improvement rates by engagement tier"
+```
+
+### Provider Success
+```
+"Which providers are at high risk of churning?"
+"What are best practices to reduce churn?"
+"Which providers have declining patient engagement trends?"
+```
+
+### Content/Product
+```
+"Which content has the highest completion rate?"
+"Recommend content for diabetes patients"
+"Compare video vs interactive content performance"
+```
 
 ---
 

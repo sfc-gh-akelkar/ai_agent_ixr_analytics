@@ -22,17 +22,9 @@
 
 | Hypothesis | Question | Business Impact |
 |------------|----------|-----------------|
-| **H1: Patient Retention** | Does engagement predict patient loyalty? | Prove value to providers |
-| **H2: Patient Outcomes** | Does engagement improve health metrics? | Prove value to pharma |
-| **H3: Provider Retention** | Does patient engagement predict provider retention? | Protect PatientPoint revenue |
-
-### Customer Success Context
-
-| Customer | Snowflake Results |
-|----------|-------------------|
-| **FIIX** | 10x improvement in maintenance insights for 40,000+ customers |
-| **Toyota** | Minimized disruptions, extended equipment life |
-| **Telecom** | Reduced costs, improved SLA compliance |
+| **H1: Patient→Provider Retention** | Are patients who engage more with digital content less likely to switch providers? | Prove value to providers |
+| **H2: Patient Outcomes** | Does digital engagement correlate with better health metrics, treatment adherence, or satisfaction? | Prove value to pharma |
+| **H3: Provider→PatientPoint Retention** | Do providers with higher patient engagement stay with PatientPoint longer? | Protect PatientPoint revenue |
 
 ---
 
@@ -50,7 +42,9 @@
 ## 🎬 Opening (0:00 - 2:00)
 
 **Talking Points:**
-> "PatientPoint operates digital health displays in thousands of healthcare waiting rooms and exam rooms. We collect **billions of patient interactions**—clicks, swipes, dwell time—from these touchscreens.
+> "PatientPoint operates digital health displays in thousands of healthcare waiting rooms and exam rooms. In production, we collect **billions of patient interactions**—clicks, swipes, dwell time—from these touchscreens.
+>
+> For today's demo, we're using **simulated data** that represents the patterns we see in real IXR data—100,000 interactions across 10,000 patients and 500 providers.
 >
 > The question leadership keeps asking: **Does patient engagement actually matter?**
 >
@@ -169,7 +163,7 @@ Compare health outcome improvement rates between high, medium, and low engagemen
 
 ---
 
-### Prompt 3: Patient Retention Correlation (H1)
+### Prompt 3: Patient→Provider Retention Correlation (H1)
 ```
 What's the average engagement score for churned patients vs active patients?
 ```
@@ -179,20 +173,20 @@ What's the average engagement score for churned patients vs active patients?
 - Churned patient avg engagement
 - Clear gap demonstrating correlation
 
-**Talking Point:** *"Churned patients had average engagement of X vs Y for active patients. That's a Z-point gap—engagement predicts retention."*
+**Talking Point:** *"Churned patients had average engagement of X vs Y for active patients. That's a Z-point gap—patients who engage more are less likely to switch providers."*
 
 ---
 
-### Prompt 4: Provider Correlation (H3)
+### Prompt 4: Provider→PatientPoint Retention Correlation (H3)
 ```
-Do providers with higher patient engagement have lower churn risk?
+Do providers with higher patient engagement have lower churn risk from PatientPoint?
 ```
 
 **Expected Response:**
 - Correlation between patient engagement and provider churn risk
 - Examples of at-risk vs healthy providers
 
-**Talking Point:** *"This validates H3—patient engagement predicts provider retention. This is the flywheel that protects our revenue."*
+**Talking Point:** *"This validates H3—providers with engaged patients stay with PatientPoint longer. This is the flywheel that protects our revenue."*
 
 ---
 
@@ -200,9 +194,9 @@ Do providers with higher patient engagement have lower churn risk?
 
 | Hypothesis | Finding | Confidence |
 |------------|---------|------------|
-| H1: Patient Retention | Churned patients have X% lower engagement | ✅ Validated |
-| H2: Patient Outcomes | High engagement = Y% better outcomes | ✅ Validated |
-| H3: Provider Retention | Patient engagement predicts provider churn | ✅ Validated |
+| H1: Patient→Provider Retention | Engaged patients are less likely to switch providers | ✅ Validated |
+| H2: Patient Outcomes | High engagement = Y% better health outcomes | ✅ Validated |
+| H3: Provider→PatientPoint Retention | Providers with engaged patients stay with PatientPoint | ✅ Validated |
 
 ---
 
@@ -324,9 +318,9 @@ What's the financial impact if we improve patient engagement by 20%?
 
 > "In 20 minutes, we validated three critical hypotheses:
 >
-> 1. **Patient Retention (H1):** Engaged patients stay with their providers
-> 2. **Patient Outcomes (H2):** Engaged patients have better health metrics
-> 3. **Provider Retention (H3):** Providers with engaged patients stay with PatientPoint
+> 1. **Patient→Provider Retention (H1):** Patients who engage more are less likely to switch providers
+> 2. **Patient Outcomes (H2):** Digital engagement correlates with better health metrics and adherence
+> 3. **Provider→PatientPoint Retention (H3):** Providers with higher patient engagement stay with PatientPoint longer
 >
 > This creates a flywheel: Better engagement → Better outcomes → Happier providers → More revenue"
 
@@ -349,25 +343,50 @@ What's the financial impact if we improve patient engagement by 20%?
 
 ---
 
-## 💬 Alternative Prompts by Persona
+## 💬 Key Demo Questions by Category
 
-### Executive
+### 🎯 Executive-Level Questions
+
+| Question | Prompt | Why It Matters |
+|----------|--------|----------------|
+| **ROI Impact** | `What's the financial impact of improving patient engagement by 20%?` | Quantifies investment value |
+| **Predictive Power** | `How accurately can we predict which patients are at risk of switching providers?` | Validates model effectiveness |
+| **Operational Efficiency** | `How does engagement analytics reduce our patient acquisition costs?` | Shows cost savings beyond retention |
+| **Competitive Advantage** | `What insights does our engagement data provide that competitors can't match?` | Differentiates in digital health market |
+
 ```
+# Executive Prompts
+What's the financial impact of improving patient engagement by 20%?
+How accurately can we predict which patients are at risk of switching providers?
 What's the total revenue at risk from provider churn?
-How accurate is our churn prediction?
+How accurate is our churn prediction model?
 What's the ROI of reducing churn by 10%?
 Which account managers have the most at-risk accounts?
 ```
 
-### Data Science
+### 📊 Technical Validation Questions
+
+| Question | Prompt | Why It Matters |
+|----------|--------|----------------|
+| **Statistical Significance** | `What confidence level do we have in the correlation between engagement and outcomes?` | Validates analytical rigor |
+| **Scalability** | `How many interaction records are in our demo dataset?` | Demonstrates data model (scales to billions in production) |
+| **Data Quality** | `What's the data completeness rate across our patient interactions?` | Ensures data integrity |
+| **Model Performance** | `What are the precision and recall rates of our churn prediction model?` | Technical credibility |
+
+> **Demo Note:** Technical validation questions use simulated data. In production, these queries would run against billions of real-time IXR records using Snowflake's scalable compute.
+
 ```
+# Data Science Prompts
 What's the correlation coefficient between engagement and outcomes?
 Compare engagement distributions for churned vs active patients
-What features best predict churn?
+What features best predict patient churn?
 Show me the engagement score distribution by condition
+What confidence level do we have in the engagement-outcome correlation?
+What are the precision and recall rates of our churn prediction?
 ```
 
-### Provider Success
+### 🏥 Provider Success Prompts
+
 ```
 Which providers have declining patient engagement trends?
 What interventions have worked for similar at-risk providers?
@@ -375,7 +394,8 @@ Show me the patient satisfaction scores for my accounts
 Which facilities need content refresh recommendations?
 ```
 
-### Content/Product
+### 📱 Content/Product Prompts
+
 ```
 What's the average completion rate by content type?
 Which content categories drive the highest engagement?
