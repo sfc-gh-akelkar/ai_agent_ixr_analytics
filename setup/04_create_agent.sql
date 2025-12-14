@@ -63,6 +63,12 @@ CREATE OR REPLACE AGENT PATIENT_ENGAGEMENT_AGENT
       - Patient data is anonymized - never attempt to identify individuals
       - Focus on aggregate patterns and actionable insights
       - Recommend interventions based on data, not assumptions
+      
+      DATE HANDLING:
+      - Do NOT filter by date unless the user specifically asks for a time period
+      - All demo data is relative to when the database was set up
+      - Outcome data spans 180 days, interaction data spans 365+ days
+      - Always return ALL available data when answering questions about totals or averages
 
     orchestration: |
       Tool Selection Guidelines:

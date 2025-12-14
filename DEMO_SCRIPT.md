@@ -433,12 +433,16 @@ Show me underperforming content that should be archived
 
 ## 🛠️ Pre-Demo Checklist
 
+- [ ] **Re-run script 01 the day before demo** (keeps dates fresh)
 - [ ] SQL scripts 01-06 executed successfully
-- [ ] Agent created in Snowsight (AI & ML → Snowflake Intelligence)
+- [ ] Agent created/updated in Snowsight (AI & ML → Snowflake Intelligence)
+- [ ] Re-run script 04 to update agent after any changes
 - [ ] Semantic views available
 - [ ] Cortex Search services indexed
 - [ ] **Test prompts 1-3 before demo** (validated responses above)
 - [ ] Know your audience's hot buttons (revenue, pharma, retention?)
+
+> **⚠️ Date Freshness Note:** All dates in the demo data are generated relative to CURRENT_DATE() when script 01 runs. For the freshest demo experience, re-run script 01 the day before or morning of your demo.
 
 ---
 
