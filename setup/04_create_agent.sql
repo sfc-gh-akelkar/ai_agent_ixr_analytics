@@ -324,11 +324,6 @@ CREATE OR REPLACE AGENT PATIENT_ENGAGEMENT_AGENT
           - Find proven strategies for engagement
           - Win-back and retention tactics
 
-    - tool_spec:
-        type: "data_to_chart"
-        name: "data_to_chart"
-        description: "Generates visualizations for engagement trends, distributions, and comparisons"
-
   tool_resources:
     PatientEngagement:
       semantic_view: "PATIENTPOINT_ENGAGEMENT.ENGAGEMENT_ANALYTICS.SV_PATIENT_ENGAGEMENT"
