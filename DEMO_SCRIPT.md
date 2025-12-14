@@ -194,17 +194,19 @@ What's the average engagement score for churned patients vs active patients?
 **Validated Response:**
 | Patient Status | Avg Engagement Score | Count |
 |----------------|----------------------|-------|
-| Active | ~75 (Healthy + Low Risk avg) | 8,558 |
-| Churned | 29.7 | 667 |
-| **Gap** | **~45 points** | - |
+| Active | 75.1 | 8,167 |
+| Churned | 30.3 | 667 |
+| **Gap** | **44.8 points** | - |
 
 > 💡 **WHY THIS MATTERS TO C-LEVEL:**
-> - **45-point gap** proves H1: Engaged patients stay with their providers
+> - **44.8-point gap** proves H1: Engaged patients stay with their providers
+> - **2.5x higher engagement** for retained patients—this is a predictive signal
+> - **91.9% retention rate** where engagement is high
 > - Provider sales pitch: "PatientPoint devices help you retain patients"
 > - VP of Sales cares about: This is **competitive differentiation**—no competitor can prove this
 > - CEO cares about: This validates the entire **business model**
 
-**Talking Point:** *"Churned patients averaged 29.7 engagement vs ~75 for active patients. That's not noise—that's a 45-point predictive signal. When you see a patient's engagement dropping below 40, you know they're at risk of switching providers."*
+**Talking Point:** *"Active patients average 75 engagement vs 30 for churned patients. That's a 45-point gap—2.5x higher engagement for retained patients. When you see a patient's score dropping below 40, that's your early warning signal."*
 
 ---
 
