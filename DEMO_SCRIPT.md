@@ -312,6 +312,34 @@ What's the financial impact if we improve patient engagement by 20%?
 
 ---
 
+### Prompt 4: Provider Prioritization
+```
+Which providers should we prioritize for intervention?
+```
+
+**Expected Response:**
+- Priority-ranked list with scores
+- Recommended action per provider
+- Revenue impact of each intervention
+
+**Why it matters:** *"This turns data into an action plan."*
+
+---
+
+### Prompt 5: Churn Reduction ROI
+```
+What's the ROI if we reduce churn by 25%?
+```
+
+**Expected Response:**
+- Revenue saved from at-risk providers
+- Estimated program cost
+- Net ROI and ROI multiplier
+
+**Why it matters:** *"This builds the business case for retention investment."*
+
+---
+
 ## 🎬 Closing (18:00 - 20:00)
 
 ### The Story We Just Told
@@ -407,10 +435,11 @@ Show me underperforming content that should be archived
 
 ## 🛠️ Pre-Demo Checklist
 
-- [ ] SQL scripts 01-04 executed successfully
-- [ ] Agent created in Snowsight (AI & ML → Agents)
-- [ ] Semantic views added to agent
+- [ ] SQL scripts 01-06 executed successfully
+- [ ] Agent created in Snowsight (AI & ML → Snowflake Intelligence)
+- [ ] Semantic views available
 - [ ] Cortex Search services indexed
+- [ ] What-if analysis views created (script 06)
 - [ ] **Test the full flow once before demo**
 
 ---

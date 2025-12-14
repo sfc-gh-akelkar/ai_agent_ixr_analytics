@@ -87,16 +87,13 @@ ai_agent_ixr_analytics/
 │   ├── 04_create_agent.sql                # Cortex Agent configuration
 │   ├── 05_add_statistical_metrics.sql     # Statistical validation + model metrics
 │   └── 06_add_whatif_analysis.sql         # What-if scenario analysis views
-├── streamlit_app/                          # Optional: Streamlit UI (backup)
-│   ├── streamlit_app.py                   
-│   └── environment.yml                    
 ├── assets/
 │   └── snowpark_ml_slide_content.md       # Slide content for ML capabilities
 ├── DEMO_SCRIPT.md
 └── README.md
 ```
 
-> **Demo Approach:** The primary demo uses **Snowflake Intelligence (Cortex Agent)** for a conversational experience. The Streamlit app is available as a backup but the agent can answer all the same questions interactively.
+> **Demo Approach:** This demo uses **Snowflake Intelligence (Cortex Agent)** for a fully conversational experience. All analysis—including what-if scenarios—is done through natural language queries.
 
 ---
 
