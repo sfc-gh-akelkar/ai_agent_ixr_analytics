@@ -473,3 +473,6 @@ Show me underperforming content that should be archived
 | "How do we know the model is accurate?" | "We validate against historical churn events. The 45-point engagement gap is a consistent, measurable signal." |
 | "We already have dashboards" | "Dashboards show what happened. This tells you what will happen—and what to do about it." |
 | "How long to implement?" | "The data model is built. With your data in Snowflake, we can have a working POC in 2-3 weeks." |
+| "How was the engagement-outcome correlation determined?" | "We analyzed 5,000 health outcomes and compared improvement rates by engagement tier. 76% of high-engagement patients improved vs 36% of low-engagement. That 40-point gap is statistically significant." |
+| "Is this causation or correlation?" | "Correlation—but a 40-point gap across 5,000 patients is a strong predictive signal. Engaged patients *have* better outcomes. That's what matters for ROI." |
+| "What data is required?" | "Three sources: interaction data (clicks, dwell time), engagement scores (computed from interactions), and outcome data (from EHR or claims). The interaction data you already have." |
