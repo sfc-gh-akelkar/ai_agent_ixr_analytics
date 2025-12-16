@@ -76,6 +76,22 @@ A detailed 20-minute demo script is available:
 
 ---
 
+## 🏗️ Architecture
+
+View the complete architecture diagram including data sources and Snowflake features:
+
+📁 **[View Architecture Diagram →](assets/architecture_diagram.md)**
+
+```mermaid
+flowchart LR
+    Sources["📊 Data Sources<br/>IXR, CRM, CMS, EHR"] --> Snowflake["❄️ Snowflake<br/>Tables + Views"]
+    Snowflake --> Cortex["🧠 Cortex<br/>Semantic Views<br/>Search Services"]
+    Cortex --> Agent["🤖 Agent<br/>Multi-Tool AI"]
+    Agent --> UI["👤 Snowflake<br/>Intelligence"]
+```
+
+---
+
 ## 📁 Project Structure
 
 ```
